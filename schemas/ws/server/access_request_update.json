@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request_update",
+  "description": "An early access request was created, answered, expired or withdrawn. Sent to every connection of every recipient device (away through family_relay), and as the answer to access_request_answer. request.can_answer tells the app whether it may still answer.",
+  "type": "object",
+  "required": [
+    "type",
+    "request"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request_update"
+    },
+    "request": {
+      "$ref": "../../common/access-request.json"
+    }
+  },
+  "additionalProperties": true
+}

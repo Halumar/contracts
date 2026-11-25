@@ -1,0 +1,5 @@
+{
+  "type": "command",
+  "command": "navigate_to_area",
+  "area_id": "__home__"
+}

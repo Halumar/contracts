@@ -1,0 +1,14 @@
+{
+  "tile": {
+    "variant": "action",
+    "tap_action": {
+      "action": "run",
+      "target_entity_id": "script.tv_abend"
+    },
+    "confirm": true,
+    "secondary": {
+      "source": "entity",
+      "entity_id": "sensor.tv_power"
+    }
+  }
+}

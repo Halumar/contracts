@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast family_changed",
+  "description": "Something of the family manager changed – a child's request (new, answered, expired, withdrawn), a release (started, ended, expired), a family manager's scope or notify targets, the family house settings or a kids rule set by a family manager. Admin UIs reload the family overview (GET /api/family) and open device pages; the integration treats it as refresh trigger. Ids only, no names or notes. Family managers get their own family_request / family_child_updated (targeted), children kids_request_state.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_changed"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "client_ids"
+      ],
+      "properties": {
+        "client_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "uniqueItems": true,
+          "description": "Child or family manager devices concerned (sorted)."
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "$ref": "../../common/defs.json#/$defs/family_request_id"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The request that changed, if any."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

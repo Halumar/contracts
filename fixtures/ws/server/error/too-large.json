@@ -1,0 +1,4 @@
+{
+  "type": "error",
+  "message": "Message too large (max 64KB)"
+}

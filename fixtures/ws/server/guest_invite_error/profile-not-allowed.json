@@ -1,0 +1,5 @@
+{
+  "type": "guest_invite_error",
+  "reason": "profile_not_allowed",
+  "message": "Profile not allowed"
+}

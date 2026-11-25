@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tag link (NFC/QR tag)",
+  "description": "URL written on an NFC tag (NDEF URI record) or printed as QR code. Fixed because it stays on physical tags: https://<website>/t/<tag_id>, development form <scheme>://t/<tag_id>. No query, no fragment, no secret. The website path is claimed by the apps (apple-app-site-association applinks and Android App Links in assetlinks.json); without the app the website shows a short page. The app resolves the id at its hub (tag_resolve); what a tag does is stored in the hub (docs/links.md).",
+  "type": "object",
+  "required": [
+    "uri",
+    "params"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string",
+      "pattern": "^(https://[a-z0-9.-]+/t|halumar://t)/[A-Za-z0-9_-]{22}$",
+      "x-namespace-key": "deep_link_tag_prefix"
+    },
+    "params": {
+      "type": "object",
+      "required": [
+        "tag_id"
+      ],
+      "properties": {
+        "tag_id": {
+          "$ref": "../common/defs.json#/$defs/tag_id"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "x-client-rules": [
+    "Only the brand website (brand.json urls.website) or the app scheme, path /t/ followed by exactly 22 base64url characters; anything else is ignored (no aliases, no other paths).",
+    "The app never acts on the URL alone: it sends tag_resolve to the hub of the active home; on unknown_tag it asks its other homes, then shows “Tag not set up”.",
+    "Switching runs like a widget (control_origin quick_access), only after tag_result ok, and only with Pro and the rule scan_tags.",
+    "Without a hub connection (away) the app shows the tag name only if it knows it from an earlier scan and does nothing else."
+  ],
+  "additionalProperties": false
+}

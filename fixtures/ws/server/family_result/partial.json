@@ -1,0 +1,15 @@
+{
+  "type": "family_result",
+  "op": "rule_set",
+  "results": [
+    {
+      "client_id": "6c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "status": "ok"
+    },
+    {
+      "client_id": "9f4d5e6a-7b8c-4d9e-9f0a-2b3c4d5e6f7a",
+      "status": "error",
+      "reason": "not_your_child"
+    }
+  ]
+}

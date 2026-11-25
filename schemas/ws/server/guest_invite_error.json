@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite_error",
+  "description": "A guest invitation request failed. reason is machine-readable; message is English text for logs only. invite_id/client_id echo the request when set.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "invite_id": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

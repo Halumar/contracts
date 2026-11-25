@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/pairing/clients/{client_id}/family (body)",
+  "description": "Admin only: children and Home Assistant notify targets of a family manager device. The right itself is the profile rule family_manager (profile value or device adjustment); this sets who it applies to. 409 not_member (guest or device with parental controls), 422 family.client_ids (an id is no child device), family.notify_targets (unknown notify service). Answer: rest/client-family.response.json; audit family_scope_set.",
+  "type": "object",
+  "required": [
+    "scope"
+  ],
+  "properties": {
+    "scope": {
+      "$ref": "../common/defs.json#/$defs/family_children_scope"
+    },
+    "notify_targets": {
+      "type": "array",
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^notify\\.[a-z0-9_]{1,64}$"
+      }
+    }
+  },
+  "additionalProperties": false
+}

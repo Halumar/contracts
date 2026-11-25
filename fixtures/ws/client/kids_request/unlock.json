@@ -1,0 +1,5 @@
+{
+  "type": "kids_request",
+  "category": "unlock_device",
+  "entity_id": "media_player.spielkonsole"
+}

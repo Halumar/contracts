@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/integration/enforcement-rules (answer)",
+  "description": "Integration token only. Every current rule snapshot (one per device with an HA user, parental controls included). The integration fetches it at start and whenever status.enforcement.rules_hashes differs from what it holds; it replaces its whole set with it.",
+  "type": "object",
+  "required": [
+    "snapshots",
+    "control_paths"
+  ],
+  "properties": {
+    "snapshots": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "$ref": "../common/enforcement-snapshot.json"
+      }
+    },
+    "control_paths": {
+      "$ref": "../common/defs.json#/$defs/enforcement_control_paths",
+      "description": "Control path of every device in snapshots, outside the versioned snapshot body (docs/enforcement.md#control-paths-next-to-the-snapshots)."
+    }
+  },
+  "additionalProperties": false
+}

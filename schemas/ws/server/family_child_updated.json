@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_child_updated",
+  "description": "A child device in scope changed (rule, adjustment, release, status, online, scope). Sent to every connection of every family manager of this child (at home directly, away through the integration relay int.family_relay). removed = the device left the scope (deleted, lost parental controls, scope changed); child then only carries client_id and name.",
+  "type": "object",
+  "required": [
+    "type",
+    "child"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_child_updated"
+    },
+    "child": {
+      "$ref": "../../common/family-child.json"
+    },
+    "removed": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

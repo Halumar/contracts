@@ -1,0 +1,9 @@
+{
+  "action": "set_brightness",
+  "level": 0.4,
+  "actor": {
+    "kind": "ha_admin",
+    "ha_user_id": "0123456789abcdef0123456789abcdef",
+    "name": "Admin"
+  }
+}

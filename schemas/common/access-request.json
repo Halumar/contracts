@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Early access request",
+  "description": "A device outside its access hours asks for access now. One open request per device. answer is set exactly for approved/declined. The requesting device sees status, answer (answer, duration, until, message, by.name) and recipients; recipients and the admin also see the device and its note. Times in UTC. tools/validate.py checks that answer is an object exactly for approved and declined.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "client_id",
+    "device_name",
+    "status",
+    "created_at",
+    "expires_at",
+    "opens_at",
+    "durations",
+    "recipients",
+    "answer"
+  ],
+  "properties": {
+    "request_id": {
+      "$ref": "defs.json#/$defs/access_request_id"
+    },
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "device_name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "owner_label": {
+      "$ref": "defs.json#/$defs/owner_label"
+    },
+    "profile_kind": {
+      "$ref": "defs.json#/$defs/profile_kind"
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "$ref": "defs.json#/$defs/access_request_status"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "expires_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "opens_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp",
+          "description": "Start of the device's next regular window when it asked (null = none within 8 days)."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "durations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.json#/$defs/access_request_duration"
+      },
+      "description": "Durations a Yes may give for this request (until_window_start only with a known opens_at at most until_window_start_max_hours ahead)."
+    },
+    "recipients": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "First name (owner label), else the device name."
+          },
+          "role": {
+            "$ref": "defs.json#/$defs/access_request_role"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "can_answer": {
+      "type": "boolean",
+      "description": "Only in the copy for a recipient device: it may answer now."
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "answer",
+            "by",
+            "at"
+          ],
+          "properties": {
+            "answer": {
+              "$ref": "defs.json#/$defs/family_answer"
+            },
+            "duration": {
+              "anyOf": [
+                {
+                  "$ref": "defs.json#/$defs/access_request_duration"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "until": {
+              "anyOf": [
+                {
+                  "$ref": "defs.json#/$defs/timestamp",
+                  "description": "Yes: end of the early access."
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message": {
+              "anyOf": [
+                {
+                  "$ref": "defs.json#/$defs/access_decline_message"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "by": {
+              "$ref": "defs.json#/$defs/access_request_actor"
+            },
+            "at": {
+              "$ref": "defs.json#/$defs/timestamp"
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

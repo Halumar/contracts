@@ -1,0 +1,8 @@
+{
+  "id": 13,
+  "type": "halumar/family",
+  "message": {
+    "type": "kids_request",
+    "category": "stay_up"
+  }
+}

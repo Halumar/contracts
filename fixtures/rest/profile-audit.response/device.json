@@ -1,0 +1,68 @@
+{
+  "entries": [
+    {
+      "id": 42,
+      "ts": "2026-11-19T21:05:00Z",
+      "action": "override_set",
+      "actor": "Admin",
+      "profile_id": null,
+      "client_id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+      "rule": "remote_access",
+      "before": null,
+      "after": {
+        "value": true,
+        "user_choice": false,
+        "expires_at": "2026-11-20T06:00:00Z"
+      },
+      "note": "Ferien"
+    },
+    {
+      "id": 41,
+      "ts": "2026-11-19T21:00:00Z",
+      "action": "own_area_set",
+      "actor": "Admin",
+      "profile_id": null,
+      "client_id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+      "rule": null,
+      "before": {
+        "own_area_id": null
+      },
+      "after": {
+        "own_area_id": "7a2c4e6f-8b0d-4c1e-9f3a-5b7d9e1f3a5c"
+      },
+      "note": null
+    },
+    {
+      "id": 40,
+      "ts": "2026-11-19T20:58:00Z",
+      "action": "profile_assigned",
+      "actor": "Admin",
+      "profile_id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+      "client_id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+      "rule": null,
+      "before": {
+        "profile_id": "3f1c2b4a-5d6e-4f70-8a9b-0c1d2e3f4a5b"
+      },
+      "after": {
+        "profile_id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d"
+      },
+      "note": null
+    },
+    {
+      "id": 3,
+      "ts": "2026-11-19T18:00:00Z",
+      "action": "migration_v9",
+      "actor": "Migration v9",
+      "profile_id": null,
+      "client_id": null,
+      "rule": null,
+      "before": null,
+      "after": {
+        "profiles": 7,
+        "devices": 6,
+        "overrides": 14
+      },
+      "note": null
+    }
+  ]
+}

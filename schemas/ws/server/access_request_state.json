@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request_state",
+  "description": "State of the device's own early access request – answer to access_request / access_request_cancel, and pushed on every change (answered, expired, cancelled because access opened by itself). With approved the device also gets client_config_updated (access open, access.hours.early).",
+  "type": "object",
+  "required": [
+    "type",
+    "request"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request_state"
+    },
+    "request": {
+      "$ref": "../../common/access-request.json"
+    },
+    "next_allowed_at": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

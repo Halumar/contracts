@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/pairing/generate (body, optional)",
+  "description": "PIN for a new device. access: member (default) or guest. profile_id missing or null = default profile of the device type that pairs (house settings; guest: default guest profile). Guests: duration guest_hours (default guest_default_hours, max guest_access.max_hours) or guest_expires_at. 422 profile.guest_child_protection for a guest with a parental-controls profile.",
+  "type": "object",
+  "properties": {
+    "access": {
+      "$ref": "../common/defs.json#/$defs/device_access",
+      "default": "member"
+    },
+    "profile_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "own_area_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "owner_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 50
+    },
+    "guest_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2160
+    },
+    "guest_expires_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Own end of the guest access; not together with guest_hours (422 guest.expires)."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "access": {
+            "const": "member"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "guest_hours"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

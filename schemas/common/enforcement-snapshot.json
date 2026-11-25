@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rule snapshot of one device",
+  "description": "What the hub hands the integration per paired device so Home Assistant can enforce operating without asking the hub: the device's HA user, the control path and per entity what the device may do on the local and the external route and from quick access, plus the kids rules with parental controls. The hub resolves everything (profile, adjustments, boundaries, areas, own area, remote_control, quick access, kids layers); the integration only looks entries up. Entities that are not listed are not controllable (blocked_area). Hiding stays a display rule: Home Assistant always lets a device user read every entity. The integration stores the last snapshot per device in .storage and keeps deciding with it while the hub is unreachable; it applies a snapshot only to the HA user it created for client_id (never to other users) and only when rules_hash matches. kids is an object exactly with parental controls (checked by tools/validate.py). access: access switch and access hours, evaluated by the integration with its own clock. home_networks: extra networks that count as the local route. location: effective rule location for <ns>.report_location.",
+  "type": "object",
+  "required": [
+    "version",
+    "client_id",
+    "ha_user_id",
+    "issued_at",
+    "rules_hash",
+    "control_path",
+    "remote_access",
+    "child_protection",
+    "entities",
+    "kids",
+    "access",
+    "home_networks",
+    "location"
+  ],
+  "properties": {
+    "version": {
+      "const": 1,
+      "description": "Snapshot format; an integration ignores a version it does not know (the device then has no snapshot: rules_missing)."
+    },
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "ha_user_id": {
+      "$ref": "defs.json#/$defs/ha_user_id",
+      "description": "HA user of the device as delivered with POST /api/integration/client-token; must equal the integration's own mapping."
+    },
+    "issued_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "rules_hash": {
+      "$ref": "defs.json#/$defs/rules_hash"
+    },
+    "control_path": {
+      "$ref": "defs.json#/$defs/control_path",
+      "description": "Control path of the device in Home Assistant: checked for the rule values hub and checked (the integration keeps the device user in system-read-only), direct for direct (profiles_ref.snapshot_control_path)."
+    },
+    "remote_access": {
+      "type": "boolean",
+      "description": "Effective rule remote_access. false = nothing from the external route (blocked_remote), in addition to local_only of the HA user."
+    },
+    "child_protection": {
+      "type": "boolean",
+      "description": "Parental controls: the hub controls for the device where it is reachable (grant), the device itself only when it holds a key; kids is then an object and every kids rule applies to every call."
+    },
+    "entities": {
+      "type": "object",
+      "maxProperties": 10000,
+      "additionalProperties": {
+        "$ref": "defs.json#/$defs/enforcement_entity_access"
+      },
+      "description": "entity_id -> access. Everything the device may operate somewhere (areas incl. own area, run targets of its tiles, kids exceptions). Group entities are checked member by member: each member must be listed as well."
+    },
+    "kids": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/enforcement_kids"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "access": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/enforcement_access"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Access switch and access hours; null = neither (no restriction). While closed every entity is refused with blocked_access_closed."
+    },
+    "home_networks": {
+      "$ref": "defs.json#/$defs/home_networks",
+      "description": "The household's additional home networks, the same in every snapshot (part of rules_hash, so a change makes the integration fetch all snapshots again). A caller whose address lies inside one of them is on the local route of <ns>.control, like the built-in local ranges."
+    },
+    "location": {
+      "enum": [
+        "off",
+        "foreground",
+        "background"
+      ],
+      "description": "Effective rule location (off when it does not apply: kind, platform, guest boundary, expired guest). <ns>.report_location and client_location are checked against it; off makes the integration clear the device_tracker."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "child_protection": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "control_path": {
+            "const": "checked"
+          },
+          "kids": {
+            "$ref": "defs.json#/$defs/enforcement_kids"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

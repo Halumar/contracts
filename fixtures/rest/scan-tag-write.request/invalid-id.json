@@ -1,0 +1,8 @@
+{
+  "tag_id": "short",
+  "name": "x",
+  "action": {
+    "kind": "show",
+    "entity_id": "light.x"
+  }
+}

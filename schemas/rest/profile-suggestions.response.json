@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/profile-suggestions",
+  "description": "Gallery of the suggestions (data/profile-suggestions.json) with the profiles created from them. The full content of a suggestion is contract data (ContractData.profileSuggestions); POST /api/profile-suggestions/{suggestion_id} adds a copy.",
+  "type": "object",
+  "required": [
+    "catalog_version",
+    "suggestions"
+  ],
+  "properties": {
+    "catalog_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "suggestions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "group",
+          "starter",
+          "name",
+          "description",
+          "icon",
+          "color",
+          "child_protection",
+          "intended_for",
+          "profile_ids"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/profile_suggestion_id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "group": {
+            "enum": [
+              "people",
+              "kids",
+              "guests",
+              "shared"
+            ]
+          },
+          "starter": {
+            "type": "boolean"
+          },
+          "name": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "description": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "child_protection": {
+            "type": "boolean"
+          },
+          "intended_for": {
+            "$ref": "../common/defs.json#/$defs/device_access"
+          },
+          "profile_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_id"
+            },
+            "description": "Profiles copied from this suggestion (badge “Already added”); adding again is allowed."
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

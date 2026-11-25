@@ -1,0 +1,204 @@
+{
+  "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+  "name": "Erwachsen",
+  "kind": "person",
+  "description": "Sees and controls everything at home, also when away. Invites guests and adds devices only if you allow it per device.",
+  "icon": "mdi:account",
+  "color": "#2E7D32",
+  "child_protection": false,
+  "rules": {
+    "remote_access": true,
+    "connection_insecure_http": false,
+    "control_path": "checked",
+    "access_hours": {
+      "enabled": false,
+      "windows": []
+    },
+    "setup_devices": {
+      "enabled": false,
+      "kinds": []
+    },
+    "family_manager": false,
+    "babysitter_requests": false,
+    "access_requests": false,
+    "app_settings": "open",
+    "app_settings_biometrics": false,
+    "remote_control": {
+      "default": "control",
+      "domains": {
+        "lock": "view",
+        "alarm_control_panel": "view",
+        "cover:garage": "view",
+        "cover:gate": "view"
+      },
+      "entities": {}
+    },
+    "areas": {
+      "mode": "all",
+      "area_ids": [],
+      "tags": [],
+      "own_area": false
+    },
+    "control_mode_max": "full",
+    "camera_live": true,
+    "kids_blocked_types": [
+      "lock",
+      "alarm_control_panel",
+      "cover:garage",
+      "cover:gate",
+      "camera"
+    ],
+    "kids_quiet_hours": [
+      {
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ],
+        "start": "20:00",
+        "end": "06:30"
+      },
+      {
+        "days": [
+          "sat",
+          "sun"
+        ],
+        "start": "21:00",
+        "end": "07:00"
+      }
+    ],
+    "kids_rate_limit": {
+      "max_actions": 6,
+      "window_seconds": 60,
+      "cooldown_seconds": 300
+    },
+    "kids_rate_limit_all": {
+      "enabled": false,
+      "max_actions": 12,
+      "max_entities": 4,
+      "window_seconds": 60,
+      "cooldown_seconds": 300
+    },
+    "kids_volume_max": 40,
+    "kids_color_lock": false,
+    "kids_requests": {
+      "enabled": true,
+      "categories": [
+        "stay_up",
+        "unlock_device",
+        "end_pause"
+      ]
+    },
+    "kids_exceptions": [],
+    "kids_watch": false,
+    "quick_access": "control",
+    "watch": true,
+    "scan_tags": true,
+    "card_style": "calm",
+    "appearance": "system",
+    "header": true,
+    "home_header": {
+      "style": "weather_mood",
+      "status_chips": true,
+      "greeting": true,
+      "weather": true
+    },
+    "search_filter": true,
+    "columns": 2,
+    "power_button": {
+      "enabled": false,
+      "domains": [
+        "light"
+      ]
+    },
+    "notification_level": "all",
+    "notification_stack": "banner",
+    "kiosk": false,
+    "panel_start": {
+      "mode": "overview",
+      "area_id": null
+    },
+    "panel_auto_home": 0,
+    "panel_dim": 0,
+    "panel_screensaver": 0,
+    "panel_night": {
+      "mode": "off",
+      "start": "22:00",
+      "end": "06:00",
+      "brightness": 20
+    },
+    "panel_remote": true,
+    "panel_sensors": [
+      "battery",
+      "charging",
+      "screen",
+      "brightness"
+    ],
+    "panel_wake": {
+      "entities": []
+    },
+    "panel_brightness": {
+      "mode": "system"
+    },
+    "panel_announce": {
+      "enabled": false,
+      "volume_max": 80,
+      "respect_night": true
+    },
+    "panel_off_mode": "black",
+    "location": "background",
+    "location_required": false
+  },
+  "fixed": [
+    "kids_blocked_types",
+    "kids_color_lock",
+    "kids_exceptions",
+    "kids_quiet_hours",
+    "kids_rate_limit",
+    "kids_volume_max"
+  ],
+  "user_choice": [
+    "appearance",
+    "card_style",
+    "columns",
+    "header",
+    "home_header",
+    "kiosk",
+    "notification_level",
+    "notification_stack",
+    "panel_auto_home",
+    "panel_dim",
+    "panel_night",
+    "panel_screensaver",
+    "panel_start",
+    "power_button",
+    "search_filter"
+  ],
+  "origin": {
+    "suggestion_id": "adult",
+    "version": 1
+  },
+  "suggestion_update": null,
+  "catalog_defaults": [
+    "control_path",
+    "home_header",
+    "notification_stack"
+  ],
+  "default_for": [
+    "ios",
+    "watchos",
+    "android",
+    "wearos"
+  ],
+  "has_remote_pin": false,
+  "remote_pin_fixed": false,
+  "device_count": 3,
+  "adjusted_device_count": 1,
+  "guest_device_count": 0,
+  "rev": 4,
+  "created_at": "2026-11-19T10:00:00Z",
+  "updated_at": "2026-11-19T10:00:00Z",
+  "updated_by": "Admin"
+}

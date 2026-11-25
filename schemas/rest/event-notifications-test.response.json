@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Answer of POST /api/settings/event-notifications/test",
+  "description": "Result per target of the test and whether the HA event went to the integration. handed_over = Home Assistant accepted the notify call (no delivery promise); shown = the device is connected and got it; waiting_for_app = stored, shown when the app connects; failed with error (device_gone for a device that is no longer paired, else a short message).",
+  "type": "object",
+  "required": [
+    "results",
+    "ha_event"
+  ],
+  "properties": {
+    "results": {
+      "type": "array",
+      "maxItems": 60,
+      "items": {
+        "type": "object",
+        "required": [
+          "target",
+          "status"
+        ],
+        "properties": {
+          "target": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^notify\\.[a-z0-9_]{1,255}$"
+              },
+              {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              }
+            ],
+            "description": "notify.<service> or the client_id of a device."
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Device name (devices only)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "handed_over",
+              "failed",
+              "shown",
+              "waiting_for_app"
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "ha_event": {
+      "type": "string",
+      "enum": [
+        "handed_over",
+        "integration_not_connected"
+      ],
+      "description": "The test was pushed to the integration (ws/integration/ha_event with test true), which fires it as <ns>_event (and <ns>_alarm for alarm kinds)."
+    }
+  },
+  "additionalProperties": false
+}

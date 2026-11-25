@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate rule (data/room-climate.json)",
+  "description": "The one source for which entities give an area's room temperature and humidity (area cards, the climate capsule, wall panel, TV tiles, widgets, watch). Per measure: entities of device_domains (thermostats) read device_attribute and come before sensors of sensor_device_class. Entities whose text matches an exclude group (fridge, freezer, cool box, pool, outdoor, boiler, water, processor ...) or whose registry entity_category is listed never count automatically; the admin may still pick one on purpose. Text = entity_id, the placement's display name, friendly_name and, where known (hub), the registry names and the device's name and model. Matching: lower case, ä→ae, ö→oe, ü→ue, ß→ss, other diacritics dropped, every run of other characters than a-z and 0-9 becomes one space; a keyword of contains matches anywhere (German compounds), one of prefixes only at the start of a word. Keywords are stored in that normalized form, with the spelling Home Assistant uses in entity ids (kuhlschrank) next to the transcribed one (kuehlschrank). docs/room-climate.md, reference tools/room_climate_ref.py. Generated as a constant for every language (codegen ContractData).",
+  "type": "object",
+  "required": [
+    "version",
+    "measures",
+    "exclude"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Raised on every change of this file."
+    },
+    "measures": {
+      "type": "object",
+      "required": [
+        "temperature",
+        "humidity"
+      ],
+      "properties": {
+        "temperature": {
+          "$ref": "../common/room-climate-measure.json"
+        },
+        "humidity": {
+          "$ref": "../common/room-climate-measure.json"
+        }
+      },
+      "additionalProperties": false
+    },
+    "exclude": {
+      "type": "object",
+      "required": [
+        "entity_categories",
+        "groups"
+      ],
+      "properties": {
+        "entity_categories": {
+          "type": "array",
+          "description": "Registry entity categories that never count automatically (hub only; apps do not see the registry).",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          }
+        },
+        "groups": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "contains",
+              "prefixes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z_]+$",
+                "description": "Reason shown to the admin (Admin UI: why a sensor does not count)."
+              },
+              "contains": {
+                "type": "array",
+                "description": "Normalized keywords that match anywhere in the text.",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+( [a-z0-9]+)*$"
+                }
+              },
+              "prefixes": {
+                "type": "array",
+                "description": "Normalized keywords that match at the start of a word.",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+( [a-z0-9]+)*$"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

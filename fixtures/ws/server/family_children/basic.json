@@ -1,0 +1,438 @@
+{
+  "type": "family_children",
+  "request_id": "f-1",
+  "children": [
+    {
+      "client_id": "6c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "name": "iPad Kind",
+      "owner_label": "Child 1",
+      "platform": "ipados",
+      "online": true,
+      "last_seen": "2026-11-19T19:58:30+00:00",
+      "profile": {
+        "id": "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Kind"
+      },
+      "time_zone": "Europe/Zurich",
+      "rules": {
+        "kids_quiet_hours": {
+          "value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:00",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "profile_value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:00",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "source": "profile",
+          "fixed": false,
+          "manageable": true,
+          "not_manageable_reason": null,
+          "expires_at": null,
+          "set_by": null,
+          "set_at": null
+        },
+        "kids_rate_limit": {
+          "value": {
+            "max_actions": 6,
+            "window_seconds": 60,
+            "cooldown_seconds": 300
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_volume_max": {
+          "value": 60,
+          "profile_value": 40,
+          "source": "device",
+          "fixed": false,
+          "manageable": true,
+          "expires_at": "2026-11-22T17:00:00+00:00",
+          "then": 40,
+          "set_by": "Admin",
+          "set_at": "2026-11-19T09:00:00+00:00"
+        },
+        "kids_color_lock": {
+          "value": false,
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_blocked_types": {
+          "value": [
+            "lock",
+            "alarm_control_panel",
+            "cover:garage",
+            "cover:gate",
+            "camera"
+          ],
+          "source": "profile",
+          "fixed": true,
+          "manageable": false,
+          "not_manageable_reason": "rule_fixed"
+        },
+        "areas": {
+          "value": {
+            "mode": "selected",
+            "area_ids": [
+              "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f"
+            ],
+            "tags": [],
+            "own_area": false
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        }
+      },
+      "area_choices": [
+        {
+          "area_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "name": "Kinderzimmer"
+        },
+        {
+          "area_id": "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f",
+          "name": "Wohnzimmer"
+        }
+      ],
+      "releases": [],
+      "status": {
+        "bedtime_now": false,
+        "bedtime_until": null,
+        "next_bedtime": "2026-11-19T19:00:00+00:00",
+        "paused_entities": 0,
+        "open_request": null
+      },
+      "today": {
+        "actions": 23,
+        "blocked": 2,
+        "requests": 1
+      }
+    },
+    {
+      "client_id": "7d2b3c4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e",
+      "name": "Tims iPad",
+      "owner_label": "Child 2",
+      "platform": "ipados",
+      "online": true,
+      "last_seen": "2026-11-19T19:58:30+00:00",
+      "profile": {
+        "id": "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Kind"
+      },
+      "time_zone": "Europe/Zurich",
+      "rules": {
+        "kids_quiet_hours": {
+          "value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:30",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "profile_value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:00",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "source": "device",
+          "fixed": false,
+          "manageable": true,
+          "expires_at": null,
+          "set_by": "Parent",
+          "set_at": "2026-11-18T18:00:00+00:00"
+        },
+        "kids_rate_limit": {
+          "value": {
+            "max_actions": 6,
+            "window_seconds": 60,
+            "cooldown_seconds": 300
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_volume_max": {
+          "value": 40,
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_color_lock": {
+          "value": false,
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_blocked_types": {
+          "value": [
+            "lock",
+            "alarm_control_panel",
+            "cover:garage",
+            "cover:gate",
+            "camera"
+          ],
+          "source": "profile",
+          "fixed": true,
+          "manageable": false,
+          "not_manageable_reason": "rule_fixed"
+        },
+        "areas": {
+          "value": {
+            "mode": "selected",
+            "area_ids": [
+              "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f"
+            ],
+            "tags": [],
+            "own_area": false
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        }
+      },
+      "area_choices": [
+        {
+          "area_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "name": "Kinderzimmer"
+        },
+        {
+          "area_id": "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f",
+          "name": "Wohnzimmer"
+        }
+      ],
+      "releases": [],
+      "status": {
+        "bedtime_now": false,
+        "bedtime_until": null,
+        "next_bedtime": "2026-11-19T19:00:00+00:00",
+        "paused_entities": 0,
+        "open_request": null
+      },
+      "today": {
+        "actions": 23,
+        "blocked": 2,
+        "requests": 1
+      }
+    },
+    {
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "name": "iPhone Kind",
+      "owner_label": "Child 3",
+      "platform": "ios",
+      "online": true,
+      "last_seen": "2026-11-19T19:58:30+00:00",
+      "profile": {
+        "id": "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Kind"
+      },
+      "time_zone": "Europe/Zurich",
+      "rules": {
+        "kids_quiet_hours": {
+          "value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:00",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "profile_value": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "start": "20:00",
+              "end": "06:30"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "start": "21:00",
+              "end": "07:00"
+            }
+          ],
+          "source": "profile",
+          "fixed": false,
+          "manageable": true,
+          "not_manageable_reason": null,
+          "expires_at": null,
+          "set_by": null,
+          "set_at": null
+        },
+        "kids_rate_limit": {
+          "value": {
+            "max_actions": 6,
+            "window_seconds": 60,
+            "cooldown_seconds": 300
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_volume_max": {
+          "value": 40,
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_color_lock": {
+          "value": false,
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        },
+        "kids_blocked_types": {
+          "value": [
+            "lock",
+            "alarm_control_panel",
+            "cover:garage",
+            "cover:gate",
+            "camera"
+          ],
+          "source": "profile",
+          "fixed": true,
+          "manageable": false,
+          "not_manageable_reason": "rule_fixed"
+        },
+        "areas": {
+          "value": {
+            "mode": "selected",
+            "area_ids": [
+              "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f"
+            ],
+            "tags": [],
+            "own_area": false
+          },
+          "source": "profile",
+          "fixed": false,
+          "manageable": true
+        }
+      },
+      "area_choices": [
+        {
+          "area_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "name": "Kinderzimmer"
+        },
+        {
+          "area_id": "c3d4e5f6-a7b8-4c9d-8e0f-2a3b4c5d6e7f",
+          "name": "Wohnzimmer"
+        }
+      ],
+      "releases": [
+        {
+          "kind": "bedtime",
+          "until": "2026-11-19T20:30:00+00:00",
+          "by": {
+            "kind": "family_manager",
+            "client_id": "2a6f0c1e-4b7d-4e8a-9c1f-3d5e7a9b1c2d",
+            "name": "iPhone Gast",
+            "owner_label": "Parent",
+            "via": "away"
+          },
+          "request_id": "b06f7a8c-9d0e-4f1a-9b2c-4d5e6f7a8b9c",
+          "created_at": "2026-11-19T20:00:00+00:00"
+        }
+      ],
+      "status": {
+        "bedtime_now": true,
+        "bedtime_until": "2026-11-20T05:30:00+00:00",
+        "next_bedtime": null,
+        "paused_entities": 0,
+        "open_request": null
+      },
+      "today": {
+        "actions": 23,
+        "blocked": 2,
+        "requests": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast client_config_updated",
+  "description": "Settings that affect client_config changed; clients re-send get_client_config. Also sent targeted to a single client after token rotation.",
+  "x-audience": "ALL",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_config_updated"
+    },
+    "data": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": true,
+      "maxProperties": 0
+    }
+  },
+  "additionalProperties": true
+}

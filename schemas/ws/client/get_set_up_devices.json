@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "get_set_up_devices",
+  "description": "“Set up by me”: the active devices and guests this device set up (set_up_by = this device), answer set_up_devices. Every active member device may ask, also after its right setup_devices was removed, so it can still remove what it set up. Others get onboard_error {not_permitted}.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "get_set_up_devices"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_error",
+  "description": "A family or child request failed. reason is machine-readable; message English text for logs only. request echoes the current state for already_answered; retry_after (seconds) for rate_limited, request_limit and cooldown.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_error"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/family_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "request": {
+      "$ref": "../../common/family-request.json"
+    },
+    "retry_after": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": true
+}

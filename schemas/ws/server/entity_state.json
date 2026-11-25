@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "entity_state",
+  "description": "State change of an entity visible to a subscribed device on the hub path (Home Assistant state object, sanitized like get_area: no access_token, no token picture URLs (entity_picture is replaced by the marker hub_picture_id), no GPS of people/trackers). state null = entity removed.",
+  "type": "object",
+  "required": [
+    "type",
+    "entity_id",
+    "state"
+  ],
+  "properties": {
+    "type": {
+      "const": "entity_state"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "state": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "entity_id": {
+              "type": "string"
+            },
+            "state": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object"
+            },
+            "last_changed": {
+              "type": "string"
+            },
+            "last_updated": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

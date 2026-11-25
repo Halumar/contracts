@@ -1,0 +1,12 @@
+{
+  "requests_enabled": true,
+  "categories": [
+    "stay_up",
+    "unlock_device",
+    "end_pause"
+  ],
+  "request_timeout_minutes": 10,
+  "child_requests_per_hour": 6,
+  "decline_cooldown_minutes": 15,
+  "activity_days": 7
+}

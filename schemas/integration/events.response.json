@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/events (answer)",
+  "type": "object",
+  "required": [
+    "accepted",
+    "duplicates"
+  ],
+  "properties": {
+    "accepted": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "duplicates": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate pick (one measure)",
+  "type": "object",
+  "required": [
+    "source",
+    "entity_ids"
+  ],
+  "properties": {
+    "source": {
+      "enum": [
+        "admin",
+        "auto"
+      ],
+      "description": "admin = picked on the area page (exactly one entity), auto = the rule."
+    },
+    "entity_ids": {
+      "type": "array",
+      "description": "Candidates in layout order; empty = the area has no room value for this measure.",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.json#/$defs/entity_id"
+      }
+    }
+  },
+  "additionalProperties": true
+}

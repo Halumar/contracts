@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/ha-url (422 url_not_allowed)",
+  "description": "The URL is neither HA's configured external_url nor a Nabu Casa remote UI address (https://<instance>.ui.nabu.casa, no port, no path), or not an http(s) URL. The integration logs it once and does not offer the same URL again until the value changes. A body that does not match ha-url.request.json is answered with FastAPI's HTTPValidationError instead.",
+  "type": "object",
+  "required": [
+    "detail"
+  ],
+  "properties": {
+    "detail": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "const": "url_not_allowed"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

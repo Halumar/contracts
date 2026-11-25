@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Area section",
+  "type": "object",
+  "required": [
+    "id",
+    "area_id",
+    "sort_order",
+    "entities",
+    "widgets"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "area_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "title": {
+      "type": "string"
+    },
+    "icon": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "column_span": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "columns": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "is_collapsed": {
+      "$ref": "defs.json#/$defs/boolish"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "$ref": "area-entity.json"
+      }
+    },
+    "widgets": {
+      "type": "array",
+      "items": {
+        "$ref": "area-widget.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

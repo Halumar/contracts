@@ -1,0 +1,12 @@
+{
+  "entity_id": "sensor.halumar_client_kinder_iphone_0a1b2c3d_quick_access",
+  "state": "0",
+  "attributes": {
+    "client_id": "0a1b2c3d-1111-4222-8333-444455556666",
+    "enabled": false,
+    "max": "control",
+    "entities": {},
+    "critical": [],
+    "updated_at": "2026-11-19T08:15:00Z"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "media_image_get",
+  "description": "A device on the hub path (parental controls or the effective rule control_path hub; never a watch) asks for the artwork of a media player; other devices read it from Home Assistant with their own key. The hub reads GET /api/media_player_proxy/<entity_id> and answers media_image with the same request_id; without artwork the answer is control_error {ha_error} and the app shows the domain icon. There is no width hint: the media player proxy does not scale. The hub answers in this order: (1) a malformed request (also a width outside 64-3840, or a request_id of a request of this device still open) → control_error {invalid_request}, the open request continues; (2) not a paired, active device on the hub path, or a watch → control_error {not_hub_controlled}; (3) access closed, an unknown entity, an entity of another domain or outside the device's scope (placed in one of its readable areas, or the run target of such a tile) → control_error {not_visible}, the same answer in every case and before Home Assistant is contacted or a kids rule is read; (4) a request for this entity still open, more than one per second for this entity, or the device's image budget used up (x-limits hub_image_*), or a lower share the hub enforces → control_error {rate_limited, retry_after}; (5) with parental controls a blocked device type (kids_blocked_types) → rule_blocked {reason blocked}; (6) the hub reads the image from Home Assistant with its own access, without following a redirect: an error answer, a redirect, no image, more than 2 MiB or a type other than JPEG, PNG, WebP or GIF → control_error {ha_error}, Home Assistant not reachable → {ha_unavailable}. The content type is normalized: lower case, parameters dropped, image/jpg and image/pjpeg are image/jpeg. The answer carries the image only: never a URL, a Home Assistant token or a signed image URL. The hub keeps no copy. Live video is not part of the hub path. The app asks again while the tile or the detail view is visible. These limits are maxima: a hub may enforce lower shares (for example of a hub-wide limit of open reads) and answer rate_limited earlier; clients honor rate_limited with retry_after at any time. The app asks when the state's attributes.hub_picture_id appears or changes ($defs/hub_picture_id); without it it asks for nothing.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "media_image_get"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id",
+      "description": "A media_player entity; any other entity is answered with not_visible."
+    }
+  },
+  "additionalProperties": true
+}

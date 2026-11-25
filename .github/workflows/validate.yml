@@ -1,0 +1,177 @@
+name: validate
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # github.workflow is the caller's name when called from release.yml, so a
+  # direct and a called run never share a group (and never the caller's).
+  group: contracts-validate-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned CLI versions (the gate must not change meaning with an upstream release).
+  ASYNCAPI_CLI: "@asyncapi/cli@6.3.1"
+  # Material Design Icons version of the hub (frontend/package.json @mdi/js, @mdi/svg).
+  MDI_VERSION: "7.4.47"
+
+jobs:
+  contracts:
+    name: Schemas, fixtures, OpenAPI, AsyncAPI, brand
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tools/requirements.txt
+
+      - name: Install validator dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Workflow checks
+        run: python -m unittest discover -s tools -p "test_workflows.py"
+
+      # Pinned commit + checksum of asyncapi/spec-json-schemas (master on 18.11.2026).
+      - name: Fetch official AsyncAPI 3.0.0 JSON Schema
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/asyncapi-3.0.0.json" \
+            https://raw.githubusercontent.com/asyncapi/spec-json-schemas/eee8d2217d23b22c475090c0e12f20801f531f11/schemas/3.0.0.json
+          echo "1786a007ac00344a8f529e5a6fc5db786b0be6757e0b94a8b95a8a6a52b7fe9a  $RUNNER_TEMP/asyncapi-3.0.0.json" | shasum -a 256 -c -
+
+      - name: brand-lint
+        run: |
+          python -m unittest discover -s tools/brand -p "test_*.py"
+          python tools/brand/brandgen.py --brand brand.json
+          python tools/brand/brandlint.py .
+
+      # No ticket references, local paths, secrets or emoji in the public
+      # repository (tools/publiclint/README.md).
+      - name: Public text lint
+        run: |
+          python -m unittest discover -s tools/publiclint -p "test_*.py"
+          python tools/publiclint/publiclint.py .
+
+      - name: Validate schemas, fixtures, OpenAPI, AsyncAPI, namespace
+        run: python tools/validate.py --asyncapi-schema "$RUNNER_TEMP/asyncapi-3.0.0.json"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+
+      - name: AsyncAPI CLI (official parser)
+        run: npx --yes "$ASYNCAPI_CLI" validate asyncapi/hub-ws.asyncapi.yaml
+        env:
+          ASYNCAPI_METRICS: "false"
+
+      # License: LICENSE unchanged, NOTICE complete; the curated tile icons contain no
+      # MDI brand/logo icon (@mdi/svg meta.json of the version the hub ships).
+      - name: Licenses
+        run: python tools/check_licenses.py
+
+      - name: Tile icons without brand icons
+        run: |
+          (cd "$RUNNER_TEMP" && npm pack --silent "@mdi/svg@$MDI_VERSION" >/dev/null \
+            && tar -xzf "mdi-svg-$MDI_VERSION.tgz" package/meta.json)
+          python tools/check_tile_icons.py --mdi-meta "$RUNNER_TEMP/package/meta.json"
+
+  codegen-check:
+    # Generated models (tools/codegen/snapshots) are up to date, Python/Kotlin round trips over the
+    # golden fixtures pass and the TypeScript types accept every valid fixture.
+    name: Codegen check (Python, TypeScript, Swift, Kotlin output; round trips)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CODEGEN_REQUIRE_ALL: "1"
+      GRADLE_VERSION: "9.9.1"
+      # No Gradle daemon and no Kotlin daemon stays behind after the job.
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.project.kotlin.compiler.execution.strategy=in-process"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tools/codegen/requirements.txt
+
+      # Every later step uses this interpreter by its path, so the round trips see exactly what is
+      # installed here, whatever later setup steps put on PATH.
+      - name: Install codegen test dependencies
+        env:
+          PYTHON: ${{ steps.python.outputs.python-path }}
+        run: |
+          "$PYTHON" -m pip install -r tools/codegen/requirements.txt
+          "$PYTHON" -c "import sys, pydantic, jsonschema; print(sys.executable, 'pydantic', pydantic.VERSION)"
+          echo "PYTHON=$PYTHON" >> "$GITHUB_ENV"
+
+      - name: Generated output is current (what consumer CIs run)
+        run: |
+          "$PYTHON" tools/codegen/generate.py --lang python --out tools/codegen/snapshots/python --check
+          "$PYTHON" tools/codegen/generate.py --lang ts     --out tools/codegen/snapshots/typescript --check
+          "$PYTHON" tools/codegen/generate.py --lang swift  --out tools/codegen/snapshots/swift --check
+          "$PYTHON" tools/codegen/generate.py --lang kotlin --out tools/codegen/snapshots/kotlin --check
+
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      # Kotlin: Gradle project tools/codegen/kotlin-check (Kotlin 2.4.21, kotlinx.serialization 1.13.0, JDK 21 as
+      # the Android apps) compiles snapshots/kotlin with -Werror and runs the round-trip harness.
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          gradle-version: ${{ env.GRADLE_VERSION }}
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+
+      # The Swift round trip runs in its own job below; naming the test classes here keeps every test of
+      # this job required (CODEGEN_REQUIRE_ALL) instead of skipping one.
+      - name: Codegen tests (generator, Python, Kotlin, TypeScript)
+        run: |
+          "$PYTHON" -c "import pydantic"
+          "$PYTHON" tools/codegen/tests/test_codegen.py -v GeneratorTests PythonRoundTrip KotlinRoundTrip TypeScriptCheck
+
+  codegen-swift:
+    name: Codegen Swift round trip
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      CODEGEN_REQUIRE_ALL: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python
+        with:
+          python-version: "3.12"
+
+      - name: Install codegen test dependencies
+        env:
+          PYTHON: ${{ steps.python.outputs.python-path }}
+        run: |
+          "$PYTHON" -m pip install -r tools/codegen/requirements.txt
+          echo "PYTHON=$PYTHON" >> "$GITHUB_ENV"
+
+      - name: Swift round trip (swift test, Swift 6 language mode)
+        run: '"$PYTHON" tools/codegen/tests/test_codegen.py -v SwiftRoundTrip'

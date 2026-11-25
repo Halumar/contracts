@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast notification_dismissed",
+  "description": "Client dismissed a notification.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_dismissed"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "required": [
+        "notification_id",
+        "client_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

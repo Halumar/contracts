@@ -1,0 +1,16 @@
+{
+  "sessions": [
+    {
+      "id": "6b1f0e2a-3c4d-4e5f-8a9b-0c1d2e3f4a5b",
+      "client_name": "Apple TV Wohnzimmer",
+      "platform": "tvos",
+      "app_version": "2026.12.0",
+      "device_model": "AppleTV14,1",
+      "created_at": "2026-11-18T19:02:11+00:00",
+      "expires_at": "2026-11-18T19:07:11+00:00",
+      "source_ip": "192.0.2.50",
+      "claimed_by": null
+    }
+  ],
+  "expires_in": 300
+}

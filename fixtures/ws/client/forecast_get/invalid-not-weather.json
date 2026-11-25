@@ -1,0 +1,6 @@
+{
+  "type": "forecast_get",
+  "request_id": "f2",
+  "entity_id": "sensor.outside_temperature",
+  "forecast_type": "daily"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-23",
+  "entity_id": "light.kids_room",
+  "reason": "color_locked",
+  "level": "area",
+  "until": null,
+  "retry_after": null
+}

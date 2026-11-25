@@ -1,0 +1,12 @@
+{
+  "type": "client_status",
+  "battery_level": 52,
+  "battery_state": "unplugged",
+  "low_power": false,
+  "panel": {
+    "screen": "active",
+    "panel_mode": false,
+    "brightness": 0.62,
+    "actions": []
+  }
+}

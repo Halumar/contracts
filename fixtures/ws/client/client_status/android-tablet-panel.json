@@ -1,0 +1,35 @@
+{
+  "type": "client_status",
+  "battery_level": 81,
+  "battery_state": "charging",
+  "low_power": false,
+  "panel": {
+    "screen": "active",
+    "panel_mode": true,
+    "brightness": 0.6,
+    "brightness_mode": "auto",
+    "illuminance": 142.0,
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "set_brightness",
+      "set_brightness_mode",
+      "screen_off",
+      "announce",
+      "show_camera"
+    ],
+    "light_sensor": true,
+    "lock": "device_admin",
+    "pip": true,
+    "proximity_sensor": true,
+    "device_admin": true,
+    "device_owner": false,
+    "background_connection": true,
+    "nfc": true,
+    "charge_limit_detected": false,
+    "battery_temperature": 31.5,
+    "battery_health": "good"
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "ha_token": "FAKE-HA-LLAT-NOT-A-REAL-TOKEN",
+  "ha_url": null,
+  "ha_internal_url": "http://homeassistant.local",
+  "ha_enforcement": {
+    "control_path": "checked",
+    "rules_hash": null
+  },
+  "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "tls_port": 8100,
+  "config_sensor": "sensor.halumar_config",
+  "notification_sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+  "home_title": "Zuhause",
+  "home_bg_light": null,
+  "home_bg_dark": "/images/7a1d2c3b.jpg",
+  "control_mode": "full",
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": {
+    "id": "9f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c",
+    "name": "Wandpanel",
+    "kind": "panel",
+    "rev": 3,
+    "child_protection": false,
+    "managed_by": "Admin"
+  },
+  "rules": {
+    "remote_access": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "ha"
+    },
+    "control_path": {
+      "value": "checked",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    },
+    "app_settings": {
+      "value": "pin",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "app_settings_biometrics": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "areas": {
+      "value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha_control"
+    },
+    "control_mode_max": {
+      "value": "full",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "camera_live": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "quick_access": {
+      "value": "off",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "card_style": {
+      "value": "calm",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "appearance": {
+      "value": "dark",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "header": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "search_filter": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "columns": {
+      "value": 2,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "power_button": {
+      "value": {
+        "enabled": false,
+        "domains": [
+          "light"
+        ]
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "notification_level": {
+      "value": "all",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "notification_stack": {
+      "value": "banner",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "kiosk": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_start": {
+      "value": {
+        "mode": "area",
+        "area_id": "a1b2c3d4-0000-4000-8000-00000000000a"
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_auto_home": {
+      "value": 5,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_dim": {
+      "value": 2,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_screensaver": {
+      "value": 10,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_night": {
+      "value": {
+        "mode": "sun",
+        "start": "22:00",
+        "end": "06:00",
+        "brightness": 20
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    }
+  },
+  "quick_access": {
+    "enabled": false,
+    "max": "status",
+    "sensor": null,
+    "entities": {},
+    "critical": []
+  },
+  "settings_pin_hash": "869e6c8350c5beb0acc399fbaac3b60d220433896b26a647734d0d8f1586e1fa",
+  "settings_pin_salt": "000102030405060708090a0b0c0d0e0f",
+  "settings_pin_source": "profile",
+  "config_hash": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ping",
+  "description": "Heartbeat, both directions. Server sends every 30 s to authenticated sessions and expects 'pong' (connection dropped after ~40-60 s without). Client may send at any time; server answers 'pong'.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "ping"
+    }
+  },
+  "additionalProperties": true
+}

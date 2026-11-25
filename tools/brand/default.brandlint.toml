@@ -1,0 +1,61 @@
+# Default configuration for brandlint.
+# A repo can add a `.brandlint.toml` at its root. Lists there are APPENDED to the
+# lists below; scalars replace them. Set `replace_lists = true` to replace instead.
+# Globs are matched against the repo-relative POSIX path; "**/" also matches the root.
+
+brand_name = "Halumar"          # display brand (exact case)
+namespace = "halumar"           # technical namespace (any other casing)
+
+# Forbidden names (regular expressions), reported as BL001 in text and BL004 in paths.
+# Empty by default: a repository's .brandlint.toml or a private config passed with
+# --config adds its own.
+forbidden_patterns = []
+
+# Never scanned.
+exclude = [
+  ".git/**", ".contracts/**", "**/.git/**", "**/node_modules/**", "**/.venv/**", "**/venv/**", "**/__pycache__/**",
+  "**/build/**", "**/DerivedData/**", "**/.svelte-kit/**", "**/dist/**", "**/xcuserdata/**",
+  "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.ico", "**/*.pdf", "**/*.mp4", "**/*.zip",
+  "**/*.tgz", "**/*.woff", "**/*.woff2", "**/*.ttf", "**/*.otf", "**/*.db", "**/*.sqlite", "**/*.pyc",
+  "**/package-lock.json", "**/static/_app/**",
+]
+
+# Paths where a forbidden name may appear (the configuration that spells the patterns).
+forbidden_allowed = ["**/.brandlint.toml"]
+
+# Literal brand name allowed: brand source, generated files, generated HA metadata,
+# user-facing docs and HA translation files (no variables possible there).
+brand_allowed = [
+  "**/brand.json", "**/contracts-brand.json", "**/brand.schema.json",
+  "**/Brand.swift", "**/Brand.xcconfig", "**/brand.py", "**/brand.ts", "**/brand.js",
+  "**/addon-config.yaml", "**/config.yaml", "**/manifest.json", "**/hacs.json", "**/repository.yaml",
+  "**/*.md", "**/strings.json", "**/services.yaml", "**/translations/*.json", "**/translations/*.yaml",
+  "**/.brandlint.toml",
+  # Legal texts name the licensor's product (see LICENSE and TRADEMARKS.md).
+  "**/NOTICE",
+]
+
+# Namespace literal allowed: one constants file per component plus files where
+# the platform forces the literal (HA manifest/config, Info.plist, CI workflows).
+namespace_allowed = [
+  "**/brand.json", "**/contracts-brand.json", "**/Brand.swift", "**/Brand.xcconfig", "**/brand.py",
+  "**/brand.ts", "**/brand.js",
+  "**/const.py", "**/namespace.py", "**/Namespace.swift", "**/namespace.ts", "**/namespace.js",
+  "**/config.yaml", "**/build.yaml", "**/manifest.json", "**/hacs.json", "**/Info.plist",
+  "**/*.md", "**/.github/workflows/*", "**/.brandlint.toml", "**/brand.schema.json",
+  "**/NOTICE",
+]
+
+# Comments (incl. Python docstrings) may name the brand/namespace.
+allow_brand_in_comments = true
+allow_namespace_in_comments = true
+allow_forbidden_in_comments = false
+
+# Report forbidden names in file and folder paths, too.
+check_paths = true
+
+# A line containing this marker is ignored.
+inline_pragma = "brandlint: allow"
+
+# Lines matching one of these regexes are ignored (e.g. imports forced by HA).
+allow_line_patterns = []

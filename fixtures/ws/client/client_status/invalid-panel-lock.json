@@ -1,0 +1,6 @@
+{
+  "type": "client_status",
+  "panel": {
+    "lock": "root"
+  }
+}

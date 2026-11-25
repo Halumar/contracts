@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant action <ns>.control (answer)",
+  "description": "Response of <ns>.control (return_response true): one result per requested entity in request order.",
+  "type": "object",
+  "required": [
+    "route",
+    "rules_hash",
+    "results"
+  ],
+  "properties": {
+    "route": {
+      "$ref": "../common/defs.json#/$defs/control_route"
+    },
+    "rules_hash": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/rules_hash"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Snapshot used (null for admins and system calls). Apps compare it with client_config.ha_enforcement.rules_hash (drift)."
+    },
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "ok",
+          "executed",
+          "reason"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "ok": {
+            "type": "boolean",
+            "description": "Allowed (and executed without error unless check_only)."
+          },
+          "executed": {
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/control_denial_reason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "until": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Kids bedtime or pause: when it ends."
+          },
+          "adjusted": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Values the integration changed before executing (kids volume cap: {\"volume_level\": 0.4})."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,5 @@
+{
+  "type": "auth_error",
+  "reason": "invalid_client_info",
+  "message": "Invalid client info: unknown platform"
+}

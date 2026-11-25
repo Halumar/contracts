@@ -1,0 +1,10 @@
+{
+  "kind": "denied",
+  "client_id": null,
+  "device_name": null,
+  "entity_id": null,
+  "reason": null,
+  "route": null,
+  "at": "2026-11-20T18:05:00+00:00",
+  "test": true
+}

@@ -1,0 +1,484 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Resolver vector",
+  "description": "Test vector of the profile resolver, shared by hub (resolver tests) and apps (display of source/reason/locked, user's choice, temporary adjustments). input.profile: from_suggestion = copy of that suggestion (data/profile-suggestions.json), else an empty profile (catalog defaults, nothing fixed, no user's choice); child_protection, fixed and user_choice replace, rules are merged per key. expected lists the asserted rules (missing user_choice/expires_at/then = false/null). tools/validate.py recomputes every vector with tools/profiles_ref.py. Apps: drop rules with source not_applicable to get client_config.rules. entity_checks: per entity and route what the app and quick access may do (tools/profiles_ref.py entity_access). notification_checks and expected_remote_pin_source as well; expected_ha_user_group.",
+  "type": "object",
+  "required": [
+    "description",
+    "input",
+    "expected"
+  ],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "platform",
+        "access",
+        "profile",
+        "device",
+        "now"
+      ],
+      "properties": {
+        "platform": {
+          "$ref": "../common/defs.json#/$defs/platform"
+        },
+        "access": {
+          "type": "object",
+          "required": [
+            "kind",
+            "expires_at"
+          ],
+          "properties": {
+            "kind": {
+              "$ref": "../common/defs.json#/$defs/device_access"
+            },
+            "expires_at": {
+              "anyOf": [
+                {
+                  "$ref": "../common/defs.json#/$defs/timestamp"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "from_suggestion": {
+              "$ref": "../common/defs.json#/$defs/profile_suggestion_id"
+            },
+            "kind": {
+              "$ref": "../common/defs.json#/$defs/profile_kind",
+              "description": "Kind of the profile; default: the suggestion's kind, without suggestion person."
+            },
+            "child_protection": {
+              "type": "boolean"
+            },
+            "rules": {
+              "$ref": "../common/profile-rule-values.json"
+            },
+            "fixed": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "../common/defs.json#/$defs/profile_rule_key"
+              }
+            },
+            "user_choice": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "../common/defs.json#/$defs/profile_rule_key"
+              }
+            },
+            "has_remote_pin": {
+              "type": "boolean",
+              "description": "The profile has a remote PIN."
+            },
+            "remote_pin_fixed": {
+              "type": "boolean",
+              "description": "The profile PIN is fixed: device PINs are ignored."
+            }
+          },
+          "additionalProperties": false
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "rule",
+              "value"
+            ],
+            "properties": {
+              "rule": {
+                "$ref": "../common/defs.json#/$defs/profile_rule_key"
+              },
+              "value": {},
+              "user_choice": {
+                "type": "boolean"
+              },
+              "expires_at": {
+                "anyOf": [
+                  {
+                    "$ref": "../common/defs.json#/$defs/timestamp"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "device": {
+          "type": "object",
+          "required": [
+            "own_area_id",
+            "has_remote_pin"
+          ],
+          "properties": {
+            "own_area_id": {
+              "anyOf": [
+                {
+                  "$ref": "../common/defs.json#/$defs/uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "has_remote_pin": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "now": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        "limit": {
+          "type": "object",
+          "required": [
+            "platform",
+            "access",
+            "profile",
+            "device"
+          ],
+          "properties": {
+            "platform": {
+              "$ref": "../common/defs.json#/$defs/platform"
+            },
+            "access": {
+              "type": "object",
+              "required": [
+                "kind",
+                "expires_at"
+              ],
+              "properties": {
+                "kind": {
+                  "$ref": "../common/defs.json#/$defs/device_access"
+                },
+                "expires_at": {
+                  "anyOf": [
+                    {
+                      "$ref": "../common/defs.json#/$defs/timestamp"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "profile": {
+              "type": "object",
+              "properties": {
+                "from_suggestion": {
+                  "$ref": "../common/defs.json#/$defs/profile_suggestion_id"
+                },
+                "kind": {
+                  "$ref": "../common/defs.json#/$defs/profile_kind",
+                  "description": "Kind of the profile; default: the suggestion's kind, without suggestion person."
+                },
+                "child_protection": {
+                  "type": "boolean"
+                },
+                "rules": {
+                  "$ref": "../common/profile-rule-values.json"
+                },
+                "fixed": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "../common/defs.json#/$defs/profile_rule_key"
+                  }
+                },
+                "user_choice": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "../common/defs.json#/$defs/profile_rule_key"
+                  }
+                },
+                "has_remote_pin": {
+                  "type": "boolean",
+                  "description": "The profile has a remote PIN."
+                },
+                "remote_pin_fixed": {
+                  "type": "boolean",
+                  "description": "The profile PIN is fixed: device PINs are ignored."
+                }
+              },
+              "additionalProperties": false
+            },
+            "overrides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "rule",
+                  "value"
+                ],
+                "properties": {
+                  "rule": {
+                    "$ref": "../common/defs.json#/$defs/profile_rule_key"
+                  },
+                  "value": {},
+                  "user_choice": {
+                    "type": "boolean"
+                  },
+                  "expires_at": {
+                    "anyOf": [
+                      {
+                        "$ref": "../common/defs.json#/$defs/timestamp"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "device": {
+              "type": "object",
+              "required": [
+                "own_area_id",
+                "has_remote_pin"
+              ],
+              "properties": {
+                "own_area_id": {
+                  "anyOf": [
+                    {
+                      "$ref": "../common/defs.json#/$defs/uuid"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "has_remote_pin": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional: the watch's phone. It is resolved the same way at input.now and the result is limited to it (profiles_ref.limit_to, reason limited_by_phone)."
+        },
+        "area_tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Optional, with limit: the hub's areas with their tags (area id -> tags). The areas of a watch are then limited on the real areas (common area ids, pinned); without it the strict symbolic meet applies."
+        },
+        "entity_classes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "Optional, with limit: the hub's states as entity id -> device class (null = a state without a device class). An entity one side names gets the other side's level for its real class; an entity not listed gets the lowest level the other side can give it."
+        },
+        "time_zone": {
+          "type": "string",
+          "description": "Optional, with limit: the hub's IANA time zone. Access hours of a watch stay within both sides on the real instants of its spring-forward nights; without it the clock jumps of every zone are assumed (fail closed)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "../common/effective-rule.json"
+      }
+    },
+    "entity_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "route",
+          "expected_app"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "device_class": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "route": {
+            "enum": [
+              "local",
+              "external"
+            ],
+            "description": "local = home network (internal HA URL or the hub); external = Nabu Casa or the HA external URL."
+          },
+          "quick_access": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/quick_access_level"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hub level of the entity in client_config.quick_access.entities (off when missing); null = not checked."
+          },
+          "expected_app": {
+            "$ref": "../common/defs.json#/$defs/remote_control_level"
+          },
+          "expected_quick": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/quick_access_level"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected_always_visible": {
+            "type": "boolean",
+            "description": "Safety entity: with parental controls always visible read-only; never hidden from away."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expected_remote_pin_source": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/remote_pin_source"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Expected origin of the effective remote PIN (tools/profiles_ref.py remote_pin_source)."
+    },
+    "notification_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "priority",
+          "expected_shown"
+        ],
+        "properties": {
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "device_class": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 64
+          },
+          "expected_shown": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Rule notification_level: whether the app shows a notification (tools/profiles_ref.py notification_shown); no delivery promise."
+    },
+    "expected_ha_user_group": {
+      "$ref": "../common/defs.json#/$defs/ha_user_group",
+      "description": "Group of the device's Home Assistant user from the effective control_path (tools/profiles_ref.py ha_user_group)."
+    },
+    "expected_ha_access": {
+      "type": "object",
+      "required": [
+        "child",
+        "access_open",
+        "expected"
+      ],
+      "description": "Home Assistant access fields for this device (tools/profiles_ref.py ha_access) with the given access state; for a watch (input.limit) with its phone's effective rules at the same moment.",
+      "properties": {
+        "child": {
+          "type": "boolean",
+          "description": "The device has parental controls."
+        },
+        "access_open": {
+          "type": "boolean"
+        },
+        "expected": {
+          "type": "object",
+          "properties": {
+            "holds_key": {
+              "type": "boolean"
+            },
+            "hub_path": {
+              "type": "boolean"
+            },
+            "token": {
+              "enum": [
+                "clear",
+                "sealed",
+                null
+              ]
+            },
+            "ha_enforcement": {
+              "anyOf": [
+                {
+                  "$ref": "../common/defs.json#/$defs/control_path"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ha_url": {
+              "type": "boolean"
+            },
+            "ha_instance_id": {
+              "type": "boolean"
+            },
+            "kids_away": {
+              "enum": [
+                "ha",
+                "none",
+                null
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

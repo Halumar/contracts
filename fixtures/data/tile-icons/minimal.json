@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "light",
+      "label": {
+        "de": "Licht",
+        "en": "Lighting"
+      }
+    }
+  ],
+  "icons": [
+    {
+      "mdi": "lightbulb",
+      "sf": "lightbulb.fill",
+      "sf_min_os": "13.0",
+      "category": "light",
+      "keywords": {
+        "de": [
+          "Glühbirne",
+          "Licht",
+          "Lampe"
+        ],
+        "en": [
+          "light bulb",
+          "light",
+          "lamp"
+        ]
+      }
+    },
+    {
+      "mdi": "lightbulb-group",
+      "sf": "lightbulb.2.fill",
+      "sf_min_os": "16.0",
+      "category": "light",
+      "keywords": {
+        "de": [
+          "Lichtgruppe",
+          "Lampen"
+        ],
+        "en": [
+          "light group",
+          "lights"
+        ]
+      }
+    }
+  ]
+}

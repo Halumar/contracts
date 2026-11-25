@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite_cancel",
+  "description": "The inviting device withdraws its own open invitation; the PIN stops working. Answer: guest_invite_ended {result: cancelled}, or guest_invite_error {invite_not_found} for an unknown, finished or foreign id.",
+  "type": "object",
+  "required": [
+    "type",
+    "invite_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite_cancel"
+    },
+    "invite_id": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+    }
+  },
+  "additionalProperties": true
+}

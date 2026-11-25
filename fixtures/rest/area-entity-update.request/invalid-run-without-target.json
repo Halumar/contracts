@@ -1,0 +1,7 @@
+{
+  "tile": {
+    "tap_action": {
+      "action": "run"
+    }
+  }
+}

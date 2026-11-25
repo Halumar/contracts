@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "namespace.json",
+  "type": "object",
+  "required": [
+    "current",
+    "literal_scope",
+    "values"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "current": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*$"
+    },
+    "literal_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Files in which the namespace literal may appear (enforced by tools/validate.py)."
+    },
+    "values": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "used_in": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

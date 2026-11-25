@@ -1,0 +1,46 @@
+{
+  "$schema": "./tools/brand/brand.schema.json",
+  "schema_version": 1,
+  "name": "Halumar",
+  "short_name": "Halumar",
+  "tagline": "Your home, in its best light.",
+  "description": "The right view of your Home Assistant for everyone.",
+  "urls": {
+    "website": "https://halumar.com",
+    "support": "https://halumar.com/support",
+    "privacy": "https://halumar.com/privacy",
+    "source": "https://github.com/Halumar"
+  },
+  "legal": {
+    "copyright_holder": "xonatec",
+    "copyright_start_year": 2026
+  },
+  "apple": {
+    "display_name": "Halumar"
+  },
+  "home_assistant": {
+    "addon_name": "Halumar",
+    "addon_description": "Gives every device in your home its own, limited view of Home Assistant",
+    "panel_title": "Halumar",
+    "integration_name": "Halumar"
+  },
+  "colors": {
+    "primary": "#0E2A47",
+    "accent": "#FF7F57",
+    "background": "#F7F5F2",
+    "surface": "#FFFFFF",
+    "text": "#121317",
+    "text_secondary": "#5D6170",
+    "text_tertiary": "#8A8E9A",
+    "success": "#2F9E5B",
+    "warning": "#C7671A",
+    "gradient_sun": [
+      "#FFB86B",
+      "#FF7A8A"
+    ],
+    "gradient_sea": [
+      "#5AC8FA",
+      "#5856D6"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration ha_event",
+  "description": "Hub -> integration push session only. An event of the taxonomy with source hub (pairing, guests, profiles, adjustments, kids release request); the integration fires it as <ns>_event (and as <ns>_alarm for alarm kinds) unchanged. Other kinds are ignored (the integration fires those itself), except a test (data.test true, “Send test” of a notification rule), which the integration fires for any kind of the taxonomy with test true. Fire-and-forget, nothing is queued while the integration session is down.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "ha_event"
+    },
+    "data": {
+      "$ref": "../../integration/ha-event.event.json"
+    }
+  },
+  "additionalProperties": true
+}

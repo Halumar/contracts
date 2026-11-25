@@ -1,0 +1,12 @@
+{
+  "type": "provision_client",
+  "data": {
+    "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "display_name": "iPhone",
+    "is_guest": true,
+    "remote_allowed": true,
+    "guest_expires_at": "2026-11-24T18:00:00+00:00",
+    "token_action": "ensure",
+    "reason": "pair"
+  }
+}

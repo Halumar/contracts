@@ -1,0 +1,13 @@
+{
+  "type": "provision_client",
+  "data": {
+    "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "display_name": "iPhone",
+    "owner_label": "Admin",
+    "is_guest": false,
+    "remote_allowed": true,
+    "guest_expires_at": null,
+    "token_action": "rotate",
+    "reason": "rotate"
+  }
+}

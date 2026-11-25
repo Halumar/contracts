@@ -1,0 +1,13 @@
+{
+  "type": "auth_ok",
+  "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+  "is_guest": true,
+  "expires_at": "2026-11-18T20:00:00+00:00",
+  "protocol_version": 1,
+  "min_protocol_version": 1,
+  "min_app_version": {
+    "ios": "2026.12.0",
+    "ipados": "2026.12.0",
+    "tvos": "2026.12.0"
+  }
+}

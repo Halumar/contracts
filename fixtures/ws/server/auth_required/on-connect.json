@@ -1,0 +1,5 @@
+{
+  "type": "auth_required",
+  "message": "Send auth with secret or pair with PIN",
+  "timeout": 30
+}

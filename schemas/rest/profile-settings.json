@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET/PUT /api/settings/profiles",
+  "description": "House settings of the profile model: default profile per device type and the default guest duration. The default profile applies wherever nobody picks a profile: preselection when pairing, onboarding by a member, guest invitations by a member (always the guest default profile and duration), pairing through the integration, API calls without profile. A default profile cannot be deleted. guest: never a profile with parental controls (422).",
+  "type": "object",
+  "required": [
+    "default_profiles",
+    "guest_default_hours"
+  ],
+  "properties": {
+    "default_profiles": {
+      "type": "object",
+      "required": [
+        "ios",
+        "ipados",
+        "tvos",
+        "watchos",
+        "android",
+        "android_tablet",
+        "android_tv",
+        "wearos",
+        "guest"
+      ],
+      "properties": {
+        "ios": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "ipados": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "tvos": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "watchos": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "android": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "android_tablet": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "android_tv": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "wearos": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "guest": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        }
+      },
+      "additionalProperties": false
+    },
+    "guest_default_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2160,
+      "description": "Default duration of a guest access (preset of the invitation; guest_access.max_hours is the maximum)."
+    }
+  },
+  "additionalProperties": false
+}

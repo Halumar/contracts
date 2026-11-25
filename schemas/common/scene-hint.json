@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scene hint (Admin API)",
+  "description": "A released scene or script whose targets a profile or device may not switch (docs/enforcement.md §2 step 4): the admin UI warns before the integration refuses it. Computed by the hub from Home Assistant with the same snapshot inputs as the integration (areas, levels from away, kids blocked device types); bedtime, releases of the family manager and stored scene states (color lock, volume cap, safe direction) depend on the moment and are not part of it. Only in admin answers.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "name",
+    "area_ids",
+    "targets_unknown",
+    "targets"
+  ],
+  "properties": {
+    "entity_id": {
+      "$ref": "defs.json#/$defs/entity_id",
+      "description": "The scene or script (a domain of the allowlist run_targets.domains)."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name: the hub name of its placement, else friendly_name, else the entity_id."
+    },
+    "area_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.json#/$defs/uuid"
+      },
+      "description": "Areas of the profile or device where the scene or script is placed visibly or is the run target of a tile, in area order; empty = released without a visible placement in them."
+    },
+    "targets_unknown": {
+      "type": "boolean",
+      "description": "Parental controls only: some targets are only known when it runs (scene of another integration, templates, events, unknown ids, integration actions without a target). It then runs for children only while the family manager releases it. Always false without parental controls."
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "name",
+          "reason",
+          "area_ids"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "defs.json#/$defs/entity_id"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name: the hub name of its placement, else friendly_name, else the entity_id."
+          },
+          "reason": {
+            "$ref": "defs.json#/$defs/scene_hint_reason"
+          },
+          "area_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "defs.json#/$defs/uuid"
+            },
+            "description": "Every active hub area where the target is placed visibly (also outside the profile): the admin UI offers to add one of them; empty = in no area."
+          }
+        },
+        "additionalProperties": true
+      },
+      "description": "Targets that would be refused, sorted by entity_id, each once (nested scenes and scripts included). Empty only with targets_unknown."
+    }
+  },
+  "additionalProperties": true
+}

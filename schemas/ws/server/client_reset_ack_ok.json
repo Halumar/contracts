@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_reset_ack_ok",
+  "description": "Tombstone purged; server closes with 1000 right after.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_reset_ack_ok"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration provision_client",
+  "description": "Hub -> integration push session only (targeted). Ask the integration to create/ensure the device's HA user and token and to deliver the token via POST /api/integration/client-token. Fire-and-forget: the integration session is read-only, the answer is the REST call. Repeated in GET /api/integration/status provisioning[] until answered.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "provision_client"
+    },
+    "data": {
+      "$ref": "../../common/provision-request.json"
+    }
+  },
+  "additionalProperties": true
+}

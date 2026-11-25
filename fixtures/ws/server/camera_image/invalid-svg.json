@@ -1,0 +1,7 @@
+{
+  "type": "camera_image",
+  "request_id": "c1",
+  "entity_id": "camera.front_door",
+  "content_type": "image/svg+xml",
+  "data_b64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgAAACAAEA4iG8MwAAAABJRU5ErkJggg=="
+}

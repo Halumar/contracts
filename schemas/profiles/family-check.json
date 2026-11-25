@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Family check vector",
+  "description": "Test vector for the permission check of the family manager (tools/family_ref.py family_check). input: the acting device (manager), the child device and the operation; expected: allowed and reason (family_error_reason, null when allowed). The hub ports family_check 1:1 and runs these vectors. A manager with babysitter true is a babysitter device (only answers, presets of data/family.json babysitter).",
+  "type": "object",
+  "required": [
+    "description",
+    "cases"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "manager",
+          "child",
+          "op",
+          "expected"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "manager": {
+            "type": "object",
+            "required": [
+              "client_id",
+              "access",
+              "child_protection",
+              "family_manager",
+              "scope"
+            ],
+            "properties": {
+              "client_id": {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              "access": {
+                "$ref": "../common/defs.json#/$defs/device_access"
+              },
+              "child_protection": {
+                "type": "boolean"
+              },
+              "family_manager": {
+                "type": "boolean"
+              },
+              "scope": {
+                "$ref": "../common/defs.json#/$defs/family_children_scope"
+              },
+              "visible_area_ids": {
+                "description": "Areas the manager sees; null = all.",
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "babysitter": {
+                "type": "boolean",
+                "description": "The acting device is of kind babysitter with the effective rule babysitter_requests (it is not a family manager)."
+              },
+              "access_open": {
+                "type": "boolean",
+                "description": "Babysitter: access right now (missing = true)."
+              },
+              "at_home": {
+                "type": "boolean",
+                "description": "Babysitter: the message came over the hub WebSocket (missing = true)."
+              },
+              "access_until": {
+                "anyOf": [
+                  {
+                    "$ref": "../common/defs.json#/$defs/timestamp"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Babysitter: end of its running access window (null = unknown)."
+              }
+            },
+            "additionalProperties": false
+          },
+          "child": {
+            "type": "object",
+            "required": [
+              "client_id",
+              "child_protection",
+              "fixed"
+            ],
+            "properties": {
+              "client_id": {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              "child_protection": {
+                "type": "boolean"
+              },
+              "fixed": {
+                "type": "array",
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/profile_rule_key"
+                }
+              },
+              "blocked_types": {
+                "type": "array",
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/kids_rule_type"
+                }
+              },
+              "exception_blocked_entities": {
+                "type": "array",
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/entity_id"
+                }
+              },
+              "quiet_now": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          },
+          "op": {
+            "type": "object",
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "rule_set",
+                  "rule_reset",
+                  "release",
+                  "release_end",
+                  "answer_yes",
+                  "answer_no"
+                ]
+              },
+              "rule": {
+                "$ref": "../common/defs.json#/$defs/profile_rule_key"
+              },
+              "value": {},
+              "release_kind": {
+                "$ref": "../common/defs.json#/$defs/family_release_kind"
+              },
+              "category": {
+                "$ref": "../common/defs.json#/$defs/family_request_category"
+              },
+              "entity_id": {
+                "$ref": "../common/defs.json#/$defs/entity_id"
+              },
+              "device_class": {
+                "type": "string"
+              },
+              "preset": {
+                "$ref": "../common/defs.json#/$defs/family_release_preset"
+              }
+            },
+            "additionalProperties": false
+          },
+          "expected": {
+            "type": "object",
+            "required": [
+              "allowed",
+              "reason"
+            ],
+            "properties": {
+              "allowed": {
+                "type": "boolean"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "$ref": "../common/defs.json#/$defs/family_error_reason"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

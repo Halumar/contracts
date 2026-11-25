@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pair",
+  "description": "Pair a new device with the active PIN (unauthenticated sessions only, 5 attempts per connection). Success authenticates the connection. Carries the client info like auth. It is checked before the PIN: a too old app yields upgrade_required + close 4426 without consuming the PIN; invalid client info yields pair_error.",
+  "type": "object",
+  "required": [
+    "type",
+    "pin",
+    "client_name",
+    "protocol_version",
+    "platform",
+    "app_version"
+  ],
+  "properties": {
+    "type": {
+      "const": "pair"
+    },
+    "pin": {
+      "$ref": "../../common/defs.json#/$defs/pin"
+    },
+    "client_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version",
+      "description": "Protocol version the app speaks. Missing or below the hub's min_protocol_version: the hub answers upgrade_required and closes 4426."
+    },
+    "platform": {
+      "$ref": "../../common/defs.json#/$defs/platform"
+    },
+    "app_version": {
+      "$ref": "../../common/defs.json#/$defs/app_version",
+      "description": "Below min_app_version[platform] of the hub: upgrade_required, close 4426."
+    },
+    "app_build": {
+      "$ref": "../../common/defs.json#/$defs/app_build"
+    },
+    "device_model": {
+      "$ref": "../../common/defs.json#/$defs/device_model"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET/PUT /api/settings/family",
+  "description": "House settings of the family functions, admin only. Defaults: data/family.json settings_defaults; limits: data/family.json limits (422 family_settings.<field>).",
+  "type": "object",
+  "required": [
+    "requests_enabled",
+    "categories",
+    "request_timeout_minutes",
+    "child_requests_per_hour",
+    "decline_cooldown_minutes",
+    "activity_days"
+  ],
+  "properties": {
+    "requests_enabled": {
+      "type": "boolean"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/defs.json#/$defs/family_request_category"
+      },
+      "uniqueItems": true
+    },
+    "request_timeout_minutes": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 30
+    },
+    "child_requests_per_hour": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 20
+    },
+    "decline_cooldown_minutes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "activity_days": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 30
+    }
+  },
+  "additionalProperties": false
+}

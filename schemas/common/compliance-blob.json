@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Compliance blob v1",
+  "description": "Per-client compliance status. sig only for restricting statuses; see fixtures/crypto/compliance-vectors. need_token_update: device deactivated, guest past its expiry, or the device's HA token changed after its last contact with the hub (ha_token_minted_at > last_seen: rotated or remote access switched off while the device was away). The app stops signing in to HA from outside until it is home again (HA IP ban). deleted: pending deletion.",
+  "type": "object",
+  "required": [
+    "status",
+    "ts"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "compliant",
+        "need_token_update",
+        "deleted",
+        "unknown"
+      ]
+    },
+    "ts": {
+      "type": "integer",
+      "description": "Unix seconds. The app does not check its age; a replayed signed status can only repeat a restricting status for the same device (docs/enforcement.md, Compliance status away from home)."
+    },
+    "sig": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "need_token_update",
+              "deleted"
+            ]
+          }
+        }
+      },
+      "then": {
+        "description": "Restricting status: sig expected (omitted only when the secret_hash is unusable - fail neutral)."
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "compliant",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "sig"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

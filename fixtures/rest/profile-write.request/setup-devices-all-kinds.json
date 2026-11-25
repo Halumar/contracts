@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "setup_devices": {
+      "enabled": true,
+      "kinds": [
+        "guest",
+        "child",
+        "panel",
+        "tv",
+        "house_sitter",
+        "babysitter",
+        "person"
+      ]
+    }
+  }
+}

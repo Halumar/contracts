@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.access.request",
+  "description": "“Ask for early access” on the requesting device; present exactly while the effective rule access_requests is on. enabled = the rule is on and the device has access hours; available = it can ask right now: enabled, closed by the schedule (access.hours.reason schedule, switch on), no own open request, limits not reached and someone can answer (recipients or an admin notification rule for access_requested). The app shows the button on “Access again from …” only with available; requests go only over the hub WebSocket (at home: away the device holds no valid Home Assistant key while closed, the app says “Only possible at home”). The hub sends client_config_updated when available, recipients or the open request change.",
+  "type": "object",
+  "required": [
+    "enabled",
+    "available",
+    "open",
+    "next_allowed_at",
+    "recipients"
+  ],
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "open": {
+      "anyOf": [
+        {
+          "$ref": "access-request.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_allowed_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp",
+          "description": "Hourly limit or cooldown after a No."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recipients": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "First name (owner label), else the device name."
+          },
+          "role": {
+            "$ref": "defs.json#/$defs/access_request_role"
+          }
+        },
+        "additionalProperties": true
+      },
+      "description": "Who gets a request now, for “Mum and Dad will get your request.”: the device that set it up first, then the devices that may set up its kind and (babysitter) the family managers, by name; each name once. Empty with available true = only the admin is notified."
+    }
+  },
+  "additionalProperties": true
+}

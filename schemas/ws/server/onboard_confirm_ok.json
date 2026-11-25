@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_confirm_ok",
+  "description": "The device was set up and its credentials were sent to it. kind, profile, all_areas/area_names, expires_at and remote_allowed describe what it got (summary on the confirming device).",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id",
+    "client_id",
+    "client_name",
+    "kind",
+    "profile"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_confirm_ok"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "all_areas": {
+      "type": "boolean",
+      "description": "true = the new device sees every active area."
+    },
+    "area_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 200,
+      "description": "Names of the active areas the new device sees now, in display order."
+    },
+    "kind": {
+      "$ref": "../../common/defs.json#/$defs/profile_kind"
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/profile_id"
+        },
+        "name": {
+          "$ref": "../../common/defs.json#/$defs/profile_name"
+        }
+      },
+      "additionalProperties": true
+    },
+    "owner_label": {
+      "$ref": "../../common/defs.json#/$defs/owner_label"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Guest and house sitter: end of the access; else null."
+    },
+    "remote_allowed": {
+      "type": "boolean",
+      "description": "Effective remote access of the new device."
+    },
+    "access_hours": {
+      "$ref": "../../common/defs.json#/$defs/access_hours",
+      "description": "Effective access hours of the new device (summary)."
+    }
+  },
+  "additionalProperties": true
+}

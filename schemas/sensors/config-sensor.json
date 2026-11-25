@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sensor.<ns>_config",
+  "description": "Overview of all ACTIVE areas; state = number of areas. Layout fallback of the iPhone and iPad app when only HA is reachable; the Android apps do not read it. Written by the hub via POST /core/api/states/<entity_id>; not persistent in HA (gone after a Core restart until the next resync). Readable with every HA token.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^sensor\\.halumar_config$",
+      "x-namespace-key": "config_sensor"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "attributes": {
+      "type": "object",
+      "required": [
+        "areas",
+        "version",
+        "updated_at"
+      ],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "unit_of_measurement": {
+          "const": "areas"
+        },
+        "areas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "is_active",
+              "entity_count",
+              "tags",
+              "sensor_entity_id"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "icon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "color": {
+                "$ref": "../common/defs.json#/$defs/hex_color"
+              },
+              "grid_cols": {
+                "type": "integer"
+              },
+              "sort_order": {
+                "type": "integer"
+              },
+              "is_active": {
+                "type": "boolean"
+              },
+              "control_mode": {
+                "anyOf": [
+                  {
+                    "$ref": "../common/defs.json#/$defs/control_mode"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "entity_count": {
+                "type": "integer"
+              },
+              "card_image_src": {
+                "$ref": "../common/defs.json#/$defs/image_src"
+              },
+              "card_image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bg_light_src": {
+                "$ref": "../common/defs.json#/$defs/image_src"
+              },
+              "bg_light_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bg_dark_src": {
+                "$ref": "../common/defs.json#/$defs/image_src"
+              },
+              "bg_dark_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "tags": {
+                "$ref": "../common/defs.json#/$defs/area_tags"
+              },
+              "sensor_entity_id": {
+                "type": "string",
+                "pattern": "^sensor\\.halumar_area_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}$"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "ha_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Always null: every HA user (guests included) can read this sensor; the external URL goes only to devices with remote access through client_config.ha_url. Apps never take an external URL from here. (Type kept nullable string: the codegen has no null-only type.)"
+        },
+        "ha_internal_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "updated_at": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

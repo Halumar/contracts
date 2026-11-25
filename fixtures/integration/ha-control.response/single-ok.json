@@ -1,0 +1,12 @@
+{
+  "route": "local",
+  "rules_hash": "cc91071149c3ba2dd6704c66a10c90dfa72e9fbfea6b1cc800ad216e410b7f32",
+  "results": [
+    {
+      "entity_id": "light.bed_light",
+      "ok": true,
+      "executed": true,
+      "reason": null
+    }
+  ]
+}

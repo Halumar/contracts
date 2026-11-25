@@ -1,0 +1,9 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-25",
+  "entity_id": "light.kids_room",
+  "reason": "too_late",
+  "level": "profile",
+  "until": null,
+  "retry_after": null
+}

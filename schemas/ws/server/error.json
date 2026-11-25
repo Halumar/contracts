@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "error",
+  "description": "Generic error answer: unknown type, invalid JSON, message > 64 KB, read-only integration session, missing fields, not found, role mismatch.",
+  "type": "object",
+  "required": [
+    "type",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "error"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

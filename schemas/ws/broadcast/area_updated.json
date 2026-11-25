@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast area_updated",
+  "description": "Area changed (also activation via integration or HA input_boolean; then with is_active).",
+  "x-audience": "ALL",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "area_updated"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "area_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

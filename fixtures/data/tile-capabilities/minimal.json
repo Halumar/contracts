@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "defaults": {
+    "variant": "compact",
+    "tap_action": "default",
+    "hold_action": "default",
+    "secondary": "state"
+  },
+  "always": {
+    "tap_actions": [
+      "default",
+      "more_info",
+      "none"
+    ],
+    "hold_actions": [
+      "default",
+      "more_info",
+      "none"
+    ],
+    "secondary_sources": [
+      "state",
+      "last_changed",
+      "none"
+    ]
+  },
+  "run_targets": [
+    {
+      "domain": "scene",
+      "service": "scene.turn_on"
+    },
+    {
+      "domain": "script",
+      "service": "script.turn_on"
+    },
+    {
+      "domain": "button",
+      "service": "button.press"
+    },
+    {
+      "domain": "input_button",
+      "service": "input_button.press"
+    }
+  ],
+  "secondary_entity_domains": [
+    "sensor",
+    "binary_sensor"
+  ],
+  "domains": [
+    {
+      "domains": [
+        "light"
+      ],
+      "variants": [
+        "compact",
+        "large",
+        "slider"
+      ],
+      "attributes": [
+        "brightness",
+        "color_temp_kelvin"
+      ],
+      "tap_actions": [
+        "toggle",
+        "run"
+      ],
+      "icon": true,
+      "accent": true,
+      "secondary_entity": true,
+      "confirm": true,
+      "confirm_always": false,
+      "run_self": false
+    },
+    {
+      "domains": [
+        "_other"
+      ],
+      "variants": [
+        "compact"
+      ],
+      "attributes": [],
+      "tap_actions": [],
+      "icon": true,
+      "accent": true,
+      "secondary_entity": true,
+      "confirm": false,
+      "confirm_always": false,
+      "run_self": false
+    }
+  ]
+}

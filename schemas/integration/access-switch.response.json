@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Access switch answer",
+  "description": "Answer of POST /api/integration/access-switch: the device's access right now.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "access"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "access": {
+      "$ref": "../common/defs.json#/$defs/access_now"
+    }
+  },
+  "additionalProperties": true
+}

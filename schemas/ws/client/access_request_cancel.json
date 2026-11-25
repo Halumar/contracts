@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request_cancel",
+  "description": "The device withdraws its open request. Answer: access_request_state (cancelled, or the current state when it was already closed) or access_request_error {request_not_found}.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request_cancel"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/access_request_id"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,151 @@
+{
+  "retention_days": 30,
+  "quiet_default": {
+    "start": "22:00",
+    "end": "07:00"
+  },
+  "rules": [
+    {
+      "id": "7f1e2d3c-4b5a-4968-8776-655443322110",
+      "name": "Alarme an Admin",
+      "enabled": true,
+      "kinds": [
+        "denied",
+        "access_group_restored",
+        "direct_access_attempt",
+        "integration_outage"
+      ],
+      "targets": {
+        "notify": [
+          "notify.mobile_app_daniel_iphone"
+        ],
+        "devices": []
+      },
+      "filters": {
+        "client_ids": [],
+        "owner_labels": [],
+        "profile_ids": [],
+        "area_ids": [],
+        "entity_ids": [],
+        "routes": []
+      },
+      "threshold": {
+        "count": 3,
+        "window_minutes": 10
+      },
+      "bundle_minutes": 0,
+      "quiet_hours": []
+    },
+    {
+      "id": "8a2f3e4d-5c6b-4a79-9887-766554433221",
+      "name": "Kinder abends",
+      "enabled": true,
+      "kinds": [
+        "kids_control",
+        "kids_bedtime_attempt",
+        "kids_pause"
+      ],
+      "targets": {
+        "notify": [
+          "notify.telegram"
+        ],
+        "devices": [
+          "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e"
+        ]
+      },
+      "filters": {
+        "client_ids": [],
+        "owner_labels": [
+          "Child 4"
+        ],
+        "profile_ids": [],
+        "area_ids": [
+          "kinderzimmer"
+        ],
+        "entity_ids": [],
+        "routes": []
+      },
+      "threshold": {
+        "count": 1,
+        "window_minutes": 1
+      },
+      "bundle_minutes": 15,
+      "quiet_hours": [
+        {
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ],
+          "start": "23:00",
+          "end": "06:30"
+        }
+      ]
+    },
+    {
+      "id": "9b3a4f5e-6d7c-4b8a-a998-877665544332",
+      "name": "Von unterwegs",
+      "enabled": false,
+      "kinds": [
+        "control"
+      ],
+      "targets": {
+        "notify": [
+          "notify.mobile_app_daniel_iphone"
+        ],
+        "devices": []
+      },
+      "filters": {
+        "client_ids": [],
+        "owner_labels": [],
+        "profile_ids": [],
+        "area_ids": [],
+        "entity_ids": [
+          "lock.front_door",
+          "cover.garage_door"
+        ],
+        "routes": [
+          "external"
+        ]
+      },
+      "threshold": {
+        "count": 1,
+        "window_minutes": 1
+      },
+      "bundle_minutes": 0,
+      "quiet_hours": []
+    },
+    {
+      "id": "5d6e7f80-9a1b-4c2d-8e3f-4a5b6c7d8e9f",
+      "name": "Gäste laufen ab",
+      "enabled": true,
+      "kinds": [
+        "guest_expiring"
+      ],
+      "targets": {
+        "notify": [],
+        "devices": [
+          "3f2b8c1d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
+        ]
+      },
+      "filters": {
+        "client_ids": [],
+        "owner_labels": [],
+        "profile_ids": [],
+        "area_ids": [],
+        "entity_ids": [],
+        "routes": []
+      },
+      "threshold": {
+        "count": 1,
+        "window_minutes": 1
+      },
+      "bundle_minutes": 0,
+      "quiet_hours": [],
+      "lead_minutes": 1440,
+      "delay_minutes": null
+    }
+  ]
+}

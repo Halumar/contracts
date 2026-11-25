@@ -1,0 +1,5 @@
+{
+  "type": "control_error",
+  "request_id": "r-27",
+  "reason": "ha_unavailable"
+}

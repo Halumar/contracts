@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/navigate_to_area|show_entity|refresh (200)",
+  "description": "422 when the client is deactivated or not connected via WebSocket, 404 unknown client/area.",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "command"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "command": {
+      "enum": [
+        "navigate_to_area",
+        "show_entity",
+        "refresh"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

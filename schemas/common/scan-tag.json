@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Scan tag (NFC/QR tag registered in the hub)",
+  "description": "Assignment of one tag id to an action, stored in the hub (table scan_tags). The tag itself carries only https://<website>/t/<tag_id>. Admin only; devices see a tag only through tag_result.",
+  "type": "object",
+  "required": [
+    "tag_id",
+    "name",
+    "action",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "tag_id": {
+      "$ref": "defs.json#/$defs/tag_id"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "action": {
+      "$ref": "defs.json#/$defs/tag_action"
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "https://<website>/t/<tag_id> to write on the tag (from brand.json urls.website)."
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "last_scanned_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,137 @@
+{
+  "hub": {
+    "version": "2026.11.1",
+    "connected_clients": 1,
+    "ws_push": true
+  },
+  "areas": [
+    {
+      "id": "a1b2c3d4-0000-4000-8000-000000000001",
+      "name": "Wohnzimmer",
+      "slug": "wohnzimmer_a1b2c3d4",
+      "icon": "mdi:sofa",
+      "description": null,
+      "color": "#4CAF50",
+      "grid_cols": 4,
+      "sort_order": 0,
+      "is_active": true,
+      "control_mode": null,
+      "entity_count": 2,
+      "section_count": 1,
+      "card_image_src": "/images/0f3c9e2a.jpg",
+      "card_image_url": null,
+      "bg_light_src": null,
+      "bg_light_url": null,
+      "bg_dark_src": null,
+      "bg_dark_url": null,
+      "tags": []
+    }
+  ],
+  "clients": [
+    {
+      "id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "name": "iPhone",
+      "slug": "wohnzimmer_panel",
+      "is_active": true,
+      "is_connected": true,
+      "tags": [],
+      "has_ha_token": true,
+      "created_at": "2026-11-18T08:15:00.123456+00:00",
+      "last_seen": "2026-11-18T08:15:00.123456+00:00",
+      "device_name": "iPad (10th generation)",
+      "app_version": "2026.7.7",
+      "battery_level": 87,
+      "connection_type": "wifi",
+      "current_area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+      "current_area_name": "Wohnzimmer",
+      "is_guest": false,
+      "expires_at": null,
+      "pending_deletion": false,
+      "pending_deletion_at": null,
+      "compliance": {
+        "status": "compliant",
+        "ts": 1783130000
+      },
+      "notification_ids": [
+        "9d1c0a6e-1111-4111-8111-000000000001"
+      ],
+      "notification_count": 1,
+      "ha_user_id": "9a8b7c6d5e4f30211203f4e5d6c7b8a9",
+      "ha_token_status": "active",
+      "owner_label": "Admin",
+      "remote_allowed": true
+    },
+    {
+      "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "name": "Gast 1",
+      "slug": "gast_alex",
+      "is_active": true,
+      "is_connected": false,
+      "tags": [
+        "guest"
+      ],
+      "has_ha_token": false,
+      "created_at": "2026-11-18T08:15:00.123456+00:00",
+      "last_seen": "2026-11-18T08:15:00.123456+00:00",
+      "device_name": null,
+      "app_version": null,
+      "battery_level": null,
+      "connection_type": "disconnected",
+      "current_area_id": null,
+      "current_area_name": null,
+      "is_guest": true,
+      "expires_at": "2026-11-18T20:00:00+00:00",
+      "pending_deletion": false,
+      "pending_deletion_at": null,
+      "compliance": {
+        "status": "compliant",
+        "ts": 1783130000
+      },
+      "notification_ids": [],
+      "notification_count": 0,
+      "ha_user_id": null,
+      "ha_token_status": "pending",
+      "owner_label": "Parent",
+      "remote_allowed": false
+    }
+  ],
+  "guests": [
+    {
+      "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "is_connected": false,
+      "expires_at": "2026-11-18T20:00:00+00:00"
+    }
+  ],
+  "guest_count": 1,
+  "pairing_active": false,
+  "pairing_remaining": 0,
+  "pairing_is_guest": false,
+  "pairing_guest_expires_at": null,
+  "allow_pairing_via_integration": true,
+  "compliance_endpoint_enabled": true,
+  "tombstones": [
+    {
+      "client_id": "11111111-2222-3333-4444-555555555555",
+      "compliance": {
+        "status": "deleted",
+        "ts": 1783130000,
+        "sig": "6ffc6ab04928d81add5fa8d0d39581d560163b81fbfeed6fd8adad61d97ed685"
+      }
+    }
+  ],
+  "area_count": 1,
+  "client_count": 2,
+  "provisioning": [
+    {
+      "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "display_name": "Gast 1",
+      "owner_label": "Parent",
+      "is_guest": true,
+      "remote_allowed": false,
+      "guest_expires_at": "2026-11-18T20:00:00+00:00",
+      "token_action": "ensure",
+      "reason": "pair"
+    }
+  ],
+  "ha_user_holds": []
+}

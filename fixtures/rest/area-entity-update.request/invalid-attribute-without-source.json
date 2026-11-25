@@ -1,0 +1,8 @@
+{
+  "tile": {
+    "secondary": {
+      "source": "state",
+      "attribute": "brightness"
+    }
+  }
+}

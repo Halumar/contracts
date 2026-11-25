@@ -1,0 +1,78 @@
+{
+  "type": "family_activity",
+  "request_id": "f-4",
+  "next_cursor": null,
+  "summary": [
+    {
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "actions": 23,
+      "blocked": 2,
+      "requests": 1,
+      "bedtime_attempts": 1
+    }
+  ],
+  "items": [
+    {
+      "id": "a-105",
+      "at": "2026-11-19T20:00:00+00:00",
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "child_name": "iPhone Kind",
+      "kind": "release",
+      "until": "2026-11-19T20:30:00+00:00",
+      "request_id": "b06f7a8c-9d0e-4f1a-9b2c-4d5e6f7a8b9c",
+      "by": {
+        "kind": "family_manager",
+        "client_id": "2a6f0c1e-4b7d-4e8a-9c1f-3d5e7a9b1c2d",
+        "name": "iPhone Gast",
+        "owner_label": "Parent",
+        "via": "away"
+      }
+    },
+    {
+      "id": "a-104",
+      "at": "2026-11-19T19:58:00+00:00",
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "child_name": "iPhone Kind",
+      "kind": "request",
+      "request_id": "b06f7a8c-9d0e-4f1a-9b2c-4d5e6f7a8b9c"
+    },
+    {
+      "id": "a-103",
+      "at": "2026-11-19T19:57:10+00:00",
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "child_name": "iPhone Kind",
+      "kind": "blocked",
+      "entity_id": "light.nora_deckenlicht",
+      "entity_name": "Deckenlicht",
+      "action": "turn_on",
+      "reason": "quiet_hours",
+      "until": "2026-11-20T05:30:00+00:00"
+    },
+    {
+      "id": "a-090",
+      "at": "2026-11-19T17:40:00+00:00",
+      "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+      "child_name": "iPhone Kind",
+      "kind": "control",
+      "entity_id": "light.nora_deckenlicht",
+      "entity_name": "Deckenlicht",
+      "action": "turn_on",
+      "count": 12
+    },
+    {
+      "id": "a-061",
+      "at": "2026-11-19T15:05:00+00:00",
+      "client_id": "7d2b3c4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e",
+      "child_name": "Tims iPad",
+      "kind": "change",
+      "rule": "kids_quiet_hours",
+      "by": {
+        "kind": "family_manager",
+        "client_id": "2a6f0c1e-4b7d-4e8a-9c1f-3d5e7a9b1c2d",
+        "name": "iPhone Gast",
+        "owner_label": "Parent",
+        "via": "home"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/scan-tags, PUT /api/scan-tags/{tag_id} (request)",
+  "description": "Create (POST, tag_id optional: missing = the hub draws a new id; given = an already written tag is registered in this hub) or change (PUT, tag_id not allowed) a tag. 409 tag_exists, 422 tag_limit (100), 422 invalid_target (entity unknown, domain does not fit the action, area unknown). Audit scan_tag_created/changed/deleted.",
+  "type": "object",
+  "required": [
+    "name",
+    "action"
+  ],
+  "properties": {
+    "tag_id": {
+      "$ref": "../common/defs.json#/$defs/tag_id"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60
+    },
+    "action": {
+      "$ref": "../common/defs.json#/$defs/tag_action"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,7 @@
+{
+  "type": "command",
+  "command": "panel_command",
+  "id": "0d6b2c8a-4f1e-4b7a-9c3d-2e5f6a7b8ca0",
+  "action": "show_camera",
+  "entity_id": "light.kitchen"
+}

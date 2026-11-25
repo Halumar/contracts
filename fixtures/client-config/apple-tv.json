@@ -1,0 +1,161 @@
+{
+  "ha_token": "FAKE-HA-LLAT-NOT-A-REAL-TOKEN",
+  "ha_url": null,
+  "ha_internal_url": "http://homeassistant.local",
+  "ha_enforcement": {
+    "control_path": "checked",
+    "rules_hash": null
+  },
+  "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "tls_port": 8100,
+  "config_sensor": "sensor.halumar_config",
+  "notification_sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+  "home_title": "Zuhause",
+  "home_bg_light": null,
+  "home_bg_dark": "/images/7a1d2c3b.jpg",
+  "control_mode": "full",
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": {
+    "id": "0a4b5c6d-7e8f-4a9b-8c1d-2e3f4a5b6c7d",
+    "name": "Fernseher",
+    "kind": "tv",
+    "rev": 3,
+    "child_protection": false,
+    "managed_by": "Admin"
+  },
+  "rules": {
+    "remote_access": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "ha"
+    },
+    "control_path": {
+      "value": "checked",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    },
+    "app_settings": {
+      "value": "hidden",
+      "source": "prerequisite",
+      "reason": "prerequisite_missing",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "areas": {
+      "value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha_control"
+    },
+    "control_mode_max": {
+      "value": "full",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "card_style": {
+      "value": "calm",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "appearance": {
+      "value": "dark",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "header": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "notification_level": {
+      "value": "all",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "notification_stack": {
+      "value": "banner",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "kiosk": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_auto_home": {
+      "value": 0,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "panel_screensaver": {
+      "value": 10,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    }
+  },
+  "quick_access": {
+    "enabled": false,
+    "max": "status",
+    "sensor": null,
+    "entities": {},
+    "critical": []
+  },
+  "settings_pin_hash": null,
+  "settings_pin_salt": null,
+  "settings_pin_source": null,
+  "config_hash": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+}

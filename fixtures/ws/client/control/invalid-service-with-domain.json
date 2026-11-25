@@ -1,0 +1,5 @@
+{
+  "type": "control",
+  "entity_id": "light.kids_room",
+  "service": "light.turn_on"
+}

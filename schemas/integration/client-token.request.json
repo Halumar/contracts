@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/client-token (body)",
+  "description": "The integration delivers the long-lived access token of a device's own HA user. Integration token only. Idempotent: the same refresh_token_id again is acknowledged with unchanged=true and nothing is re-sent to the app; a different refresh_token_id replaces the stored token (rotation) and the hub pushes client_config_updated to the device, waits for its get_client_config (max 5 s) plus 3 s, then answers. The integration removes every other token of that HA user only AFTER the 200. The bearer is stored encrypted, never logged, never returned. Binding: the hub accepts a delivery only (a) while the device waits for its token (ha_token_status pending, listed in provisioning[]), (b) with the request_id of an open rotation of this device, or (c) unsolicited for the HA user already stored for the device (the integration rotates on its own when local_only changes or a guest token no longer covers the expiry). Anything else is answered 422 request_required. Under the Supervisor the integration token itself is accepted only from the hub's own host (Home Assistant Core), never from the LAN or other add-ons.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "ha_user_id",
+    "refresh_token_id",
+    "token"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "ha_user_id": {
+      "$ref": "../common/defs.json#/$defs/ha_id"
+    },
+    "refresh_token_id": {
+      "$ref": "../common/defs.json#/$defs/ha_id"
+    },
+    "token": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096,
+      "x-sensitive": true,
+      "description": "HA access token (JWT) of the device's long-lived refresh token."
+    },
+    "request_id": {
+      "$ref": "../common/defs.json#/$defs/uuid",
+      "description": "Echo of provision_client.request_id / provisioning[].request_id, if the delivery answers a request. Required to deliver a token for a different HA user than the stored one outside the pending phase."
+    }
+  },
+  "additionalProperties": false
+}

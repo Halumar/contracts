@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/profiles, PATCH /api/profiles/{profile_id} (body)",
+  "description": "Create an empty profile (POST: name required; rules missing = catalog defaults, fixed/user_choice missing = catalog default_fixed/default_user_choice) or change one (PATCH: every field optional; rules is merged per key, fixed and user_choice replace the whole list). Validation 422 per field (rules.<key>, fixed, user_choice.<key> not allowed, name.duplicate, profile.limit, profile.guest_child_protection). Making a rule fixed deletes its device adjustments; a change of control_path or remote_access that takes a device's Home Assistant key away rotates its HA token - see ?dry_run=true (profile-preview.response.json) before saving.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "../common/defs.json#/$defs/profile_name"
+    },
+    "kind": {
+      "$ref": "../common/defs.json#/$defs/profile_kind",
+      "description": "Kind of the profile. POST without kind: person. Changing the kind changes no rule; a profile that is no longer of kind person loses setup_devices (resolved not_applicable)."
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 300
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "One sentence for the profile card."
+    },
+    "icon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^mdi:[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "color": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "child_protection": {
+      "type": "boolean"
+    },
+    "rules": {
+      "$ref": "../common/profile-rule-values.json"
+    },
+    "fixed": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      }
+    },
+    "user_choice": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      }
+    },
+    "remote_pin": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "x-sensitive": true,
+      "description": "Profile remote PIN: exactly 8 digits, stored only as PBKDF2 hash + salt (fixtures/crypto/settings-pin-vectors); null removes it. Never in log, audit, diff or preview (the audit only notes profile_remote_pin_set)."
+    },
+    "remote_pin_fixed": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

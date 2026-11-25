@@ -1,0 +1,15 @@
+{
+  "events": [
+    {
+      "id": "4f506172-8394-4a5b-86d7-e8f9a0b1c2d3",
+      "type": "denied",
+      "at": "2026-11-20T18:01:05+00:00",
+      "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+      "entity_id": "lock.front_door",
+      "action": "unlock",
+      "route": "local",
+      "origin": "app"
+    }
+  ],
+  "dropped": 0
+}

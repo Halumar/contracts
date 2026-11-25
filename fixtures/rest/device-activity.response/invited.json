@@ -1,0 +1,18 @@
+{
+  "client_id": "6c1f2e3d-4b5a-4968-8776-5a4b3c2d1e0f",
+  "max_events": 100,
+  "events": [
+    {
+      "id": 41,
+      "client_id": "6c1f2e3d-4b5a-4968-8776-5a4b3c2d1e0f",
+      "ts": "2026-11-19T17:02:00+00:00",
+      "event": "paired",
+      "detail": {
+        "platform": "ios",
+        "app_version": "2026.12.0",
+        "method": "invite",
+        "invited_by": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b"
+      }
+    }
+  ]
+}

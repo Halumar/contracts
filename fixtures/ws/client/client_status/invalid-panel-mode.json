@@ -1,0 +1,7 @@
+{
+  "type": "client_status",
+  "panel": {
+    "screen": "active",
+    "panel_mode": "yes"
+  }
+}

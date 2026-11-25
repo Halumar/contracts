@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/start-pairing (200)",
+  "type": "object",
+  "required": [
+    "pin",
+    "expires_in",
+    "is_guest"
+  ],
+  "properties": {
+    "pin": {
+      "$ref": "../common/defs.json#/$defs/pin"
+    },
+    "expires_in": {
+      "const": 300
+    },
+    "is_guest": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

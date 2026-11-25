@@ -1,0 +1,5 @@
+{
+  "type": "guest_invite_error",
+  "reason": "no_guest_areas",
+  "message": "…"
+}

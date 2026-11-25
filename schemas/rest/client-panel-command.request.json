@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/pairing/clients/{client_id}/panel (request)",
+  "description": "Admin UI test button: same checks and answer as the integration endpoint (integration/panel-command.response.json, errors integration/panel-command.error.json); actor admin_ui in the log.",
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "$ref": "../common/defs.json#/$defs/panel_action"
+    },
+    "level": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 1
+    },
+    "mode": {
+      "$ref": "../common/defs.json#/$defs/panel_brightness_mode"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "announce only: text to speak and show (never logged)."
+    },
+    "volume": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "announce only: volume in percent; capped by panel_announce.volume_max (missing = volume_max)."
+    },
+    "chime": {
+      "type": "boolean",
+      "description": "announce only: chime before the text (missing = true)."
+    },
+    "entity_id": {
+      "$ref": "../common/defs.json#/$defs/camera_entity_id",
+      "description": "show_camera only: the camera to open."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_brightness"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "level"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_brightness_mode"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "mode"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "announce"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "show_camera"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "entity_id"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

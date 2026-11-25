@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant event <ns>_tag_scanned (data)",
+  "description": "Fired by the integration when the hub reports a resolved tag (ws/integration/ha_event with kind tag_scanned), in addition to <ns>_event, so owners can trigger their own automations by tag (like HA's tag_scanned). Fired for every result, so automations filter on result ok. The app never calls fire_event itself. Only admins can subscribe to it over the WebSocket API.",
+  "type": "object",
+  "required": [
+    "tag_id",
+    "result",
+    "at"
+  ],
+  "properties": {
+    "tag_id": {
+      "$ref": "../common/defs.json#/$defs/tag_id"
+    },
+    "tag_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 60
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result": {
+      "$ref": "../common/defs.json#/$defs/tag_scan_result"
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    }
+  },
+  "additionalProperties": false
+}

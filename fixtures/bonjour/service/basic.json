@@ -1,0 +1,20 @@
+{
+  "service_type": "_halumar._tcp.local.",
+  "instance_name": "Zuhause (3f9a1c)._halumar._tcp.local.",
+  "host": "hub-3f9a1c.local.",
+  "port": 8099,
+  "addresses": [
+    "192.0.2.50"
+  ],
+  "txt": {
+    "ws_path": "/api/ws",
+    "api_path": "/api",
+    "tls": "1",
+    "tls_port": "8100",
+    "fp": "abababababababababababababababababababababababababababababababab",
+    "iid": "3f9a1c2e-8b7e-4d2a-9c1f-0123456789ab",
+    "version": "2026.12.0",
+    "pv": "1",
+    "pv_min": "1"
+  }
+}

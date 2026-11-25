@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Set-up grant",
+  "description": "What a device with the rule setup_devices may give when it sets up a new device (onboard_info.grant) or invites a guest (setup_grant): the allowed kinds with their profiles, its own areas, the family managers and the guest limits. The hub offers only profiles whose rights are not stronger than the confirming device's own (docs/setup.md “No escalation”): every rule of security critical or sensitive outside the kids and location groups, compared along order, setup_devices by kinds, remote_control per level and the areas a fixed profile shows. Profiles that do not pass are left out; kinds without any profile are left out.",
+  "type": "object",
+  "required": [
+    "tags",
+    "all_areas",
+    "areas",
+    "kinds",
+    "managers_choice",
+    "managers",
+    "guest_access",
+    "own_watch"
+  ],
+  "properties": {
+    "tags": {
+      "$ref": "defs.json#/$defs/client_tags",
+      "description": "Tags of the confirming device; a new device gets them when the area choice is the whole list."
+    },
+    "all_areas": {
+      "type": "boolean",
+      "description": "true = the confirming device sees every active area; only then may it choose “All areas”."
+    },
+    "areas": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "mdi: icon of the area, informational."
+          }
+        },
+        "additionalProperties": true
+      },
+      "description": "Active areas the confirming device sees itself, in display order: the choice for the new device (areas, own area, start area)."
+    },
+    "kinds": {
+      "type": "array",
+      "maxItems": 7,
+      "description": "Allowed kinds in the order of data/profile-rules.json profile_kinds: in setup_devices.kinds of the confirming device, fitting the platform of the waiting device (profile_kinds[].platforms; for an invitation: guest only) and with at least one profile. A watch session (own_watch) has exactly its default profile.",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "profiles"
+        ],
+        "properties": {
+          "kind": {
+            "$ref": "defs.json#/$defs/profile_kind"
+          },
+          "profiles": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "kind",
+                "child_protection",
+                "area_choice",
+                "remote_access",
+                "remote_choice",
+                "start_area_choice",
+                "access_hours_choice",
+                "access_hours"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "defs.json#/$defs/profile_id"
+                },
+                "name": {
+                  "$ref": "defs.json#/$defs/profile_name"
+                },
+                "kind": {
+                  "$ref": "defs.json#/$defs/profile_kind"
+                },
+                "description": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 300
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "icon": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^mdi:[a-z0-9]+(-[a-z0-9]+)*$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "color": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^#[0-9A-Fa-f]{6}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "child_protection": {
+                  "type": "boolean",
+                  "description": "Parental controls: at home the device controls only through the hub; a read-only Home Assistant key only with remote access."
+                },
+                "area_choice": {
+                  "type": "boolean",
+                  "description": "true = the areas are chosen from grant.areas (stored as a device adjustment of the rule areas); false = the profile fixes them (profile_areas, onboard_confirm area fields are ignored)."
+                },
+                "profile_areas": {
+                  "type": "object",
+                  "required": [
+                    "all_areas",
+                    "area_names"
+                  ],
+                  "properties": {
+                    "all_areas": {
+                      "type": "boolean"
+                    },
+                    "area_names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "maxItems": 200
+                    }
+                  },
+                  "additionalProperties": true,
+                  "description": "Only with area_choice false: what the fixed areas of the profile show now (display)."
+                },
+                "remote_access": {
+                  "type": "boolean",
+                  "description": "Effective remote access of a device with this profile on this platform before any choice."
+                },
+                "remote_choice": {
+                  "type": "boolean",
+                  "description": "Guest and house sitter only: the confirming device may choose remote access (onboard_confirm.remote, guest_invite_create.remote): the profile does not fix remote_access and the confirming device has remote access itself."
+                },
+                "start_area_choice": {
+                  "type": "boolean",
+                  "description": "Wall panels on a tablet: the start area may be chosen (onboard_confirm.start_area, a device adjustment of panel_start); false when the profile fixes panel_start."
+                },
+                "access_hours_choice": {
+                  "type": "boolean",
+                  "description": "The confirming device may choose access hours (onboard_confirm.access_windows, guest_invite_create.access_windows): the profile does not fix access_hours. Apps ask for them at least for the kinds guest, house_sitter and babysitter."
+                },
+                "access_hours": {
+                  "$ref": "defs.json#/$defs/access_hours",
+                  "description": "Access hours of the profile (preset of the question; enabled false = any time)."
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "managers_choice": {
+      "type": "boolean",
+      "description": "true = the confirming device has the right family_manager: it chooses the managers of a new child (onboard_confirm.managers, preselect itself). false = a new child is managed by every family manager with “all children” automatically."
+    },
+    "managers": {
+      "type": "array",
+      "maxItems": 100,
+      "description": "Family manager devices (effective rule family_manager): all_children = manages every child, also a new one (cannot be deselected); otherwise only the chosen children.",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "all_children",
+          "is_self"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "defs.json#/$defs/owner_label"
+          },
+          "all_children": {
+            "type": "boolean"
+          },
+          "is_self": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "guest_access": {
+      "type": "object",
+      "required": [
+        "default_hours",
+        "max_hours",
+        "presets_hours"
+      ],
+      "description": "Limits of a guest or house sitter (data/profile-rules.json guest_access): expires_at at most max_hours (90 days) ahead.",
+      "properties": {
+        "default_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "presets_hours": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "maxItems": 10
+        }
+      },
+      "additionalProperties": true
+    },
+    "own_watch": {
+      "type": "boolean",
+      "description": "true = the waiting device is a watch: the phone sets up its own watch (needs its rule watch) with the watch's default profile, no other choice. Also true for the child's phone of a child_watch session (role child)."
+    },
+    "child_watch": {
+      "type": "object",
+      "required": [
+        "role",
+        "phone_name"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "child",
+            "adult"
+          ],
+          "description": "child = the looking-up device is the child's phone (parental controls, effective rule watch through kids_watch): the hub bound the watch session to it; it may not confirm (onboard_confirm answers not_permitted), it shows the session's code and QR code to an adult. adult = the session is the watch of the child device phone_name: confirming it is the adult's approval; kinds holds exactly kind child with that phone's profile (no area choice, no managers), the watch follows the phone's profile, adjustments and kids state."
+        },
+        "phone_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Name of the child's phone the watch belongs to."
+        }
+      },
+      "additionalProperties": true,
+      "description": "Present only for the watch of a device with parental controls (docs/setup.md “A child's watch”). Absent = no child's watch."
+    }
+  },
+  "additionalProperties": true
+}

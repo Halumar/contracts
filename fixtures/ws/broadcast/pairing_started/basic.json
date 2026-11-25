@@ -1,0 +1,7 @@
+{
+  "type": "pairing_started",
+  "data": {
+    "is_guest": false,
+    "expires_in": 300
+  }
+}

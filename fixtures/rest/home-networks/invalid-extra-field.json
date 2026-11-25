@@ -1,0 +1,9 @@
+{
+  "networks": [
+    {
+      "cidr": "100.64.0.0/10",
+      "name": "Tailscale",
+      "preset": "tailscale"
+    }
+  ]
+}

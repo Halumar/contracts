@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/clients/{client_id}/effective",
+  "description": "Everything the device page needs: access, profile, own area, adjustments and the effective value of every catalog rule with source and reason (not applicable rules included, value null). Also the answer of PUT/DELETE …/overrides/{rule_key} and PUT …/own-area.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "platform",
+    "access",
+    "profile",
+    "own_area_id",
+    "has_remote_pin",
+    "rules",
+    "overrides",
+    "remote_pin_source",
+    "scene_hints"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "platform": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/platform"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "access": {
+      "$ref": "../common/client-access.json"
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "rev",
+        "child_protection"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../common/defs.json#/$defs/profile_id"
+        },
+        "name": {
+          "$ref": "../common/defs.json#/$defs/profile_name"
+        },
+        "rev": {
+          "type": "integer"
+        },
+        "child_protection": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "own_area_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Own area of the device; null = none."
+    },
+    "has_remote_pin": {
+      "type": "boolean"
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "../common/effective-rule.json"
+      },
+      "description": "Rule key -> effective rule, every catalog rule."
+    },
+    "overrides": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/device-override.json"
+      }
+    },
+    "remote_pin_source": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/remote_pin_source"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Origin of the effective remote PIN; has_remote_pin = the device's own PIN."
+    },
+    "scene_hints": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "$ref": "../common/scene-hint.json"
+      },
+      "description": "Released scenes and scripts with targets this device may not switch (docs/enforcement.md §2 step 4), with its own area and adjustments. Empty when Home Assistant is not reachable. At most 50."
+    },
+    "hub_remote_now": {
+      "type": "boolean",
+      "description": "Right after this state the device's effective Home Assistant access is Hub only and its remote access is on: it holds the read-only key because of remote access (the admin page warns). Never true on tvos, android_tv, watchos or wearos (Hub only resolves to checked there). Missing on older hubs = unknown."
+    },
+    "hub_remote_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The earliest later end (UTC) of a device adjustment or of the guest access after which the device becomes Hub only with remote access; null when hub_remote_now is true or no end leads there."
+    }
+  },
+  "additionalProperties": true
+}

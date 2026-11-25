@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "remote_off",
+    "message": "Control from Home Assistant is off for this device"
+  }
+}

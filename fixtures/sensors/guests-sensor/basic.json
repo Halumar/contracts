@@ -1,0 +1,17 @@
+{
+  "entity_id": "sensor.halumar_guests",
+  "state": "1",
+  "attributes": {
+    "friendly_name": "Halumar Guests",
+    "icon": "mdi:account-clock",
+    "unit_of_measurement": "guests",
+    "guests": [
+      {
+        "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "is_connected": false,
+        "expires_at": "2026-11-18T20:00:00+00:00"
+      }
+    ],
+    "updated_at": "2026-11-18T08:15:00.123456+00:00"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/integration/devices (200)",
+  "description": "Not used by the integration.",
+  "deprecated": true,
+  "type": "object",
+  "required": [
+    "devices"
+  ],
+  "properties": {
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "identifier",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "hub",
+              "client"
+            ]
+          },
+          "identifier": {
+            "type": "string",
+            "pattern": "^halumar_(hub|client_.+)$",
+            "x-namespace-key": "ha_device_identifier_hub"
+          },
+          "name": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "sw_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "area_count": {
+            "type": "integer"
+          },
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_connected": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/clients/{client_id}/rotate-token (200, 202)",
+  "description": "Admin only. The rotation is stored first and survives a hub restart. 200: the integration delivered the new token within the wait time (ha_token_status, ha_token_minted_at; the app was told via client_config_updated). 202 status rotation_requested: sent to the integration, no answer yet. 202 status pending: the integration is not connected; the rotation runs as soon as it is (provisioning[] on its next poll, retry loop once its push session is up), answered at once. 202 status pending also for a device with remote access (remote_allowed) that is not connected to the hub (away): the rotation is deferred until the device connects to the hub (it is home and fetches the new token at once), at the latest after 72 h; then it runs anyway (audit log, no endless deferral). There is no separate status value for this; the admin UI tells the case apart by remote_allowed and is_connected of the device. 404 unknown device, 409 device not active or without an HA token. There is no 503.",
+  "type": "object",
+  "required": [
+    "ok",
+    "client_id"
+  ],
+  "properties": {
+    "ok": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "ha_token_status": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/ha_token_status"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ha_token_minted_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "description": "202: rotation_requested (sent, waiting for the integration) or pending (integration not connected, or a device with remote access that is away: deferred until it connects, max. 72 h). 200: null.",
+      "anyOf": [
+        {
+          "enum": [
+            "rotation_requested",
+            "pending"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

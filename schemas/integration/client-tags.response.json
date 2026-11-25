@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/tags (200)",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "tags"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "tags": {
+      "$ref": "../common/defs.json#/$defs/client_tags"
+    }
+  },
+  "additionalProperties": false
+}

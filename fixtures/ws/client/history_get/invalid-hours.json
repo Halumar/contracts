@@ -1,0 +1,6 @@
+{
+  "type": "history_get",
+  "request_id": "h2",
+  "entity_id": "sensor.kids_room_temperature",
+  "hours": 720
+}

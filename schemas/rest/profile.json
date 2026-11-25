@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile (Admin API)",
+  "description": "A profile: GET /api/profiles/{profile_id}, answer of every profile write. One profile per device; profiles are created freely by the admin (max limits.max_profiles), from a suggestion, from a device or empty.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "description",
+    "icon",
+    "color",
+    "child_protection",
+    "rules",
+    "fixed",
+    "user_choice",
+    "origin",
+    "suggestion_update",
+    "catalog_defaults",
+    "default_for",
+    "device_count",
+    "adjusted_device_count",
+    "guest_device_count",
+    "rev",
+    "created_at",
+    "updated_at",
+    "updated_by",
+    "has_remote_pin",
+    "remote_pin_fixed"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "../common/defs.json#/$defs/profile_id"
+    },
+    "name": {
+      "$ref": "../common/defs.json#/$defs/profile_name"
+    },
+    "kind": {
+      "$ref": "../common/defs.json#/$defs/profile_kind",
+      "description": "Kind of the profile: groups profiles for “Set up new devices” (rule setup_devices) and the gallery; independent of child_protection. Only kind person may have setup_devices (other kinds resolve it to not_applicable, reason requires_profile_kind)."
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 300
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "One sentence for the profile card."
+    },
+    "icon": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^mdi:[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "color": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "child_protection": {
+      "type": "boolean",
+      "description": "Parental controls. Not for a profile with guest devices (422 profile.guest_child_protection)."
+    },
+    "rules": {
+      "$ref": "../common/profile-rule-values.json",
+      "description": "Answers: every rule of the catalog (defaults filled in, see catalog_defaults)."
+    },
+    "fixed": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      },
+      "description": "Rules with checkbox “Fixed”: no device adjustment possible. Always contains the rules without checkbox."
+    },
+    "user_choice": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      },
+      "description": "Rules where the person at the device decides (value = starting value)."
+    },
+    "origin": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "suggestion_id",
+            "version"
+          ],
+          "properties": {
+            "suggestion_id": {
+              "$ref": "../common/defs.json#/$defs/profile_suggestion_id"
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Suggestion the profile was copied from (information only; a later suggestion version never changes the profile)."
+    },
+    "suggestion_update": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "version"
+          ],
+          "properties": {
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "A newer version of the origin suggestion exists (POST /api/profiles/{profile_id}/apply-suggestion, only on request)."
+    },
+    "catalog_defaults": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      },
+      "description": "Rules the profile does not contain yet (added by a hub update); they use the catalog default until the profile is saved."
+    },
+    "default_for": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/default_profile_slot"
+      },
+      "description": "Device types this profile is the default profile of."
+    },
+    "device_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "adjusted_device_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Devices with at least one adjustment."
+    },
+    "guest_device_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rev": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    },
+    "updated_by": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "has_remote_pin": {
+      "type": "boolean",
+      "description": "The profile has its own remote PIN for “settings with remote PIN”: valid for every device of the profile; a device PIN wins unless remote_pin_fixed. Never returned, only this flag."
+    },
+    "remote_pin_fixed": {
+      "type": "boolean",
+      "description": "Checkbox “Fixed” of the profile PIN: device PINs are ignored and PUT …/remote-pin answers 422 remote_pin.fixed."
+    },
+    "scene_hints": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "$ref": "../common/scene-hint.json"
+      },
+      "description": "Released scenes and scripts with targets this profile may not switch (docs/enforcement.md §2 step 4), computed for the profile without a device (no own area, no adjustments). Only in GET and PATCH /api/profiles/{profile_id}; empty when Home Assistant is not reachable. At most 50."
+    },
+    "hub_remote_pairing": {
+      "type": "object",
+      "required": [
+        "member",
+        "guest"
+      ],
+      "properties": {
+        "member": {
+          "type": "object",
+          "properties": {
+            "ios": {
+              "type": "boolean"
+            },
+            "ipados": {
+              "type": "boolean"
+            },
+            "tvos": {
+              "type": "boolean"
+            },
+            "watchos": {
+              "type": "boolean"
+            },
+            "android": {
+              "type": "boolean"
+            },
+            "android_tablet": {
+              "type": "boolean"
+            },
+            "android_tv": {
+              "type": "boolean"
+            },
+            "wearos": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true,
+          "description": "Platform ($defs/platform) -> Hub only with remote access."
+        },
+        "guest": {
+          "type": "object",
+          "properties": {
+            "ios": {
+              "type": "boolean"
+            },
+            "ipados": {
+              "type": "boolean"
+            },
+            "tvos": {
+              "type": "boolean"
+            },
+            "watchos": {
+              "type": "boolean"
+            },
+            "android": {
+              "type": "boolean"
+            },
+            "android_tablet": {
+              "type": "boolean"
+            },
+            "android_tv": {
+              "type": "boolean"
+            },
+            "wearos": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true,
+          "description": "Platform ($defs/platform) -> Hub only with remote access."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Per access (member, guest) and platform: whether a device paired with this profile now would be Hub only with remote access (it would hold the read-only key because of remote access; a new device has no adjustment). Always false on tvos, android_tv, watchos and wearos. Missing on older hubs."
+    }
+  },
+  "additionalProperties": true
+}

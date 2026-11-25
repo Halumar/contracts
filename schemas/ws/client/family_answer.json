@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_answer",
+  "description": "Answer a child's request. yes needs preset (one of the category's presets) and is carried out as a release (same checks as family_release; not allowed → family_error release_not_allowed, the request stays open for others and the admin). no may carry a short message. The first answer wins; a later one gets family_error already_answered with the request. Family manager devices (effective rule family_manager) and babysitter devices (kind babysitter, effective rule babysitter_requests, with access right now and over the hub WebSocket = at home); otherwise family_error {not_permitted}. A babysitter may only answer no or yes with 15m, 30m or access_end (else preset_not_allowed); its Yes never lasts beyond the end of its access window and never releases a blocked device type, an exception or a fixed rule (release_not_allowed). Also accepted through the integration relay (POST /api/integration/family) when the device is away. Answer: family_request (closed); the child gets kids_request_state, the other family managers family_request.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "answer"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_answer"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/family_request_id"
+    },
+    "answer": {
+      "$ref": "../../common/defs.json#/$defs/family_answer"
+    },
+    "preset": {
+      "$ref": "../../common/defs.json#/$defs/family_release_preset"
+    },
+    "message": {
+      "$ref": "../../common/defs.json#/$defs/family_decline_message"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "answer": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "answer"
+        ]
+      },
+      "then": {
+        "required": [
+          "preset"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "client_location",
+  "data": {
+    "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "location": {
+      "latitude": 47.3769,
+      "longitude": 8.5417,
+      "accuracy": 12.0,
+      "altitude": 408.0,
+      "vertical_accuracy": 4.0,
+      "speed": 0.0,
+      "course": 90.0,
+      "ts": "2026-11-21T18:00:00Z",
+      "battery_level": 80
+    }
+  }
+}

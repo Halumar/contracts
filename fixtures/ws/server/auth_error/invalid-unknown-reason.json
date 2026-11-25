@@ -1,0 +1,5 @@
+{
+  "type": "auth_error",
+  "reason": "wrong_password",
+  "message": "Invalid client secret"
+}

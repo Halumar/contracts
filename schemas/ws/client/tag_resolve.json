@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tag_resolve",
+  "description": "See docs/links.md. The app read a tag link (NFC, QR or opened link) and asks the hub what the tag does. The hub answers tag_result, logs tag_scanned (activity, <ns>_event and <ns>_tag_scanned in Home Assistant) and never executes anything itself: the app switches afterwards like a widget (control_origin quick_access). At most 10 per minute per device (rate_limited).",
+  "type": "object",
+  "required": [
+    "type",
+    "tag_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "tag_resolve"
+    },
+    "tag_id": {
+      "$ref": "../../common/defs.json#/$defs/tag_id"
+    },
+    "via": {
+      "enum": [
+        "nfc",
+        "qr",
+        "link"
+      ],
+      "description": "How the app got the link (log only). Missing = link."
+    }
+  },
+  "additionalProperties": true
+}

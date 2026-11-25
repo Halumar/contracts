@@ -1,0 +1,20 @@
+{
+  "type": "client_status",
+  "battery_level": 64,
+  "battery_state": "charging",
+  "low_power": false,
+  "panel": {
+    "screen": "dimmed",
+    "panel_mode": true,
+    "brightness": 0.15,
+    "brightness_mode": "auto",
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "set_brightness",
+      "set_brightness_mode"
+    ]
+  }
+}

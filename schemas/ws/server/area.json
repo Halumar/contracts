@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "area",
+  "description": "Answer to get_area.",
+  "type": "object",
+  "required": [
+    "type",
+    "data",
+    "image_base_url"
+  ],
+  "properties": {
+    "type": {
+      "const": "area"
+    },
+    "data": {
+      "$ref": "../../common/area-detail.json"
+    },
+    "image_base_url": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration client_location",
+  "description": "Hub -> integration push session only. A location_report of a device on the hub path the hub accepted; the integration checks the rule location of its snapshot as well and updates the device's device_tracker at once. The hub keeps no position. Fire-and-forget: nothing is queued while the integration session is down.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_location"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "client_id",
+        "location"
+      ],
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "location": {
+          "$ref": "../../common/defs.json#/$defs/location_fix"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

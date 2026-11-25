@@ -1,0 +1,4 @@
+{
+  "entity_id": "light.bed_light",
+  "service": "turn_on"
+}

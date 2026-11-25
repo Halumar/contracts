@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "upgrade_required",
+  "description": "The app is too old for this hub: its protocol_version is missing or below min_protocol_version (reason 'protocol'), or its app_version is below min_app_version[platform] (reason 'app_version'). Answer to auth or pair; the hub closes the connection with 4426 right after. The app must not reconnect in a loop and must not reset its pairing: it shows a localized 'Please update the app' hint built from reason, and retries only after an app update or a manual retry. message is an English fallback for logs.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message",
+    "protocol_version",
+    "min_protocol_version",
+    "min_app_version"
+  ],
+  "properties": {
+    "type": {
+      "const": "upgrade_required"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/upgrade_reason"
+    },
+    "message": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version"
+    },
+    "min_protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version"
+    },
+    "min_app_version": {
+      "$ref": "../../common/defs.json#/$defs/min_app_version"
+    },
+    "platform": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/platform"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Platform the app reported, null if missing or unknown."
+    }
+  },
+  "additionalProperties": true
+}

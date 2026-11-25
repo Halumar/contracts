@@ -1,0 +1,6 @@
+{
+  "type": "camera_image_get",
+  "request_id": "c4",
+  "entity_id": "camera.front_door",
+  "width": 8
+}

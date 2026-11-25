@@ -1,0 +1,7 @@
+{
+  "type": "family_notify_set",
+  "notify": {
+    "kids_control": true,
+    "kids_bedtime_attempt": false
+  }
+}

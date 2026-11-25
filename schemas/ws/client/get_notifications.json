@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "get_notifications",
+  "description": "Request all active notifications of this paired client (connect-time catch-up). Paired clients only.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "get_notifications"
+    }
+  },
+  "additionalProperties": true
+}

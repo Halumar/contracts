@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Device identity (hub -> integration)",
+  "description": "Everything the integration needs to name and configure the HA user of one paired device. HA user name = '<brand> · [<guest label> ][<owner_label> ]<display_name>'; HA local_only = not remote_allowed. remote_allowed is the effective profile rule remote_access: guests may have it; a device with parental controls never has it. is_guest=true requires a guest_expires_at.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "display_name",
+    "is_guest",
+    "remote_allowed"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "display_name": {
+      "$ref": "defs.json#/$defs/display_name"
+    },
+    "owner_label": {
+      "$ref": "defs.json#/$defs/owner_label"
+    },
+    "is_guest": {
+      "type": "boolean"
+    },
+    "remote_allowed": {
+      "type": "boolean",
+      "description": "Device may use HA from outside the local network: the effective profile rule remote_access. Default false (local-first); also for guests when their profile allows it and for devices with parental controls (read-only key, docs/enforcement.md §7)."
+    },
+    "guest_expires_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/utc_expiry"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Guest expiry (UTC). The integration bounds the HA-side token lifetime to expiry + 7 days grace and rotates the token when an extension is no longer covered."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "is_guest": {
+            "const": true
+          }
+        },
+        "required": [
+          "is_guest"
+        ]
+      },
+      "then": {
+        "required": [
+          "guest_expires_at"
+        ],
+        "properties": {
+          "guest_expires_at": {
+            "$ref": "defs.json#/$defs/utc_expiry"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

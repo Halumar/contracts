@@ -1,0 +1,207 @@
+{
+  "type": "area",
+  "data": {
+    "id": "a1b2c3d4-0000-4000-8000-000000000001",
+    "name": "Wohnzimmer",
+    "icon": "mdi:sofa",
+    "description": null,
+    "color": "#4CAF50",
+    "card_image_url": null,
+    "bg_light_url": null,
+    "bg_dark_url": null,
+    "grid_cols": 4,
+    "dense_section_placement": 1,
+    "sort_order": 0,
+    "is_active": 1,
+    "control_mode": null,
+    "ha_area_id": "living_room",
+    "created_at": "2026-11-18T08:15:00.123456+00:00",
+    "updated_at": "2026-11-18T08:15:00.123456+00:00",
+    "entity_count": 5,
+    "tags": [],
+    "card_image_src": null,
+    "bg_light_src": null,
+    "bg_dark_src": null,
+    "icon_svg": "M12.5 7C12.5 5.89 13.39 5 14.5 5H18C19.1 5 20 5.9 20 7V9.16C18.84 9.57 18 10.67 18 11.97V14H12.5V7M6 11.96V14H11.5V7C11.5 5.89 10.61 5 9.5 5H6C4.9 5 4 5.9 4 7V9.15C5.16 9.56 6 10.67 6 11.96M20.66 10.03C19.68 10.19 19 11.12 19 12.12V15H5V12C5 10.9 4.11 10 3 10S1 10.9 1 12V17C1 18.1 1.9 19 3 19V21H5V19H19V21H21V19C22.1 19 23 18.1 23 17V12C23 10.79 21.91 9.82 20.66 10.03Z",
+    "section_count": 1,
+    "sections": [
+      {
+        "id": "5ec7a000-0000-4000-8000-000000000001",
+        "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+        "title": "Wohnen",
+        "icon": null,
+        "sort_order": 0,
+        "column_span": 1,
+        "columns": 2,
+        "is_collapsed": 0,
+        "created_at": "2026-11-18 08:15:00",
+        "entities": [
+          {
+            "id": "e0e0e0e0-0000-4000-8000-000000000001",
+            "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+            "entity_id": "light.living_room_rgbww",
+            "section_id": "5ec7a000-0000-4000-8000-000000000001",
+            "display_name": "Stehlampe",
+            "columns": 2,
+            "rows": 1,
+            "sort_order": 0,
+            "is_visible": 1,
+            "control_mode": null,
+            "tile": {
+              "icon": "mdi:floor-lamp",
+              "icon_svg": "M15,2L17,9H7L9,2M11,10H13V20H16V22H8V20H11V10Z",
+              "variant": "slider",
+              "secondary": {
+                "source": "attribute",
+                "attribute": "brightness"
+              },
+              "tap_action": {
+                "action": "toggle"
+              },
+              "hold_action": {
+                "action": "more_info"
+              },
+              "accent": "light"
+            },
+            "created_at": "2026-11-18T08:15:00.123456+00:00",
+            "state": {
+              "state": "on",
+              "attributes": {
+                "brightness": 153,
+                "friendly_name": "Living Room RGBWW Lights"
+              },
+              "last_changed": "2026-11-18T08:15:00.123456+00:00"
+            }
+          },
+          {
+            "id": "e0e0e0e0-0000-4000-8000-000000000002",
+            "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+            "entity_id": "switch.decorative_lights",
+            "section_id": "5ec7a000-0000-4000-8000-000000000001",
+            "display_name": "TV-Steckdose",
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 1,
+            "is_visible": 1,
+            "control_mode": null,
+            "tile": {
+              "icon": "mdi:power-socket-ch",
+              "icon_svg": "M19.78 2H4.22C3 2 2 3 2 4.22V19.78C2 21 3 22 4.22 22H19.78C21 22 22 21 22 19.78V4.22C22 3 21 2 19.78 2M20 13L16.55 16.45C16.19 16.81 15.75 17 15.3 17H8.7C8.25 17 7.81 16.81 7.45 16.45L4 13C3.5 12.5 3.5 11.5 4 11L7.45 7.55C7.81 7.19 8.25 7 8.7 7H15.3C15.75 7 16.19 7.19 16.55 7.55L20 11C20.5 11.5 20.5 12.5 20 13M10.5 14C10.5 13.17 11.17 12.5 12 12.5S13.5 13.17 13.5 14 12.83 15.5 12 15.5 10.5 14.83 10.5 14M15.5 12C15.5 11.17 16.17 10.5 17 10.5S18.5 11.17 18.5 12 17.83 13.5 17 13.5 15.5 12.83 15.5 12M5.5 12C5.5 11.17 6.17 10.5 7 10.5S8.5 11.17 8.5 12 7.83 13.5 7 13.5 5.5 12.83 5.5 12Z",
+              "secondary": {
+                "source": "entity",
+                "entity_id": "sensor.tv_power"
+              },
+              "secondary_state": {
+                "state": "412",
+                "attributes": {
+                  "unit_of_measurement": "W",
+                  "device_class": "power",
+                  "friendly_name": "TV Leistung"
+                },
+                "last_changed": "2026-11-18T08:15:00.123456+00:00"
+              },
+              "tap_action": {
+                "action": "run",
+                "target_entity_id": "script.tv_abend"
+              },
+              "confirm": true
+            },
+            "created_at": "2026-11-18T08:15:00.123456+00:00",
+            "state": {
+              "state": "on",
+              "attributes": {
+                "friendly_name": "Decorative Lights"
+              },
+              "last_changed": "2026-11-18T08:15:00.123456+00:00"
+            }
+          },
+          {
+            "id": "e0e0e0e0-0000-4000-8000-000000000003",
+            "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+            "entity_id": "scene.filmabend",
+            "section_id": "5ec7a000-0000-4000-8000-000000000001",
+            "display_name": null,
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 2,
+            "is_visible": 1,
+            "control_mode": null,
+            "tile": {
+              "icon": "sf:popcorn.fill",
+              "variant": "action",
+              "tap_action": {
+                "action": "run",
+                "target_entity_id": "scene.filmabend"
+              },
+              "confirm": true,
+              "accent": "media"
+            },
+            "created_at": "2026-11-18T08:15:00.123456+00:00",
+            "state": {
+              "state": "2026-11-17T20:00:00+00:00",
+              "attributes": {
+                "friendly_name": "Filmabend"
+              },
+              "last_changed": "2026-11-18T08:15:00.123456+00:00"
+            }
+          },
+          {
+            "id": "e0e0e0e0-0000-4000-8000-000000000004",
+            "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+            "entity_id": "sensor.outside_temperature",
+            "section_id": "5ec7a000-0000-4000-8000-000000000001",
+            "display_name": "Temperatur",
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 3,
+            "is_visible": 1,
+            "control_mode": null,
+            "tile": {
+              "hidden_on": [
+                "tv"
+              ],
+              "secondary": {
+                "source": "last_changed"
+              },
+              "tap_action": {
+                "action": "none"
+              }
+            },
+            "created_at": "2026-11-18T08:15:00.123456+00:00",
+            "state": {
+              "state": "21.5",
+              "attributes": {
+                "unit_of_measurement": "°C",
+                "friendly_name": "Outside Temperature"
+              },
+              "last_changed": "2026-11-18T08:15:00.123456+00:00"
+            }
+          },
+          {
+            "id": "e0e0e0e0-0000-4000-8000-000000000005",
+            "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+            "entity_id": "lock.front_door",
+            "section_id": "5ec7a000-0000-4000-8000-000000000001",
+            "display_name": "Haustür",
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 4,
+            "is_visible": 1,
+            "control_mode": null,
+            "tile": {},
+            "created_at": "2026-11-18T08:15:00.123456+00:00",
+            "state": {
+              "state": "locked",
+              "attributes": {
+                "friendly_name": "Front Door"
+              },
+              "last_changed": "2026-11-18T08:15:00.123456+00:00"
+            }
+          }
+        ],
+        "widgets": []
+      }
+    ]
+  },
+  "image_base_url": "http://homeassistant.local:8099"
+}

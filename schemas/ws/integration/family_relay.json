@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_relay",
+  "description": "Hub -> integration push session only. Forward message (a ws/server family_* message, kids_request_state for a child device, or an early access message access_request_update / access_requests / access_request_error for a recipient device) to the HA WebSocket subscriptions (<ns>/family/subscribe) of the HA users of these devices that are not connected to the hub but have remote access. Fire-and-forget; when nobody is subscribed the integration drops it. The integration never stores it.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_ids",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_relay"
+    },
+    "client_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "$ref": "../../common/defs.json#/$defs/uuid"
+      }
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(family_[a-z_]{1,40}|kids_request_state|access_request_state|access_request_update|access_requests|access_request_error)$"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "x-audience": "INTEGRATION"
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/pairing/clients/{client_id}/own-area (body)",
+  "description": "Own area of the device: one area or null. Profiles refer to it (visible areas + own area, wall panel start area, kids exceptions); the hub resolves it before delivery. A deleted area sets it to null (fail closed). Answer: client-effective.response.json.",
+  "type": "object",
+  "required": [
+    "area_id"
+  ],
+  "properties": {
+    "area_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,8 @@
+{
+  "client_ids": [
+    "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b"
+  ],
+  "action": "assign_profile",
+  "profile_id": "9f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c",
+  "dry_run": true
+}

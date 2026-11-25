@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration enforcement_rules",
+  "description": "Hub -> integration push session only. Rule snapshots of devices after any change that affects them (profile, adjustment incl. expiry of a temporary one, areas, placements, quick access, kids rules, parental release, HA user). complete = true: the list is every device with an HA user; the integration drops snapshots of devices not in it. Fire-and-forget; the integration reports applied snapshots as events (rules_applied, POST /api/integration/events) and compares status.enforcement.rules_hashes on every poll, fetching GET /api/integration/enforcement-rules when anything differs (backstop for lost messages).",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "enforcement_rules"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "snapshots",
+        "control_paths",
+        "removed",
+        "complete"
+      ],
+      "properties": {
+        "snapshots": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "../../common/enforcement-snapshot.json"
+          }
+        },
+        "control_paths": {
+          "$ref": "../../common/defs.json#/$defs/enforcement_control_paths",
+          "description": "Control path of every device in snapshots, outside the versioned snapshot body (docs/enforcement.md#control-paths-next-to-the-snapshots)."
+        },
+        "removed": {
+          "type": "array",
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "description": "Devices whose snapshot is gone (device deleted or without HA user)."
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

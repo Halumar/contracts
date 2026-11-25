@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Any client -> hub message",
+  "description": "Discriminated by 'type'. For decoders/codegen.",
+  "anyOf": [
+    {
+      "$ref": "heartbeat/ping.json"
+    },
+    {
+      "$ref": "heartbeat/pong.json"
+    },
+    {
+      "$ref": "client/auth.json"
+    },
+    {
+      "$ref": "client/client_reset_ack.json"
+    },
+    {
+      "$ref": "client/client_leave.json"
+    },
+    {
+      "$ref": "client/watch_access_get.json"
+    },
+    {
+      "$ref": "client/client_status.json"
+    },
+    {
+      "$ref": "client/get_area.json"
+    },
+    {
+      "$ref": "client/get_areas.json"
+    },
+    {
+      "$ref": "client/get_client_config.json"
+    },
+    {
+      "$ref": "client/get_notifications.json"
+    },
+    {
+      "$ref": "client/notification_ack.json"
+    },
+    {
+      "$ref": "client/notification_dismiss.json"
+    },
+    {
+      "$ref": "client/pair.json"
+    },
+    {
+      "$ref": "client/subscribe.json"
+    },
+    {
+      "$ref": "client/onboard_confirm.json"
+    },
+    {
+      "$ref": "client/onboard_decline.json"
+    },
+    {
+      "$ref": "client/onboard_lookup.json"
+    },
+    {
+      "$ref": "client/onboard_start.json"
+    },
+    {
+      "$ref": "client/guest_invite_create.json"
+    },
+    {
+      "$ref": "client/guest_invite_cancel.json"
+    },
+    {
+      "$ref": "client/control.json"
+    },
+    {
+      "$ref": "client/state_subscribe.json"
+    },
+    {
+      "$ref": "client/history_get.json"
+    },
+    {
+      "$ref": "client/location_report.json"
+    },
+    {
+      "$ref": "client/tag_resolve.json"
+    },
+    {
+      "$ref": "client/forecast_get.json"
+    },
+    {
+      "$ref": "client/camera_image_get.json"
+    },
+    {
+      "$ref": "client/media_image_get.json"
+    },
+    {
+      "$ref": "client/family_get_children.json"
+    },
+    {
+      "$ref": "client/family_rule_set.json"
+    },
+    {
+      "$ref": "client/family_rule_reset.json"
+    },
+    {
+      "$ref": "client/family_release.json"
+    },
+    {
+      "$ref": "client/family_release_end.json"
+    },
+    {
+      "$ref": "client/family_get_requests.json"
+    },
+    {
+      "$ref": "client/family_answer.json"
+    },
+    {
+      "$ref": "client/family_get_activity.json"
+    },
+    {
+      "$ref": "client/family_notify_set.json"
+    },
+    {
+      "$ref": "client/kids_request.json"
+    },
+    {
+      "$ref": "client/kids_request_cancel.json"
+    },
+    {
+      "$ref": "client/access_request.json"
+    },
+    {
+      "$ref": "client/access_request_cancel.json"
+    },
+    {
+      "$ref": "client/access_requests_get.json"
+    },
+    {
+      "$ref": "client/access_request_answer.json"
+    },
+    {
+      "$ref": "client/panel_command_ok.json"
+    },
+    {
+      "$ref": "client/panel_command_error.json"
+    },
+    {
+      "$ref": "client/get_setup_grant.json"
+    },
+    {
+      "$ref": "client/get_set_up_devices.json"
+    },
+    {
+      "$ref": "client/set_up_device_remove.json"
+    }
+  ]
+}

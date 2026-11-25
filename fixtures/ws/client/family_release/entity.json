@@ -1,0 +1,9 @@
+{
+  "type": "family_release",
+  "client_ids": [
+    "6c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+  ],
+  "kind": "entity",
+  "entity_id": "media_player.spielkonsole",
+  "preset": "30m"
+}

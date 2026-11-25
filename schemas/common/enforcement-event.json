@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Integration event for the hub log",
+  "description": "One structured event of the integration for the log tab of the hub (activity and alarms). Data minimization: only the fields below; never action data (no values, no codes), no IP addresses, no names (the hub knows the device by client_id).",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "at"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/uuid",
+      "description": "Random id; the hub ignores a repeated id (retry after a timeout)."
+    },
+    "type": {
+      "$ref": "defs.json#/$defs/enforcement_event_type"
+    },
+    "at": {
+      "$ref": "defs.json#/$defs/timestamp",
+      "description": "UTC, when it happened (not when it was sent)."
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ha_user_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/ha_user_id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Set when the device is not known (direct_access_attempt of a user without mapping never happens: such users are ignored)."
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "route": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/control_route"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "origin": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/control_origin"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/control_denial_reason"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "denied: why; control: null."
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000,
+      "description": "Occurrences merged into this event (direct_access_attempt: rejected direct actions in the window). Missing = 1."
+    },
+    "since": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "integration_outage: last sign of life before the gap; direct_access_attempt: first attempt in the window."
+    },
+    "ha_group": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/ha_user_group"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "rules_applied, access_group_restored: group the device user has now."
+    },
+    "rules_hash": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/rules_hash"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "rules_applied: the snapshot now in force."
+    },
+    "reliability": {
+      "enum": [
+        "exact",
+        "best_effort"
+      ],
+      "description": "best_effort = detected on a best-effort basis (direct_access_attempt, integration_outage); may miss occurrences. Missing = exact."
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 32,
+      "description": "integration_started: version of the integration."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "control",
+              "denied"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "client_id",
+          "entity_id",
+          "action",
+          "route"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "denied"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "access_group_restored",
+              "direct_access_attempt",
+              "rules_applied"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "client_id"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "integration_outage"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "since"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

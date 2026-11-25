@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_lookup",
+  "description": "A paired device with the rule setup_devices asks what it is about to set up (paired clients only). Either the values of the scanned QR code (session_id, public_key, hub_id; the device first compared fp of the QR code with its own pin) or the typed code (code; the device checked nothing itself: it trusts its own pinned connection, and the waiting device gets the secret only over its own pinned TLS connection, like with a PIN). A QR mismatch of key or hub id invalidates the session. A code is looked up only among the hub's own open sessions and is used up by the first successful lookup; wrong codes count against x-limits onboard_code_failures_per_device and onboard_code_failures_total (too_many_attempts). Answer: onboard_info or onboard_error. Exactly one way: either code alone or all of session_id, public_key and hub_id (checked by tools/validate.py; the hub answers invalid_request otherwise).",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_lookup"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "public_key": {
+      "$ref": "../../common/defs.json#/$defs/onboard_public_key"
+    },
+    "hub_id": {
+      "$ref": "../../common/defs.json#/$defs/hub_instance_id"
+    },
+    "code": {
+      "$ref": "../../common/defs.json#/$defs/onboard_code"
+    }
+  },
+  "additionalProperties": true
+}

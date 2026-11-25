@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "client_inactive",
+    "message": "Client is revoked or pending deletion"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "client_status",
+  "connection_type": "ethernet",
+  "battery_state": "unknown",
+  "panel": {
+    "screen": "active",
+    "panel_mode": false,
+    "brightness": null,
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "show_camera"
+    ],
+    "pip": true
+  }
+}

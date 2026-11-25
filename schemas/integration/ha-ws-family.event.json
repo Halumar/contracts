@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HA WebSocket event of <ns>/family/subscribe",
+  "description": "The event field of an HA event message of the subscription: the hub's push itself (family_relay.message), unchanged – e.g. family_request or family_child_updated for a family manager, kids_request_state for a child device – the same object the app gets on the hub WebSocket at home. Not wrapped. Also access_request_update, access_requests, access_request_state and access_request_error.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "pattern": "^(family_[a-z_]{1,40}|kids_request_state)$"
+    }
+  },
+  "additionalProperties": true
+}

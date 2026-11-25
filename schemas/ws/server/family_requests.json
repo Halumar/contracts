@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_requests",
+  "description": "Requests of the children in scope (answer to family_get_requests), newest first.",
+  "type": "object",
+  "required": [
+    "type",
+    "requests"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_requests"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "requests": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/family-request.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

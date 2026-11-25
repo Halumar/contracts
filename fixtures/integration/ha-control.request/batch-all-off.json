@@ -1,0 +1,8 @@
+{
+  "entity_ids": [
+    "light.bed_light",
+    "light.ceiling_lights",
+    "switch.decorative_lights"
+  ],
+  "action": "turn_off"
+}

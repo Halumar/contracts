@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/log/summary",
+  "type": "object",
+  "required": [
+    "namespace",
+    "unread_alarms",
+    "unread",
+    "counts",
+    "total",
+    "oldest_ts",
+    "retention_days",
+    "hidden_owners",
+    "integration_connected",
+    "time_zone",
+    "facets"
+  ],
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "description": "Technical namespace (UI texts <ns>.control, <ns>_event)."
+    },
+    "unread_alarms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unread": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "ts",
+          "kind",
+          "device_name",
+          "client_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "ts": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "device_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "client_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "activity_today",
+        "changes_7d",
+        "alarms_7d"
+      ],
+      "properties": {
+        "activity_today": {
+          "type": "integer"
+        },
+        "changes_7d": {
+          "type": "integer"
+        },
+        "alarms_7d": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "total": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "oldest_ts": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retention_days": {
+      "type": "integer",
+      "minimum": 7,
+      "maximum": 90,
+      "description": "7, 30 (default) or 90; other values 422 log.retention."
+    },
+    "hidden_owners": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "integration_connected": {
+      "type": "boolean"
+    },
+    "time_zone": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "facets": {
+      "type": "object",
+      "required": [
+        "devices",
+        "owners",
+        "profiles",
+        "areas"
+      ],
+      "properties": {
+        "devices": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "areas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

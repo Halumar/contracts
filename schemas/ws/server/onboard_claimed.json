@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_claimed",
+  "description": "A confirming device looked up this session (by QR code or code); the waiting device may show “Setting up · from <by_name>”. Informational: the session is still open until onboard_ok or onboard_error. Sent at most once per confirming device.",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id",
+    "by_name"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_claimed"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "by_name": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Name of the confirming device."
+    }
+  },
+  "additionalProperties": true
+}

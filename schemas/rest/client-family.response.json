@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Family manager of one device (admin view)",
+  "description": "Answer of GET/PUT /api/pairing/clients/{client_id}/family.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "family_manager",
+    "scope",
+    "notify_targets",
+    "children"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "family_manager": {
+      "type": "boolean",
+      "description": "Effective rule family_manager of this device."
+    },
+    "scope": {
+      "$ref": "../common/defs.json#/$defs/family_children_scope"
+    },
+    "notify_targets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^notify\\.[a-z0-9_]{1,64}$"
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "../common/defs.json#/$defs/owner_label"
+          },
+          "profile_name": {
+            "$ref": "../common/defs.json#/$defs/profile_name"
+          },
+          "fixed_manageable": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "description": "Manageable rules fixed in this child's profile (the admin UI offers “allow for family managers” = untick “Fixed” in the profile, with preview)."
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

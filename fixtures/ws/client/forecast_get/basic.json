@@ -1,0 +1,6 @@
+{
+  "type": "forecast_get",
+  "request_id": "f1",
+  "entity_id": "weather.home",
+  "forecast_type": "hourly"
+}

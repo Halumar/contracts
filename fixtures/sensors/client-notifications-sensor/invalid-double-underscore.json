@@ -1,0 +1,28 @@
+{
+  "entity_id": "sensor.halumar_client__wohnzimmer_panel_3f2b8c1e_notifications",
+  "state": "1",
+  "attributes": {
+    "friendly_name": "Halumar: Wohnzimmer-Panel Notifications",
+    "icon": "mdi:bell-badge",
+    "count": 1,
+    "notifications": [
+      {
+        "notification_id": "9d1c0a6e-1111-4111-8111-000000000001",
+        "title": "Waschmaschine fertig",
+        "message": "Bitte ausräumen.",
+        "notification_type": "default",
+        "popup": false,
+        "popup_mode": "none",
+        "scheduled_at": null,
+        "priority": 50,
+        "color": "blue",
+        "action_type": "area",
+        "action_target": "a1b2c3d4-0000-4000-8000-000000000002",
+        "show_time": true,
+        "created_at": "2026-11-18T08:15:00.123456+00:00",
+        "status": "pending"
+      }
+    ],
+    "updated_at": "2026-11-18T08:15:00.123456+00:00"
+  }
+}

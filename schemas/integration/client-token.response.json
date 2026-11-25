@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/client-token (200)",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "ha_token_status",
+    "unchanged",
+    "delivered"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "ha_token_status": {
+      "const": "active"
+    },
+    "unchanged": {
+      "type": "boolean",
+      "description": "true when refresh_token_id equals the stored one (repeat delivery); nothing was sent to the device."
+    },
+    "delivered": {
+      "type": "boolean",
+      "description": "A live connection of the device received client_config_updated (and fetched its config, or the 5 s wait expired). false = device offline; it gets the token on its next connect."
+    }
+  },
+  "additionalProperties": false
+}

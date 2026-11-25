@@ -1,0 +1,236 @@
+{
+  "ha_token": null,
+  "ha_url": null,
+  "ha_internal_url": "http://homeassistant.local",
+  "ha_instance_id": null,
+  "ha_enforcement": null,
+  "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "tls_port": 8100,
+  "config_sensor": "sensor.halumar_config",
+  "notification_sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+  "home_title": "Zuhause",
+  "home_bg_light": null,
+  "home_bg_dark": "/images/7a1d2c3b.jpg",
+  "control_mode": "full",
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": {
+    "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "name": "Erwachsen",
+    "kind": "person",
+    "rev": 3,
+    "child_protection": false,
+    "managed_by": "Admin"
+  },
+  "rules": {
+    "remote_access": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    },
+    "control_path": {
+      "value": "hub",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    },
+    "setup_devices": {
+      "value": {
+        "enabled": false,
+        "kinds": []
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    },
+    "app_settings": {
+      "value": "open",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "app_settings_biometrics": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "areas": {
+      "value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    },
+    "control_mode_max": {
+      "value": "full",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "camera_live": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "quick_access": {
+      "value": "off",
+      "source": "boundary",
+      "reason": "boundary_hub_only",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "watch": {
+      "value": false,
+      "source": "boundary",
+      "reason": "boundary_hub_only",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "card_style": {
+      "value": "calm",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "appearance": {
+      "value": "system",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "header": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "home_header": {
+      "value": {
+        "style": "weather_mood",
+        "status_chips": true,
+        "greeting": true,
+        "weather": true
+      },
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "search_filter": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "columns": {
+      "value": 2,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "power_button": {
+      "value": {
+        "enabled": false,
+        "domains": [
+          "light"
+        ]
+      },
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "notification_level": {
+      "value": "all",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "notification_stack": {
+      "value": "banner",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "location": {
+      "value": "background",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    }
+  },
+  "quick_access": {
+    "enabled": false,
+    "max": "status",
+    "sensor": null,
+    "entities": {},
+    "critical": []
+  },
+  "settings_pin_hash": null,
+  "settings_pin_salt": null,
+  "settings_pin_source": null,
+  "config_hash": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+}

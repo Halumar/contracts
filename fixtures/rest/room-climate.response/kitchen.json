@@ -1,0 +1,41 @@
+{
+  "temperature": {
+    "entity_id": null,
+    "pick": {
+      "source": "auto",
+      "entity_ids": [
+        "sensor.kitchen_room_temperature"
+      ]
+    },
+    "value": 21.4,
+    "unit": "°C",
+    "options": [
+      {
+        "entity_id": "sensor.sensor_1_temperature",
+        "name": "Sensor 1 Temperatur",
+        "tier": "sensor",
+        "in_room": true,
+        "excluded": "fridge",
+        "value": 4.2
+      },
+      {
+        "entity_id": "sensor.kitchen_room_temperature",
+        "name": "Raumtemperatur",
+        "tier": "sensor",
+        "in_room": true,
+        "excluded": null,
+        "value": 21.4
+      }
+    ]
+  },
+  "humidity": {
+    "entity_id": null,
+    "pick": {
+      "source": "auto",
+      "entity_ids": []
+    },
+    "value": null,
+    "unit": null,
+    "options": []
+  }
+}

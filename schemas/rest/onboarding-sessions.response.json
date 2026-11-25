@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/onboarding",
+  "description": "Admin only: running onboarding sessions (a device waiting to be set up), oldest first. Never contains the session id, the code or the public key. DELETE /api/pairing/onboarding/{id} cancels one (204; 404 when unknown); the waiting device gets onboard_error {reason: cancelled}.",
+  "type": "object",
+  "required": [
+    "sessions",
+    "expires_in"
+  ],
+  "properties": {
+    "sessions": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "client_name",
+          "platform",
+          "app_version",
+          "created_at",
+          "expires_at",
+          "source_ip"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "client_name": {
+            "type": "string"
+          },
+          "platform": {
+            "$ref": "../common/defs.json#/$defs/platform"
+          },
+          "app_version": {
+            "$ref": "../common/defs.json#/$defs/app_version"
+          },
+          "device_model": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/device_model"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "created_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "expires_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "source_ip": {
+            "type": "string",
+            "maxLength": 64,
+            "x-pii": true
+          },
+          "claimed_by": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/device_ref"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Device that looked the session up (it is being set up from there); null while waiting."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "expires_in": {
+      "type": "integer",
+      "const": 300,
+      "description": "Lifetime of a session in seconds."
+    }
+  },
+  "additionalProperties": true
+}

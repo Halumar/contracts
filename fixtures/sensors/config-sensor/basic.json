@@ -1,0 +1,57 @@
+{
+  "entity_id": "sensor.halumar_config",
+  "state": "2",
+  "attributes": {
+    "friendly_name": "Halumar Configuration",
+    "icon": "mdi:floor-plan",
+    "unit_of_measurement": "areas",
+    "areas": [
+      {
+        "id": "a1b2c3d4-0000-4000-8000-000000000001",
+        "name": "Wohnzimmer",
+        "icon": "mdi:sofa",
+        "description": null,
+        "color": "#4CAF50",
+        "grid_cols": 4,
+        "sort_order": 0,
+        "is_active": true,
+        "control_mode": null,
+        "entity_count": 2,
+        "card_image_src": "/images/0f3c9e2a.jpg",
+        "card_image_url": null,
+        "bg_light_src": null,
+        "bg_light_url": null,
+        "bg_dark_src": null,
+        "bg_dark_url": null,
+        "tags": [],
+        "sensor_entity_id": "sensor.halumar_area_wohnzimmer_a1b2c3d4"
+      },
+      {
+        "id": "a1b2c3d4-0000-4000-8000-000000000002",
+        "name": "Küche",
+        "icon": "mdi:fridge",
+        "description": null,
+        "color": null,
+        "grid_cols": 4,
+        "sort_order": 1,
+        "is_active": true,
+        "control_mode": "basic",
+        "entity_count": 0,
+        "card_image_src": null,
+        "card_image_url": null,
+        "bg_light_src": null,
+        "bg_light_url": null,
+        "bg_dark_src": null,
+        "bg_dark_url": null,
+        "tags": [
+          "family"
+        ],
+        "sensor_entity_id": "sensor.halumar_area_kuche_a1b2c3d4"
+      }
+    ],
+    "ha_url": null,
+    "ha_internal_url": "http://homeassistant.local",
+    "version": "2026.11.1",
+    "updated_at": "2026-11-18T08:15:00.123456+00:00"
+  }
+}

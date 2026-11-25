@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pairing deep link / QR payload",
+  "description": "Canonical string built only by the hub; identical in Admin-UI QR, copy link and integration camera. 'uri' is the exact string, 'params' its decoded query. tools/validate.py checks that both agree.",
+  "type": "object",
+  "required": [
+    "uri",
+    "params"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string",
+      "pattern": "^halumar://pair\\?url=https?%3A%2F%2F[^&/:?]+&pin=[0-9]{4}-[0-9]{4}(&tls_port=[0-9]{1,5}&fp=[0-9a-f]{64})?(&hn=[0-9a-fA-F.%]+)?$",
+      "x-namespace-key": "deep_link_pair_prefix"
+    },
+    "params": {
+      "type": "object",
+      "required": [
+        "url",
+        "pin"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https?://[^/]+$",
+          "description": "Base URL of the hub without trailing slash; percent-encoded in the URI. Resolution: app_url, X-Forwarded-Host (not Ingress), routable Host (not Ingress), host of ha_internal_url + :8099, local IP + :8099."
+        },
+        "pin": {
+          "$ref": "../common/defs.json#/$defs/pin"
+        },
+        "tls_port": {
+          "type": "string",
+          "pattern": "^[0-9]{1,5}$"
+        },
+        "fp": {
+          "$ref": "../common/defs.json#/$defs/fingerprint"
+        },
+        "hn": {
+          "type": "string",
+          "minLength": 9,
+          "maxLength": 500,
+          "pattern": "^[0-9a-f.:/]+(,[0-9a-f.:/]+){0,9}$",
+          "description": "The household's home networks (client_config.home_networks), comma-separated canonical CIDRs, percent-encoded in the URI; only when the list is not empty. Lets the app accept a hub host inside them before it is paired (e.g. a Tailscale address 100.x.y.z). The app takes from it only networks inside the private ranges of $defs/home_network_cidr and only for this pairing."
+        },
+        "pv": {
+          "type": "string",
+          "x-planned": "protocol_version"
+        },
+        "iid": {
+          "type": "string",
+          "x-planned": "hub instance id"
+        }
+      },
+      "dependentRequired": {
+        "tls_port": [
+          "fp"
+        ],
+        "fp": [
+          "tls_port"
+        ]
+      },
+      "additionalProperties": false
+    }
+  },
+  "x-client-rules": [
+    "The apps accept only the scheme of namespace.json deep_link_scheme (no aliases), host must be 'pair'.",
+    "Only local hosts (RFC1918, loopback, link-local, ULA, .local, localhost) or hosts inside a network listed in hn (only private ranges incl. 100.64.0.0/10 are taken from it); CGNAT/Tailscale without hn rejected.",
+    "Only when not paired; confirmation dialog; PIN is prefilled, never sent automatically.",
+    "tvOS has no deep-link/QR path."
+  ],
+  "additionalProperties": false
+}

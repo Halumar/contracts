@@ -1,0 +1,5 @@
+{
+  "type": "auth_error",
+  "reason": "rate_limited",
+  "message": "Too many auth attempts. Reconnect to try again."
+}

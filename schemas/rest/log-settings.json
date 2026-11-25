@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET/PUT /api/log/settings",
+  "description": "Retention 7, 30 (default) or 90 days (nightly clean-up from 03:00 HA time); people whose activity is not stored (owner labels; changes and alarms stay); threshold from which rejections of one device become an alarm (default 3 in 10 minutes).",
+  "type": "object",
+  "required": [
+    "retention_days",
+    "hidden_owners",
+    "alarm_threshold"
+  ],
+  "properties": {
+    "retention_days": {
+      "type": "integer",
+      "minimum": 7,
+      "maximum": 90,
+      "description": "7, 30 (default) or 90; other values 422 log.retention."
+    },
+    "hidden_owners": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      }
+    },
+    "alarm_threshold": {
+      "type": "object",
+      "required": [
+        "count",
+        "window_minutes"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "window_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

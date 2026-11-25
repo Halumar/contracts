@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tag_result",
+  "description": "Answer to tag_resolve. tag only with result ok: name and action (show, toggle, turn_on, turn_off, run). The hub checks the rule scan_tags (tags_off, also for guests) and that the target is inside the device's areas (not_visible); quick access levels and the control path apply when the app switches. Pro is checked by the app.",
+  "type": "object",
+  "required": [
+    "type",
+    "tag_id",
+    "result"
+  ],
+  "properties": {
+    "type": {
+      "const": "tag_result"
+    },
+    "tag_id": {
+      "$ref": "../../common/defs.json#/$defs/tag_id"
+    },
+    "result": {
+      "$ref": "../../common/defs.json#/$defs/tag_scan_result"
+    },
+    "tag": {
+      "type": "object",
+      "required": [
+        "name",
+        "action"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "action": {
+          "$ref": "../../common/defs.json#/$defs/tag_action"
+        }
+      },
+      "additionalProperties": true
+    },
+    "retry_after": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "rate_limited only."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "result": {
+            "const": "ok"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "then": {
+        "required": [
+          "tag"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "tag"
+          ]
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

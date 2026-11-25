@@ -1,0 +1,8 @@
+{
+  "type": "notifications_cleared",
+  "data": {
+    "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "client_name": "Wohnzimmer-Panel",
+    "count": 2
+  }
+}

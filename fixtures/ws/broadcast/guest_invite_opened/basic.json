@@ -1,0 +1,11 @@
+{
+  "type": "guest_invite_opened",
+  "data": {
+    "id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+    "invited_by": {
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "name": "iPhone"
+    },
+    "expires_at": "2026-11-19T17:05:00+00:00"
+  }
+}

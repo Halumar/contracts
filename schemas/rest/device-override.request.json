@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/pairing/clients/{client_id}/overrides/{rule_key} (body)",
+  "description": "Set the device adjustment of one rule, permanent or temporary. 422 override.fixed (rule fixed in the profile or without checkbox), override.boundary (a boundary decides the rule for this device, e.g. quick_access on a guest device, or on Hub only without remote access), override.not_applicable, override.value (does not match profile-rule-values.json#/properties/<rule_key>), override.expires_at (expires together with expires_at, or outside data/profile-rules.json expiry_limits), override.user_choice (rule without user_choice_allowed). A value equal to the profile value deletes the adjustment. Loosening a critical/sensitive rule needs the confirmation in the admin UI (loosening_warning); the API itself does not ask. Answer: client-effective.response.json; ?dry_run=true: profile-preview.response.json.",
+  "type": "object",
+  "required": [
+    "value"
+  ],
+  "properties": {
+    "value": {
+      "description": "New value of the rule."
+    },
+    "user_choice": {
+      "type": "boolean",
+      "default": false
+    },
+    "expires": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/rule_expiry_preset"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Temporary: preset, the hub computes expires_at in its time zone (fixtures/profiles/expiry)."
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Temporary: own end (“Date”). Not together with expires (422 override.expires_at)."
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

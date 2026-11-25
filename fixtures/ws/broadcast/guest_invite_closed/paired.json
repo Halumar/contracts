@@ -1,0 +1,8 @@
+{
+  "type": "guest_invite_closed",
+  "data": {
+    "id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+    "result": "paired",
+    "client_id": "6c1f2e3d-4b5a-4968-8776-5a4b3c2d1e0f"
+  }
+}

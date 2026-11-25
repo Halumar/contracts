@@ -1,0 +1,10 @@
+{
+  "entity_id": "media_player.living_room",
+  "service": "volume_set",
+  "data": {
+    "volume_level": 0.9
+  },
+  "area_ids": [
+    "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+  ]
+}

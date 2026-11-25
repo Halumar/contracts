@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sealed watch access (plaintext)",
+  "description": "What watch_access.sealed carries once the watch opened it. config is the watch's own client_config (with its HA token; null only while it has none, e.g. outside its access hours: the watch then keeps its stored token and applies the rest). The watch checks that client_id equals the outer client_id and its own, and ignores an issued_at older than the access it holds (a replayed message never replaces a newer one).",
+  "type": "object",
+  "required": [
+    "client_id",
+    "issued_at",
+    "config"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the hub sealed it (UTC, ISO 8601 with milliseconds)."
+    },
+    "config": {
+      "$ref": "../client-config.json"
+    }
+  },
+  "additionalProperties": false,
+  "x-sensitive": true
+}

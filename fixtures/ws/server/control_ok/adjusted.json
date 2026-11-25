@@ -1,0 +1,8 @@
+{
+  "type": "control_ok",
+  "request_id": "r-18",
+  "entity_id": "media_player.living_room",
+  "adjusted": {
+    "volume_level": 0.4
+  }
+}

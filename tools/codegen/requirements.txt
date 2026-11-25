@@ -1,0 +1,4 @@
+# Generator (generate.py) needs only the Python standard library.
+# Tests (tests/test_codegen.py): validator dependencies + pydantic at the hub's version.
+-r ../requirements.txt
+pydantic==2.10.4

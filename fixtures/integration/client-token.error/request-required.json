@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "request_required",
+    "message": "Token delivery is not bound to an open request"
+  }
+}

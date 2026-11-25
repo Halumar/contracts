@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "auth_timeout",
+  "description": "No successful auth/pair within 30 s; followed by close 4002.",
+  "type": "object",
+  "required": [
+    "type",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "auth_timeout"
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

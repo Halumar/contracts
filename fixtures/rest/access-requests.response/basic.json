@@ -1,0 +1,167 @@
+{
+  "requests": [
+    {
+      "request_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "client_id": "5b6c7d8e-9f0a-4b1c-8d2e-3f4a5b6c7d8e",
+      "device_name": "iPhone Babysitter",
+      "owner_label": "Babysitter",
+      "profile_kind": "babysitter",
+      "note": "Kinder schon wach",
+      "status": "open",
+      "created_at": "2026-11-21T15:20:00Z",
+      "expires_at": "2026-11-21T15:30:00Z",
+      "opens_at": "2026-11-21T16:00:00Z",
+      "durations": [
+        "until_window_start",
+        "1h",
+        "3h",
+        "today"
+      ],
+      "recipients": [
+        {
+          "name": "Papa",
+          "role": "set_up_by"
+        },
+        {
+          "name": "Mama",
+          "role": "setup"
+        }
+      ],
+      "answer": null,
+      "can_answer": true
+    },
+    {
+      "request_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "client_id": "5b6c7d8e-9f0a-4b1c-8d2e-3f4a5b6c7d8e",
+      "device_name": "iPhone Babysitter",
+      "owner_label": "Babysitter",
+      "profile_kind": "babysitter",
+      "note": "Kinder schon wach",
+      "status": "approved",
+      "created_at": "2026-11-21T15:20:00Z",
+      "expires_at": "2026-11-21T15:30:00Z",
+      "opens_at": "2026-11-21T16:00:00Z",
+      "durations": [
+        "until_window_start",
+        "1h",
+        "3h",
+        "today"
+      ],
+      "recipients": [
+        {
+          "name": "Papa",
+          "role": "set_up_by"
+        },
+        {
+          "name": "Mama",
+          "role": "setup"
+        }
+      ],
+      "answer": {
+        "answer": "yes",
+        "duration": "until_window_start",
+        "until": "2026-11-21T16:00:00Z",
+        "message": null,
+        "by": {
+          "kind": "device",
+          "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+          "name": "Papa",
+          "owner_label": "Papa",
+          "via": "home"
+        },
+        "at": "2026-11-21T15:22:00Z"
+      }
+    },
+    {
+      "request_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "client_id": "5b6c7d8e-9f0a-4b1c-8d2e-3f4a5b6c7d8e",
+      "device_name": "iPhone Babysitter",
+      "owner_label": "Babysitter",
+      "profile_kind": "babysitter",
+      "note": "Kinder schon wach",
+      "status": "declined",
+      "created_at": "2026-11-21T15:20:00Z",
+      "expires_at": "2026-11-21T15:30:00Z",
+      "opens_at": "2026-11-21T16:00:00Z",
+      "durations": [
+        "until_window_start",
+        "1h",
+        "3h",
+        "today"
+      ],
+      "recipients": [
+        {
+          "name": "Papa",
+          "role": "set_up_by"
+        },
+        {
+          "name": "Mama",
+          "role": "setup"
+        }
+      ],
+      "answer": {
+        "answer": "no",
+        "duration": null,
+        "until": null,
+        "message": "later",
+        "by": {
+          "kind": "device",
+          "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+          "name": "Papa",
+          "owner_label": "Papa",
+          "via": "away"
+        },
+        "at": "2026-11-21T15:23:00Z"
+      }
+    },
+    {
+      "request_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+      "client_id": "5b6c7d8e-9f0a-4b1c-8d2e-3f4a5b6c7d8e",
+      "device_name": "iPhone Babysitter",
+      "owner_label": "Babysitter",
+      "profile_kind": "babysitter",
+      "note": "Kinder schon wach",
+      "status": "expired",
+      "created_at": "2026-11-21T15:20:00Z",
+      "expires_at": "2026-11-21T15:30:00Z",
+      "opens_at": "2026-11-21T16:00:00Z",
+      "durations": [
+        "until_window_start",
+        "1h",
+        "3h",
+        "today"
+      ],
+      "recipients": [
+        {
+          "name": "Papa",
+          "role": "set_up_by"
+        },
+        {
+          "name": "Mama",
+          "role": "setup"
+        }
+      ],
+      "answer": null
+    }
+  ],
+  "early": [
+    {
+      "client_id": "5b6c7d8e-9f0a-4b1c-8d2e-3f4a5b6c7d8e",
+      "device_name": "iPhone Babysitter",
+      "owner_label": "Babysitter",
+      "early": {
+        "until": "2026-11-21T16:00:00Z",
+        "by": {
+          "kind": "device",
+          "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+          "name": "Papa",
+          "owner_label": "Papa",
+          "via": "home"
+        },
+        "request_id": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f",
+        "duration": "until_window_start",
+        "at": "2026-11-21T15:22:00Z"
+      }
+    }
+  ]
+}

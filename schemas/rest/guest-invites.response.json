@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/guest-invites",
+  "description": "Admin only: open guest invitations of member devices, oldest first. Never contains the PIN. DELETE /api/pairing/guest-invites/{id} cancels one (204; 404 when unknown); the inviting device gets guest_invite_ended {result: revoked}.",
+  "type": "object",
+  "required": [
+    "invites",
+    "expires_in"
+  ],
+  "properties": {
+    "invites": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "invited_by",
+          "created_at",
+          "expires_at"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/guest_invite_id"
+          },
+          "invited_by": {
+            "$ref": "../common/defs.json#/$defs/device_ref"
+          },
+          "created_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "expires_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "expires_in": {
+      "type": "integer",
+      "const": 300,
+      "description": "Lifetime of an invitation in seconds."
+    }
+  },
+  "additionalProperties": true
+}

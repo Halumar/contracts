@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_request",
+  "description": "A request was created, answered, expired or withdrawn. Sent to every connection of every family manager of the child (away through the relay), and as the answer to family_answer.",
+  "type": "object",
+  "required": [
+    "type",
+    "request"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_request"
+    },
+    "request": {
+      "$ref": "../../common/family-request.json"
+    }
+  },
+  "additionalProperties": true
+}

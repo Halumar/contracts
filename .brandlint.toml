@@ -1,0 +1,15 @@
+# Brand lint for Halumar/contracts (merged onto tools/brand/default.brandlint.toml).
+# The contract documents the namespace (namespace.json, enforced in detail by
+# tools/validate.py via literal_scope) and shows real hub output (OpenAPI snapshot,
+# golden fixtures with friendly names).
+# The issue template links name the product, its website and the repositories.
+namespace_allowed = [
+  "namespace.json", "schemas/**", "fixtures/**", "openapi/**", "asyncapi/**",
+  "tools/snapshot_openapi.py",
+  "tools/codegen/snapshots/**/Namespace.kt", "tools/codegen/snapshots/**/namespace.py",
+  "tools/codegen/snapshots/**/Namespace.swift", "tools/codegen/snapshots/**/namespace.ts",
+  ".github/ISSUE_TEMPLATE/config.yml",
+]
+brand_allowed = ["fixtures/**", "openapi/*.json", ".github/ISSUE_TEMPLATE/config.yml"]
+# The brand tools spell the brand and the namespace they look for.
+exclude = ["tools/brand/**"]

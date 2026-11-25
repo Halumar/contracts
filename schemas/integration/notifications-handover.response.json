@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/notifications/handover (200)",
+  "description": "Result per item: created (new at the hub), duplicates (the hub already had this id for the device: idempotent), skipped with a reason (client_not_found = unknown device or a watch whose phone is gone, id_conflict = id of another device, expired = older than 72 h, invalid = e.g. neither title nor message, popup_mode direct without a link). An item for a watch is created for the phone that set it up, as with POST /api/integration/notify (duplicates are checked against the phone). The hub rewrites the notification sensors once afterwards. A schema violation of the body is 422 for the whole call.",
+  "type": "object",
+  "required": [
+    "success",
+    "created",
+    "duplicates",
+    "skipped"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duplicates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "notification_id",
+          "reason"
+        ],
+        "properties": {
+          "notification_id": {
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "client_not_found",
+              "id_conflict",
+              "expired",
+              "invalid"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

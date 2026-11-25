@@ -1,0 +1,17 @@
+{
+  "type": "onboard_ok",
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+  "client_name": "Apple TV Wohnzimmer",
+  "sealed": {
+    "suite": "X25519-SHA256-ChaCha20Poly1305",
+    "enc": "_gkKHeYt1_uzYA2_tZaDa4cmi2DvV21qVeiTJoF_TSE",
+    "ciphertext": "2ZFPicCd8ehI5KDc7QnWl5DDubBs6iVWD82Wz0_Rz3SKYtOZHwXKXB3OFTuzWIxPUqgFY1ki-lCZUrRg-hUtQEnSm6tPNtBh5pmnRbQ5yvQujdUMAMklF7loDsMu-BsVjzPMe3cphdcYbWHjaxMV2Me2JMJ0M2H-0TLGgP5Mbcs_mCjl5PGGkNsrki_Zq4y3"
+  },
+  "protocol_version": 1,
+  "min_protocol_version": 1,
+  "min_app_version": {
+    "ios": "2026.12.0",
+    "ipados": "2026.12.0",
+    "tvos": "2026.12.0"
+  }
+}

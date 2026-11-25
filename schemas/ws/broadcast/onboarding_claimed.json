@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast onboarding_claimed",
+  "description": "A member device looked up a running onboarding session (by QR code or code): the admin UI shows “being set up by <name>”. Never the session id, code or key.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboarding_claimed"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "claimed_by"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "claimed_by": {
+          "$ref": "../../common/defs.json#/$defs/device_ref"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

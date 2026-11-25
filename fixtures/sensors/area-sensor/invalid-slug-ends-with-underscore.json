@@ -1,0 +1,69 @@
+{
+  "entity_id": "sensor.halumar_area_wohnzimmer__a1b2c3d4",
+  "state": "2",
+  "attributes": {
+    "friendly_name": "Halumar: Wohnzimmer",
+    "icon": "mdi:sofa",
+    "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+    "name": "Wohnzimmer",
+    "description": null,
+    "color": "#4CAF50",
+    "grid_cols": 4,
+    "sort_order": 0,
+    "is_active": true,
+    "control_mode": null,
+    "card_image_src": "/images/0f3c9e2a.jpg",
+    "card_image_url": null,
+    "bg_light_src": null,
+    "bg_light_url": null,
+    "bg_dark_src": null,
+    "bg_dark_url": null,
+    "tags": [],
+    "section_count": 1,
+    "updated_at": "2026-11-18T08:15:00.123456+00:00",
+    "unit_of_measurement": "entities",
+    "sections": [
+      {
+        "id": "5ec7a000-0000-4000-8000-000000000001",
+        "title": "Licht",
+        "icon": null,
+        "column_span": 1,
+        "columns": 2,
+        "sort_order": 0,
+        "is_collapsed": 0,
+        "entities": [
+          {
+            "entity_id": "light.bed_light",
+            "display_name": null,
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 0,
+            "is_visible": 1,
+            "control_mode": null
+          },
+          {
+            "entity_id": "climate.hvac",
+            "display_name": "Klima",
+            "columns": 2,
+            "rows": 1,
+            "sort_order": 1,
+            "is_visible": 1,
+            "control_mode": "full"
+          }
+        ],
+        "widgets": [
+          {
+            "id": "d1d1d1d1-0000-4000-8000-000000000001",
+            "widget_type": "clock",
+            "config": {
+              "show_seconds": false
+            },
+            "columns": 1,
+            "rows": 1,
+            "sort_order": 2
+          }
+        ]
+      }
+    ]
+  }
+}

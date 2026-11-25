@@ -1,0 +1,10 @@
+{
+  "retention_days": 90,
+  "hidden_owners": [
+    "Child 1"
+  ],
+  "alarm_threshold": {
+    "count": 5,
+    "window_minutes": 10
+  }
+}

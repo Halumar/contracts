@@ -1,0 +1,23 @@
+{
+  "entity_id": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_quick_access",
+  "state": "3",
+  "attributes": {
+    "friendly_name": "Halumar Wohnzimmer Panel Schnellzugriff",
+    "icon": "mdi:widgets",
+    "client_id": "3f2b8c1e-5d4a-4c3b-9a2f-1e0d9c8b7a65",
+    "enabled": true,
+    "max": "control",
+    "entities": {
+      "light.living_room_rgbww_lights": "control",
+      "scene.movie_night": "control",
+      "lock.front_door": "control",
+      "cover.garage_door": "status",
+      "sensor.outside_temperature": "status"
+    },
+    "critical": [
+      "lock.front_door",
+      "cover.garage_door"
+    ],
+    "updated_at": "2026-11-19T08:15:00Z"
+  }
+}

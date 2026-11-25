@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Early access requests",
+  "description": "Catalog of “Ask for early access” (docs/access.md#early-access): the durations of a Yes, the short answers of a No, the buttons of Home Assistant notifications, texts for the requesting device and for the recipients, and the limits the hub enforces. Hub, admin UI and apps read the same file.",
+  "type": "object",
+  "required": [
+    "version",
+    "durations",
+    "decline_messages",
+    "notify_actions",
+    "requester_texts",
+    "recipient_texts",
+    "limits"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "durations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/access_request_duration"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "short": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decline_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "requester_text"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/access_decline_message"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "requester_text": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notify_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "answer",
+          "duration",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,20}$"
+          },
+          "answer": {
+            "$ref": "../common/defs.json#/$defs/family_answer"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/access_request_duration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requester_texts": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "../common/defs.json#/$defs/localized_text"
+      }
+    },
+    "recipient_texts": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "../common/defs.json#/$defs/localized_text"
+      }
+    },
+    "limits": {
+      "type": "object",
+      "required": [
+        "request_timeout_minutes",
+        "requests_per_hour",
+        "decline_cooldown_minutes",
+        "open_requests_per_device",
+        "note_max_length",
+        "until_window_start_max_hours",
+        "messages_per_device_per_minute",
+        "answers_per_recipient_per_hour",
+        "recipients_max",
+        "answer_token_bytes"
+      ],
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  },
+  "additionalProperties": false
+}

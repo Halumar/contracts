@@ -1,0 +1,16 @@
+{
+  "status": "error",
+  "db": "database is locked",
+  "version": "2026.12.0",
+  "build": null,
+  "uptime_seconds": 12,
+  "connected_clients": 0,
+  "tls_fingerprint": null,
+  "protocol_version": 1,
+  "min_protocol_version": 1,
+  "min_app_version": {
+    "ios": "2026.12.0",
+    "ipados": "2026.12.0",
+    "tvos": "2026.12.0"
+  }
+}

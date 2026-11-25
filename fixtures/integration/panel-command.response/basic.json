@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "client_id": "c1d2e3f4-0000-4000-8000-0000000000a1",
+  "action": "set_brightness",
+  "panel": {
+    "screen": "active",
+    "brightness": 0.4,
+    "brightness_mode": "manual",
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "set_brightness",
+      "set_brightness_mode"
+    ]
+  }
+}

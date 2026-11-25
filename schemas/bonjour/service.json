@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bonjour service announcement",
+  "type": "object",
+  "required": [
+    "service_type",
+    "instance_name",
+    "host",
+    "port",
+    "txt"
+  ],
+  "properties": {
+    "service_type": {
+      "const": "_halumar._tcp.local.",
+      "x-namespace-key": "bonjour_service_type"
+    },
+    "instance_name": {
+      "type": "string",
+      "description": "'<home title> (<short id>).' + bonjour_service_type; the short id is the first 6 hex digits of the stable instance id (TXT iid), name conflicts are resolved by mDNS probing."
+    },
+    "host": {
+      "type": "string",
+      "pattern": "^hub-[0-9a-f]{6}(-[0-9a-z]+)?\\.local\\.$",
+      "description": "'hub-<short id>.local.' (functional, not namespaced); '-2', '-3' … is appended when another responder already answers for the name."
+    },
+    "port": {
+      "const": 8099
+    },
+    "addresses": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "ipv4"
+      }
+    },
+    "txt": {
+      "$ref": "txt-record.json"
+    }
+  },
+  "additionalProperties": false
+}

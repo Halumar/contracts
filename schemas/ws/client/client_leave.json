@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_leave",
+  "description": "The device signs itself off before it resets or removes this home. Only on an authenticated socket of a paired device (members, child devices and guests); client_id must be the authenticated device, otherwise error and nothing is removed. The hub removes the device like an admin deletion whose HA user goes at once: the pairing row is deleted (no tombstone, the device has wiped itself), the integration removes the device's HA user (deprovision_client), open guest invitations of the device end, admin UIs get client_kicked with reason 'left', the audit log records 'client_left'. Reply client_leave_ok, then close 1000; other live connections of the device close 4001. A device that cannot reach the hub resets locally without it; the admin deletes it as before. A device without a hub socket (the watch) signs off with POST /api/client/leave and its secret.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_leave"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

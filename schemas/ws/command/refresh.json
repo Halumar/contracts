@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command refresh",
+  "description": "Reload everything, triggered by POST /api/integration/clients/{id}/refresh.",
+  "type": "object",
+  "required": [
+    "type",
+    "command"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "refresh"
+    }
+  },
+  "additionalProperties": true
+}

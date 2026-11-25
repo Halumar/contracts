@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "rule_blocked",
+  "description": "A rule of the device's profile rejected the action (or, with parental controls, a camera_image_get or media_image_get of a blocked device type: reason blocked). until = next allowed time (UTC) for quiet_hours, rate_limited, cooldown, paused_all, access_closed (when access opens again, null while the switch is off); null for blocked, color_locked, volume_limit. retry_after = seconds until then (null without time). Apps show a child-friendly message by reason, with a countdown when until is set. Same body as 403 of POST /api/client/control.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id",
+    "reason",
+    "level",
+    "until",
+    "retry_after"
+  ],
+  "properties": {
+    "type": {
+      "const": "rule_blocked"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/control_request_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/rule_blocked_reason"
+    },
+    "level": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/rule_level"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "retry_after": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limit": {
+      "type": "object",
+      "properties": {
+        "volume_max": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "max_actions": {
+          "type": "integer"
+        },
+        "window_seconds": {
+          "type": "integer"
+        },
+        "max_entities": {
+          "type": "integer",
+          "description": "Reason paused_all: different entities allowed within window_seconds."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

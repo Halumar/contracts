@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Request of a child",
+  "description": "“Can I have more time?”: a child device asks its family managers (and the admin). One open request per child device. answer is set exactly for approved/declined. The child sees only status, answer.answer/until/message and the first name of who answered; family managers and the admin see everything. Babysitters (kind babysitter, rule babysitter_requests) receive open requests while they have access and are at home; answer.by.kind babysitter names them for the parents.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "client_id",
+    "child_name",
+    "category",
+    "status",
+    "created_at",
+    "expires_at",
+    "answer"
+  ],
+  "properties": {
+    "request_id": {
+      "$ref": "defs.json#/$defs/family_request_id"
+    },
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "child_name": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Device name of the child device."
+    },
+    "owner_label": {
+      "$ref": "defs.json#/$defs/owner_label"
+    },
+    "category": {
+      "$ref": "defs.json#/$defs/family_request_category"
+    },
+    "entity_id": {
+      "$ref": "defs.json#/$defs/entity_id"
+    },
+    "entity_name": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "$ref": "defs.json#/$defs/family_request_status"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "expires_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "can_approve": {
+      "type": "boolean",
+      "description": "For family managers: true = a Yes is allowed for this device (no fixed rule in the way). false: the app disables Yes and says that only the admin can allow it."
+    },
+    "answer_presets": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.json#/$defs/family_release_preset"
+      },
+      "description": "Only in requests sent to a babysitter: the durations it may give with a Yes (15m, 30m and access_end while its access has a known end). Babysitters get no note of the child's earlier requests and no rules."
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "answer",
+            "by",
+            "at"
+          ],
+          "properties": {
+            "answer": {
+              "$ref": "defs.json#/$defs/family_answer"
+            },
+            "preset": {
+              "$ref": "defs.json#/$defs/family_release_preset"
+            },
+            "until": {
+              "anyOf": [
+                {
+                  "$ref": "defs.json#/$defs/timestamp"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "message": {
+              "anyOf": [
+                {
+                  "$ref": "defs.json#/$defs/family_decline_message"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "by": {
+              "$ref": "family-actor.json"
+            },
+            "at": {
+              "$ref": "defs.json#/$defs/timestamp"
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "category": {
+            "const": "unlock_device"
+          }
+        },
+        "required": [
+          "category"
+        ]
+      },
+      "then": {
+        "required": [
+          "entity_id"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

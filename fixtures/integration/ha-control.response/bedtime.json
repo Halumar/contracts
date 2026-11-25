@@ -1,0 +1,13 @@
+{
+  "route": "local",
+  "rules_hash": "f619ffe256afcf50c053f1da6e38ace953fb51e24a75a808219c3cf5db6d8886",
+  "results": [
+    {
+      "entity_id": "light.kids_room",
+      "ok": false,
+      "executed": false,
+      "reason": "blocked_kids_bedtime",
+      "until": "2026-11-21T05:30:00+00:00"
+    }
+  ]
+}

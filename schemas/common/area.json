@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Area (WebSocket list item)",
+  "description": "Item of the WS 'areas' response: raw areas row plus entity_count, tags, *_src and icon_svg. Only active areas, filtered by client tags.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "sort_order",
+    "is_active",
+    "tags",
+    "entity_count"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "icon": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "icon_svg": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "SVG path data resolved from an mdi: icon, rendered by the apps."
+    },
+    "description": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "color": {
+      "$ref": "defs.json#/$defs/hex_color"
+    },
+    "card_image_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Server file path. Only in admin sessions (Ingress, admin web UI) and the admin REST API; never sent to paired apps. Use the *_src / *_url fields.",
+      "deprecated": true
+    },
+    "card_image_url": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "card_image_src": {
+      "$ref": "defs.json#/$defs/image_src"
+    },
+    "bg_light_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "deprecated": true,
+      "description": "Server file path. Only in admin sessions (Ingress, admin web UI) and the admin REST API; never sent to paired apps. Use the *_src / *_url fields."
+    },
+    "bg_light_url": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "bg_light_src": {
+      "$ref": "defs.json#/$defs/image_src"
+    },
+    "bg_dark_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "deprecated": true,
+      "description": "Server file path. Only in admin sessions (Ingress, admin web UI) and the admin REST API; never sent to paired apps. Use the *_src / *_url fields."
+    },
+    "bg_dark_url": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "bg_dark_src": {
+      "$ref": "defs.json#/$defs/image_src"
+    },
+    "grid_cols": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 4,
+      "description": "DB default 2, REST response default 4, apps default 4 (known deviation D2, docs/protocol.md)."
+    },
+    "dense_section_placement": {
+      "$ref": "defs.json#/$defs/boolish"
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "is_active": {
+      "$ref": "defs.json#/$defs/boolish"
+    },
+    "control_mode": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/control_mode"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "null = inherit the global default."
+    },
+    "ha_area_id": {
+      "$ref": "defs.json#/$defs/nullable_string"
+    },
+    "tags": {
+      "$ref": "defs.json#/$defs/area_tags"
+    },
+    "entity_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "room_climate": {
+      "description": "Which entities give the room temperature and humidity of the area card, the climate capsule, the wall panel and widgets (room-climate.json, docs/room-climate.md). When absent, the apps apply the rule locally.",
+      "$ref": "room-climate.json"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    }
+  },
+  "additionalProperties": true
+}

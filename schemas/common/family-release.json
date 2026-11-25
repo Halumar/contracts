@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Release on a child device",
+  "description": "Running release: until `until` the rule(s) of kind do not apply on this child device. bedtime: kids_quiet_hours; pause: kids_rate_limit and running pauses; entity: blocked type and bedtime for entity_id (never locks/alarm panels or entities blocked in kids_exceptions). Ends at until (hub planner), by release_end or when the device loses parental controls. At most one release per kind (and per entity).",
+  "type": "object",
+  "required": [
+    "kind",
+    "until",
+    "by",
+    "created_at"
+  ],
+  "properties": {
+    "kind": {
+      "$ref": "defs.json#/$defs/family_release_kind"
+    },
+    "entity_id": {
+      "$ref": "defs.json#/$defs/entity_id"
+    },
+    "until": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "by": {
+      "$ref": "family-actor.json"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/family_request_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "entity"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "entity_id"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

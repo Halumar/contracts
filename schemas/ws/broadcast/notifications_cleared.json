@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast notifications_cleared",
+  "description": "Admin cleared all notifications of a client.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "notifications_cleared"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "client_name": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "client_id",
+        "count"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

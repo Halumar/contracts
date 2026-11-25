@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "panel_command_ok",
+  "description": "App -> hub: the panel_command with this id was executed. panel carries the status after the command (same shape as client_status.panel); the hub stores it like a client_status. No answer from the hub.",
+  "type": "object",
+  "required": [
+    "type",
+    "id"
+  ],
+  "properties": {
+    "type": {
+      "const": "panel_command_ok"
+    },
+    "id": {
+      "$ref": "../../common/defs.json#/$defs/panel_command_id"
+    },
+    "panel": {
+      "anyOf": [
+        {
+          "$ref": "../../common/panel-status.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

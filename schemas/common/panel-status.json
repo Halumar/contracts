@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Panel status",
+  "description": "Live status of a device for Home Assistant, reported by the app in client_status.panel and echoed in panel_command_ok. Every app with a hub connection sends it, not only wall panels: on a wall panel (iPad or Android tablet in wall panel mode) and on a TV the screen state, on every other device (phone, tablet without wall panel) whether the app is in front (screen active) or not (off). The hub keeps only the last value (no history), checks enums and ranges and drops invalid fields silently. No touch timestamp: the coarse screen state is enough for automations and is not a presence log. Reserved for later app versions: the capabilities pip, proximity_sensor, device_admin, device_owner, background_connection, nfc, charge_limit_detected and the Android values battery_temperature and battery_health.",
+  "type": "object",
+  "properties": {
+    "screen": {
+      "$ref": "defs.json#/$defs/panel_screen"
+    },
+    "panel_mode": {
+      "type": "boolean",
+      "description": "True while the wall panel mode (iPad, Android tablet) or the kiosk (Apple TV, Android TV) is shown; false when the app runs normally (phones always false). Outside the panel mode screen is only active (app in front) or off (app in the background, or the device left it), and panel_command is answered with not_in_panel_mode."
+    },
+    "brightness": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Actual backlight 0–1 (screen brightness of the system on iPhone and iPad, window brightness on Android). Phones and tablets outside the wall panel mode: only while the app is in front, null in the background (iOS lets no app read the brightness there). null on Apple TV."
+    },
+    "brightness_mode": {
+      "$ref": "defs.json#/$defs/panel_brightness_mode"
+    },
+    "illuminance": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 200000,
+      "description": "Android only: light sensor of the device in lx (median over a few seconds; sent on a change of 15 % or 5 lx, at most every 10 s). iPadOS has no light sensor API for apps."
+    },
+    "actions": {
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 16,
+      "items": {
+        "$ref": "defs.json#/$defs/panel_action"
+      },
+      "description": "Capabilities: the panel_command actions this app supports right now (iPad: all except screen_off; Apple TV: wake, screensaver, home, reload; Android: plus screen_off depending on the lock level). The hub rejects other actions with unsupported."
+    },
+    "light_sensor": {
+      "type": "boolean",
+      "description": "Android: the device has a light sensor (illuminance possible)."
+    },
+    "lock": {
+      "$ref": "defs.json#/$defs/panel_lock",
+      "description": "Android lock level: none, pinning, lock_task (device owner), device_admin."
+    },
+    "pip": {
+      "type": "boolean",
+      "description": "picture-in-picture is available (Apple TV, Google TV, iPad, Android); show_camera can continue in picture-in-picture when the user starts it."
+    },
+    "proximity_sensor": {
+      "type": "boolean",
+      "description": "Android: the device has a proximity sensor (panel_wake proximity possible). The proximity value itself never leaves the device."
+    },
+    "device_admin": {
+      "type": "boolean",
+      "description": "Android: the app is device administrator (panel_off_mode off possible)."
+    },
+    "device_owner": {
+      "type": "boolean",
+      "description": "Android: the app is device owner (lock task without confirmation)."
+    },
+    "background_connection": {
+      "type": "boolean",
+      "description": "Android: a foreground service keeps the hub connection while the app is not in front."
+    },
+    "nfc": {
+      "type": "boolean",
+      "description": "The device can read NFC tags right now (reader present and switched on)."
+    },
+    "charge_limit_detected": {
+      "type": "boolean",
+      "description": "Android: the device limits charging itself (e.g. 80/85 % battery protection); the battery protection blueprint is then not needed."
+    },
+    "battery_temperature": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": -40,
+      "maximum": 100,
+      "description": "Android only: battery temperature in °C (one decimal; sent on a change of 1 °C, at most every 60 s). Sensor battery_temperature of panel_sensors."
+    },
+    "battery_health": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/battery_health"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Android only: battery health (attribute of the sensor battery_temperature)."
+    }
+  },
+  "additionalProperties": true
+}

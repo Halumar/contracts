@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/pairing/clients/bulk (answer)",
+  "type": "object",
+  "required": [
+    "dry_run",
+    "results"
+  ],
+  "properties": {
+    "dry_run": {
+      "type": "boolean"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "status"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "status": {
+            "enum": [
+              "changed",
+              "unchanged",
+              "skipped"
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "not_found",
+                  "guest_child_protection",
+                  "rule_fixed",
+                  "boundary",
+                  "not_applicable",
+                  "invalid_value"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "preview": {
+      "anyOf": [
+        {
+          "$ref": "profile-preview.response.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

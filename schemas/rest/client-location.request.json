@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/client/location",
+  "description": "REST twin (devices on the hub path only) of the WS location_report for reports without a hub socket (app in the background). Authorization: Bearer <device secret> (like /api/client/control); 401 for an unknown, revoked or deleted device. Answers: 200 location_report_ok, 403 location_report_error {location_not_allowed|location_background_not_allowed|not_hub_controlled}, 422 {invalid_request|location_stale}, 429 {rate_limited} with Retry-After (bodies = schemas/ws/server/location_report_*.json).",
+  "type": "object",
+  "required": [
+    "latitude",
+    "longitude",
+    "accuracy",
+    "background",
+    "ts"
+  ],
+  "properties": {
+    "latitude": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "longitude": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "accuracy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Horizontal accuracy in m."
+    },
+    "altitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": -1000,
+      "maximum": 100000
+    },
+    "vertical_accuracy": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "speed": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "m/s."
+    },
+    "course": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 360
+    },
+    "battery_level": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "background": {
+      "type": "boolean",
+      "description": "Fix taken while the app was not in the foreground."
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time of the fix (UTC)."
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "What the app shares now (optional, like client_status.location_shared)."
+    }
+  },
+  "additionalProperties": false
+}

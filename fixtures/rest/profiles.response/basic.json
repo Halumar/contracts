@@ -1,0 +1,299 @@
+{
+  "profiles": [
+    {
+      "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+      "name": "Erwachsen",
+      "kind": "person",
+      "description": "Sees and controls everything at home, also when away. Invites guests and adds devices only if you allow it per device.",
+      "icon": "mdi:account",
+      "color": "#2E7D32",
+      "child_protection": false,
+      "rules": {
+        "remote_access": true,
+        "setup_devices": {
+          "enabled": false,
+          "kinds": []
+        },
+        "app_settings": "open",
+        "app_settings_biometrics": false,
+        "remote_control": {
+          "default": "control",
+          "domains": {
+            "lock": "view",
+            "alarm_control_panel": "view",
+            "cover:garage": "view",
+            "cover:gate": "view"
+          },
+          "entities": {}
+        },
+        "areas": {
+          "mode": "all",
+          "area_ids": [],
+          "tags": [],
+          "own_area": false
+        },
+        "control_mode_max": "full",
+        "camera_live": true,
+        "kids_blocked_types": [
+          "lock",
+          "alarm_control_panel",
+          "cover:garage",
+          "cover:gate",
+          "camera"
+        ],
+        "kids_quiet_hours": [
+          {
+            "days": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri"
+            ],
+            "start": "20:00",
+            "end": "06:30"
+          },
+          {
+            "days": [
+              "sat",
+              "sun"
+            ],
+            "start": "21:00",
+            "end": "07:00"
+          }
+        ],
+        "kids_rate_limit": {
+          "max_actions": 6,
+          "window_seconds": 60,
+          "cooldown_seconds": 300
+        },
+        "kids_volume_max": 40,
+        "kids_color_lock": false,
+        "kids_exceptions": [],
+        "quick_access": "control",
+        "watch": true,
+        "card_style": "calm",
+        "appearance": "system",
+        "header": true,
+        "search_filter": true,
+        "columns": 2,
+        "power_button": {
+          "enabled": false,
+          "domains": [
+            "light"
+          ]
+        },
+        "notification_level": "all",
+        "notification_stack": "banner",
+        "kiosk": false,
+        "panel_start": {
+          "mode": "overview",
+          "area_id": null
+        },
+        "panel_auto_home": 0,
+        "panel_dim": 0,
+        "panel_screensaver": 0,
+        "panel_night": {
+          "mode": "off",
+          "start": "22:00",
+          "end": "06:00",
+          "brightness": 20
+        },
+        "location": "background",
+        "location_required": false
+      },
+      "fixed": [
+        "kids_blocked_types",
+        "kids_color_lock",
+        "kids_exceptions",
+        "kids_quiet_hours",
+        "kids_rate_limit",
+        "kids_volume_max"
+      ],
+      "user_choice": [
+        "appearance",
+        "card_style",
+        "columns",
+        "header",
+        "kiosk",
+        "notification_level",
+        "notification_stack",
+        "panel_auto_home",
+        "panel_dim",
+        "panel_night",
+        "panel_screensaver",
+        "panel_start",
+        "power_button",
+        "search_filter"
+      ],
+      "origin": {
+        "suggestion_id": "adult",
+        "version": 1
+      },
+      "suggestion_update": null,
+      "catalog_defaults": [],
+      "default_for": [
+        "ios",
+        "watchos",
+        "android",
+        "wearos"
+      ],
+      "has_remote_pin": false,
+      "remote_pin_fixed": false,
+      "device_count": 3,
+      "adjusted_device_count": 1,
+      "guest_device_count": 0,
+      "rev": 4,
+      "created_at": "2026-11-19T10:00:00Z",
+      "updated_at": "2026-11-19T10:00:00Z",
+      "updated_by": "Admin"
+    },
+    {
+      "id": "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d",
+      "name": "Kind",
+      "kind": "child",
+      "description": "Controls only through the hub and only at home. Locks, alarm, garage and cameras are blocked. Bedtime Mon–Fri from 20:00.",
+      "icon": "mdi:human-child",
+      "color": "#F9A825",
+      "child_protection": true,
+      "rules": {
+        "remote_access": false,
+        "setup_devices": {
+          "enabled": false,
+          "kinds": []
+        },
+        "app_settings": "pin",
+        "app_settings_biometrics": false,
+        "remote_control": {
+          "default": "control",
+          "domains": {
+            "lock": "view",
+            "alarm_control_panel": "view",
+            "cover:garage": "view",
+            "cover:gate": "view"
+          },
+          "entities": {}
+        },
+        "areas": {
+          "mode": "all",
+          "area_ids": [],
+          "tags": [],
+          "own_area": false
+        },
+        "control_mode_max": "advanced",
+        "camera_live": false,
+        "kids_blocked_types": [
+          "lock",
+          "alarm_control_panel",
+          "cover:garage",
+          "cover:gate",
+          "camera"
+        ],
+        "kids_quiet_hours": [
+          {
+            "days": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri"
+            ],
+            "start": "20:00",
+            "end": "06:30"
+          },
+          {
+            "days": [
+              "sat",
+              "sun"
+            ],
+            "start": "21:00",
+            "end": "07:00"
+          }
+        ],
+        "kids_rate_limit": {
+          "max_actions": 6,
+          "window_seconds": 60,
+          "cooldown_seconds": 300
+        },
+        "kids_volume_max": 40,
+        "kids_color_lock": false,
+        "kids_exceptions": [],
+        "quick_access": "off",
+        "watch": false,
+        "card_style": "color",
+        "appearance": "system",
+        "header": true,
+        "search_filter": true,
+        "columns": 2,
+        "power_button": {
+          "enabled": false,
+          "domains": [
+            "light"
+          ]
+        },
+        "notification_level": "all",
+        "notification_stack": "banner",
+        "kiosk": false,
+        "panel_start": {
+          "mode": "overview",
+          "area_id": null
+        },
+        "panel_auto_home": 0,
+        "panel_dim": 0,
+        "panel_screensaver": 0,
+        "panel_night": {
+          "mode": "off",
+          "start": "22:00",
+          "end": "06:00",
+          "brightness": 20
+        },
+        "location": "off",
+        "location_required": false
+      },
+      "fixed": [
+        "app_settings",
+        "kids_blocked_types",
+        "kids_color_lock",
+        "kids_exceptions",
+        "kids_quiet_hours",
+        "kids_rate_limit",
+        "kids_volume_max"
+      ],
+      "user_choice": [
+        "appearance",
+        "card_style",
+        "columns",
+        "header",
+        "kiosk",
+        "notification_level",
+        "notification_stack",
+        "panel_auto_home",
+        "panel_dim",
+        "panel_night",
+        "panel_screensaver",
+        "panel_start",
+        "power_button",
+        "search_filter"
+      ],
+      "origin": {
+        "suggestion_id": "child",
+        "version": 1
+      },
+      "suggestion_update": {
+        "version": 2
+      },
+      "catalog_defaults": [],
+      "default_for": [],
+      "has_remote_pin": true,
+      "remote_pin_fixed": true,
+      "device_count": 2,
+      "adjusted_device_count": 0,
+      "guest_device_count": 0,
+      "rev": 1,
+      "created_at": "2026-11-19T10:00:00Z",
+      "updated_at": "2026-11-19T10:00:00Z",
+      "updated_by": "Admin"
+    }
+  ],
+  "max_profiles": 50
+}

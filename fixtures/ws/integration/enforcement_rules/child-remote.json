@@ -1,0 +1,76 @@
+{
+  "type": "enforcement_rules",
+  "data": {
+    "snapshots": [
+      {
+        "version": 1,
+        "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+        "ha_user_id": "fedcba9876543210fedcba9876543210",
+        "issued_at": "2026-11-20T18:00:00+00:00",
+        "rules_hash": "818a681886fdf95c73e19bf0cff912fcaea41e2d3e58877d0a3081948ac6ee90",
+        "control_path": "checked",
+        "remote_access": true,
+        "child_protection": true,
+        "entities": {
+          "light.kids_room": {
+            "local": "control",
+            "remote": "control",
+            "quick": "off"
+          },
+          "media_player.kids_speaker": {
+            "local": "control",
+            "remote": "control",
+            "quick": "off"
+          }
+        },
+        "kids": {
+          "time_zone": "Europe/Zurich",
+          "override_until": null,
+          "entities": {
+            "light.kids_room": {
+              "blocked": false,
+              "quiet_hours": [
+                {
+                  "days": [
+                    "mon",
+                    "tue",
+                    "wed",
+                    "thu",
+                    "fri"
+                  ],
+                  "start": "20:00",
+                  "end": "06:30"
+                }
+              ],
+              "color_lock": true,
+              "volume_max": null,
+              "rate_limit": {
+                "max_actions": 6,
+                "window_seconds": 60,
+                "cooldown_seconds": 300
+              }
+            },
+            "media_player.kids_speaker": {
+              "blocked": false,
+              "quiet_hours": [],
+              "color_lock": false,
+              "volume_max": 40,
+              "rate_limit": null
+            }
+          }
+        },
+        "access": null,
+        "home_networks": [
+          "100.64.0.0/10",
+          "fd7a:115c:a1e0::/48"
+        ],
+        "location": "foreground"
+      }
+    ],
+    "control_paths": {
+      "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b": "checked"
+    },
+    "removed": [],
+    "complete": true
+  }
+}

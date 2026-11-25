@@ -1,0 +1,17 @@
+{
+  "name": "empty",
+  "input": [],
+  "expect": {
+    "networks": []
+  },
+  "hosts": [
+    {
+      "address": "100.64.1.1",
+      "home": false
+    },
+    {
+      "address": "8.8.8.8",
+      "home": false
+    }
+  ]
+}

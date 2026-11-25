@@ -1,0 +1,48 @@
+{
+  "namespace": "halumar",
+  "unread_alarms": 1,
+  "unread": [
+    {
+      "id": 40,
+      "ts": "2026-11-19T17:31:00+00:00",
+      "kind": "denied",
+      "device_name": "iPad Kind",
+      "client_id": "22222222-2222-4222-8222-222222222222"
+    }
+  ],
+  "counts": {
+    "activity_today": 12,
+    "changes_7d": 4,
+    "alarms_7d": 1
+  },
+  "total": 230,
+  "oldest_ts": "2026-10-21T08:00:00+00:00",
+  "retention_days": 30,
+  "hidden_owners": [],
+  "integration_connected": true,
+  "time_zone": "Europe/Zurich",
+  "facets": {
+    "devices": [
+      {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "name": "iPhone Air"
+      }
+    ],
+    "owners": [
+      "Admin",
+      "Child 1"
+    ],
+    "profiles": [
+      {
+        "id": "p-kid",
+        "name": "Kind"
+      }
+    ],
+    "areas": [
+      {
+        "id": "a-kitchen",
+        "name": "Küche"
+      }
+    ]
+  }
+}

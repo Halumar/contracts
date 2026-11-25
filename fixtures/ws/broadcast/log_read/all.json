@@ -1,0 +1,7 @@
+{
+  "type": "log_read",
+  "data": {
+    "ids": null,
+    "all": true
+  }
+}

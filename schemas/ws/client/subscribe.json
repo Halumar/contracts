@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "subscribe",
+  "description": "No-op; answered with 'subscribed'. Clients need not send it.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "subscribe"
+    },
+    "area_id": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true,
+  "deprecated": true
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast log_read",
+  "description": "Alarms were marked as read (POST /api/log/read) – the given ids or all; open admin UIs update the unread count. Admin sessions only; never sent to the integration push session.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "log_read"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "ids",
+        "all"
+      ],
+      "properties": {
+        "ids": {
+          "anyOf": [
+            {
+              "type": "array",
+              "maxItems": 500,
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "all": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

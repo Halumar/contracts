@@ -1,0 +1,356 @@
+{
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+  "platform": "ios",
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": {
+    "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "name": "Erwachsen",
+    "rev": 4,
+    "child_protection": false
+  },
+  "own_area_id": null,
+  "has_remote_pin": false,
+  "remote_pin_source": null,
+  "rules": {
+    "remote_access": {
+      "value": false,
+      "source": "device",
+      "reason": "device",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha",
+      "profile_value": true
+    },
+    "setup_devices": {
+      "value": {
+        "enabled": false,
+        "kinds": []
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub",
+      "profile_value": false
+    },
+    "app_settings": {
+      "value": "open",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": "open"
+    },
+    "app_settings_biometrics": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": false
+    },
+    "remote_control": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_remote_access",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "areas": {
+      "value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      }
+    },
+    "control_mode_max": {
+      "value": "full",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": "full"
+    },
+    "camera_live": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": true
+    },
+    "kids_blocked_types": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "kids_quiet_hours": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "kids_rate_limit": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "kids_volume_max": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "kids_color_lock": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "kids_exceptions": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "requires_child_protection",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "hub"
+    },
+    "quick_access": {
+      "value": "control",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": "control"
+    },
+    "watch": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub",
+      "profile_value": true
+    },
+    "card_style": {
+      "value": "calm",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": "calm"
+    },
+    "appearance": {
+      "value": "system",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": "system"
+    },
+    "header": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": true
+    },
+    "search_filter": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": true
+    },
+    "columns": {
+      "value": 2,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": 2
+    },
+    "power_button": {
+      "value": {
+        "enabled": false,
+        "domains": [
+          "light"
+        ]
+      },
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": {
+        "enabled": false,
+        "domains": [
+          "light"
+        ]
+      }
+    },
+    "notification_level": {
+      "value": "all",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": "all"
+    },
+    "notification_stack": {
+      "value": "banner",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app",
+      "profile_value": "banner"
+    },
+    "kiosk": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_start": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_auto_home": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_dim": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_screensaver": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "panel_night": {
+      "value": null,
+      "source": "not_applicable",
+      "reason": "not_applicable",
+      "locked": true,
+      "fixed": true,
+      "enforcement": "app"
+    },
+    "location": {
+      "value": "background",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app",
+      "profile_value": "background"
+    }
+  },
+  "overrides": [
+    {
+      "rule": "remote_access",
+      "value": false,
+      "user_choice": false,
+      "expires_at": null,
+      "note": null,
+      "created_by": "Admin",
+      "created_at": "2026-11-19T21:00:00Z"
+    }
+  ],
+  "scene_hints": [
+    {
+      "entity_id": "script.all_off",
+      "name": "Alles aus",
+      "area_ids": [
+        "8a1d2c3e-4f50-4a61-9b72-c3d4e5f60718"
+      ],
+      "targets_unknown": false,
+      "targets": [
+        {
+          "entity_id": "light.bed_light",
+          "name": "Bettlicht",
+          "reason": "outside_areas",
+          "area_ids": []
+        }
+      ]
+    }
+  ],
+  "hub_remote_now": true,
+  "hub_remote_at": "2026-11-20T20:00:00Z"
+}

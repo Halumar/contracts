@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config",
+  "description": "Answer to get_client_config.",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_config"
+    },
+    "data": {
+      "$ref": "../../client-config.json"
+    }
+  },
+  "additionalProperties": true
+}

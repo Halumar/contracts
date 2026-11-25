@@ -1,0 +1,13 @@
+{
+  "type": "upgrade_required",
+  "reason": "app_version",
+  "message": "This app version is too old for this hub. Please update the app.",
+  "protocol_version": 1,
+  "min_protocol_version": 1,
+  "min_app_version": {
+    "ios": "2026.12.0",
+    "ipados": "2026.12.0",
+    "tvos": "2026.12.1"
+  },
+  "platform": "tvos"
+}

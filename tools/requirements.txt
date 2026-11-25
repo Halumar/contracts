@@ -1,0 +1,6 @@
+jsonschema==4.26.0
+referencing==0.37.0
+rfc3339-validator==0.1.4
+PyYAML==6.0.3
+openapi-spec-validator==0.9.0
+cryptography==50.0.2

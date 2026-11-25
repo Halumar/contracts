@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/notifications/handover (body)",
+  "description": "Notifications the integration queued while the hub did not answer (connection error, timeout, HTTP 502/503/504 on POST /api/integration/notify), oldest first, 1-50 per call. Meanwhile the integration wrote them into the device's notification sensor (client-notifications-sensor.json, listed in pending_handover). Per item the hub creates the notification with the given notification_id and created_at, or reports it as a duplicate when it already has that id for the same device; from then on the hub is the source of truth. Integration token only.",
+  "type": "object",
+  "required": [
+    "notifications"
+  ],
+  "properties": {
+    "notifications": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "notification_id",
+          "created_at"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid",
+            "description": "One paired device (never \"all\": a broadcast was expanded by the integration, one item and id per device)."
+          },
+          "notification_id": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "description": "Lowercase UUID chosen by the integration; the same id as in the sensor (and in the notify call the hub did not answer)."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the notification was sent (with offset); stored normalized to UTC. Older than 72 h: skipped (expired)."
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "delivered"
+            ],
+            "default": "pending",
+            "description": "delivered: the app already confirmed it through Home Assistant (ack_notifications) during the outage; stored with delivered_via 'remote' and not pushed again. pending: pushed to the connected app like a new notification."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "message": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 5000
+          },
+          "notification_type": {
+            "enum": [
+              "default",
+              "sticky"
+            ]
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          },
+          "icon_svg": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 10000
+          },
+          "popup_mode": {
+            "enum": [
+              "none",
+              "popup",
+              "both",
+              "direct"
+            ]
+          },
+          "scheduled_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "color": {
+            "enum": [
+              "none",
+              "red",
+              "blue",
+              "green",
+              "yellow",
+              "orange"
+            ]
+          },
+          "action_type": {
+            "enum": [
+              "none",
+              "area",
+              "entity",
+              "url"
+            ]
+          },
+          "action_target": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 2000
+          },
+          "show_time": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

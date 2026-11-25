@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/health",
+  "description": "Public. 200 when healthy, 503 with the same body when the database is not usable. Polled by the Admin UI every 10 s and by the Supervisor watchdog. Carries the protocol version fields (same values as auth_ok), so an app can check compatibility before pairing.",
+  "type": "object",
+  "required": [
+    "status",
+    "db",
+    "version",
+    "uptime_seconds",
+    "connected_clients",
+    "protocol_version",
+    "min_protocol_version",
+    "min_app_version"
+  ],
+  "properties": {
+    "status": {
+      "enum": [
+        "ok",
+        "error"
+      ]
+    },
+    "db": {
+      "type": "string",
+      "description": "'ok' or an error description."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]{4}\\.[0-9]{1,2}\\.[0-9]+"
+    },
+    "build": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "uptime_seconds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "connected_clients": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tls_fingerprint": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/fingerprint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "protocol_version": {
+      "$ref": "../common/defs.json#/$defs/protocol_version"
+    },
+    "min_protocol_version": {
+      "$ref": "../common/defs.json#/$defs/protocol_version"
+    },
+    "min_app_version": {
+      "$ref": "../common/defs.json#/$defs/min_app_version"
+    }
+  },
+  "additionalProperties": true
+}

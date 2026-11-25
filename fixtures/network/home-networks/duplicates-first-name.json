@@ -1,0 +1,27 @@
+{
+  "name": "duplicates-first-name",
+  "input": [
+    {
+      "cidr": "10.8.0.0/24",
+      "name": "WireGuard"
+    },
+    {
+      "cidr": "10.8.0.0/24",
+      "name": "Andere"
+    }
+  ],
+  "expect": {
+    "networks": [
+      {
+        "cidr": "10.8.0.0/24",
+        "name": "WireGuard"
+      }
+    ]
+  },
+  "hosts": [
+    {
+      "address": "10.8.0.9",
+      "home": true
+    }
+  ]
+}

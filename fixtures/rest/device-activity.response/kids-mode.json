@@ -1,0 +1,50 @@
+{
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+  "max_events": 100,
+  "events": [
+    {
+      "id": 12,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-19T19:12:00.000000+00:00",
+      "event": "rule_blocked",
+      "detail": {
+        "entity_id": "light.kids_room",
+        "level": "profile",
+        "until": "2026-11-20T05:30:00+00:00",
+        "blocked_reason": "quiet_hours"
+      }
+    },
+    {
+      "id": 11,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-19T18:00:00.000000+00:00",
+      "event": "kids_override",
+      "detail": {
+        "action": "release",
+        "minutes": 30,
+        "until": "2026-11-19T18:30:00+00:00"
+      }
+    },
+    {
+      "id": 10,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-19T17:00:00.000000+00:00",
+      "event": "kids_override",
+      "detail": {
+        "action": "lift",
+        "cooldowns_cleared": 1
+      }
+    },
+    {
+      "id": 9,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-19T10:00:00.000000+00:00",
+      "event": "profile_changed",
+      "detail": {
+        "profile_id": "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "profile_name": "Child 1",
+        "kind": "child"
+      }
+    }
+  ]
+}

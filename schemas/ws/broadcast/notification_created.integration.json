@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast notification_created (integration view)",
+  "description": "Redacted projection sent to the integration push session (_integration_view): ids only, no content.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_created"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "client_id",
+        "notification_id",
+        "ws_sent"
+      ],
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "notification_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "ws_sent": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

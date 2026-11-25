@@ -1,0 +1,13 @@
+{
+  "default_profiles": {
+    "ios": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "ipados": "9f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c",
+    "tvos": "0a4b5c6d-7e8f-4a9b-8c1d-2e3f4a5b6c7d",
+    "watchos": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "android": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "android_tablet": "9f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c",
+    "android_tv": "0a4b5c6d-7e8f-4a9b-8c1d-2e3f4a5b6c7d",
+    "wearos": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6"
+  },
+  "guest_default_hours": 24
+}

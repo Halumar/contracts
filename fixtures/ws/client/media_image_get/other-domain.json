@@ -1,0 +1,5 @@
+{
+  "type": "media_image_get",
+  "request_id": "m2",
+  "entity_id": "camera.front_door"
+}

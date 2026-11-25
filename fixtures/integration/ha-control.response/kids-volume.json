@@ -1,0 +1,16 @@
+{
+  "route": "local",
+  "rules_hash": "f619ffe256afcf50c053f1da6e38ace953fb51e24a75a808219c3cf5db6d8886",
+  "results": [
+    {
+      "entity_id": "media_player.kids_speaker",
+      "ok": true,
+      "executed": true,
+      "reason": null,
+      "until": null,
+      "adjusted": {
+        "volume_level": 0.4
+      }
+    }
+  ]
+}

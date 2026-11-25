@@ -1,0 +1,10 @@
+{
+  "ws_path": "/api/ws",
+  "api_path": "/api",
+  "tls": "1",
+  "tls_port": "8100",
+  "iid": "5f0c3a1e-8b7e-4d2a-9c1f-0123456789ab",
+  "version": "2026.12.0",
+  "pv": "1",
+  "pv_min": "1"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "public-refused",
+  "input": [
+    {
+      "cidr": "100.64.0.0/10"
+    },
+    {
+      "cidr": "8.8.8.0/24"
+    }
+  ],
+  "expect": {
+    "error": "home_network_public"
+  }
+}

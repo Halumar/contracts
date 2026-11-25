@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/family/requests/{request_id}/answer (body)",
+  "description": "Admin answers a child's request in the admin UI; same rules as family_answer, but the admin is not limited by “Fixed”. 409 already_answered (with the request), 404 request_not_found. Answer: common/family-request.json.",
+  "type": "object",
+  "required": [
+    "answer"
+  ],
+  "properties": {
+    "answer": {
+      "$ref": "../common/defs.json#/$defs/family_answer"
+    },
+    "preset": {
+      "$ref": "../common/defs.json#/$defs/family_release_preset"
+    },
+    "message": {
+      "$ref": "../common/defs.json#/$defs/family_decline_message"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "answer": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "answer"
+        ]
+      },
+      "then": {
+        "required": [
+          "preset"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

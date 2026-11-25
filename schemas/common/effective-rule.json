@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Effective profile rule (admin and resolver vectors)",
+  "description": "Effective value of one profile rule with its source, as computed by the resolver (tools/profiles_ref.py). Admin view: GET /api/pairing/clients/{client_id}/effective; resolver vectors: fixtures/profiles/resolve. Unlike client_config.rules (resolved-rules.json) the value is untyped here and null for not applicable rules.",
+  "type": "object",
+  "required": [
+    "value",
+    "source",
+    "reason",
+    "locked",
+    "fixed"
+  ],
+  "properties": {
+    "value": {
+      "description": "Effective value (schema: profile-rule-values.json#/properties/<key>); null when not applicable."
+    },
+    "source": {
+      "$ref": "defs.json#/$defs/rule_source"
+    },
+    "reason": {
+      "$ref": "defs.json#/$defs/rule_reason"
+    },
+    "locked": {
+      "type": "boolean",
+      "description": "The person at the device must not change it (not user_choice)."
+    },
+    "fixed": {
+      "type": "boolean",
+      "description": "The admin cannot adjust the rule on this device (checkbox “Fixed”, rule without checkbox, boundary that decides the rule, not applicable)."
+    },
+    "user_choice": {
+      "type": "boolean",
+      "description": "The person at the device decides; value is the starting value. Missing = false."
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "End of a temporary device adjustment; also on a rule whose boundary only that adjustment lifts (watch while a temporary kids_watch runs, catalog 9); missing = null."
+    },
+    "then": {
+      "description": "Value after expires_at; missing = null."
+    },
+    "profile_value": {
+      "description": "Admin view only: value of the profile (or catalog default) before device adjustment and boundaries, for “Adjusted · profile: …”."
+    },
+    "enforcement": {
+      "$ref": "defs.json#/$defs/rule_enforcement",
+      "description": "Who enforces the rule on this device: ha/hub = shown “Enforced”, app = “Applies in <brand>” (someone with their own Home Assistant access is not bound by it). Missing = see the catalog."
+    }
+  },
+  "additionalProperties": true
+}

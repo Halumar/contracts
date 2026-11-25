@@ -1,0 +1,11 @@
+{
+  "type": "family_notify",
+  "notify": {
+    "kids_release_requested": true,
+    "kids_request_answered": true,
+    "kids_bedtime_attempt": true,
+    "kids_pause": true,
+    "kids_control": false,
+    "family_change": true
+  }
+}

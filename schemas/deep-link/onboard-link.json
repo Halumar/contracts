@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Onboarding QR (pairing an Apple TV or iPad by iPhone)",
+  "description": "QR code of a device waiting for onboarding (hub mode). Built by the waiting app (Apple TV, iPad, Android TV, Android tablet) from onboard_session, its own pinned TLS fingerprint and its public key. All values are in the URL fragment, so a web server never sees them. The production QR uses the universal link of the brand website (brand.json urls.website, path /pair-tv, Associated Domains; one path for every waiting device: Apple TV, iPad); the development form uses the app scheme. The same path is used by the direct-mode TV sign-in (fragment svc=…, not described here): clients tell them apart by the hub parameter. Contains no secret.",
+  "type": "object",
+  "required": [
+    "uri",
+    "params"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string",
+      "pattern": "^(https://[a-z0-9.-]+/pair-tv|halumar://pair-tv)#hub=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}&fp=[0-9a-f]{32}&s=[A-Za-z0-9_-]{22}&k=[A-Za-z0-9_-]{43}(&n=[A-Za-z0-9%._~-]{1,180})?$",
+      "x-namespace-key": "deep_link_pair_tv_prefix"
+    },
+    "params": {
+      "type": "object",
+      "required": [
+        "hub",
+        "fp",
+        "s",
+        "k"
+      ],
+      "properties": {
+        "hub": {
+          "$ref": "../common/defs.json#/$defs/hub_instance_id",
+          "description": "Instance id of the hub the waiting device is connected to (onboard_session.hub_id)."
+        },
+        "fp": {
+          "$ref": "../common/defs.json#/$defs/onboard_short_fingerprint"
+        },
+        "s": {
+          "$ref": "../common/defs.json#/$defs/onboard_session_id"
+        },
+        "k": {
+          "$ref": "../common/defs.json#/$defs/onboard_public_key"
+        },
+        "n": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 60,
+          "description": "Name of the waiting device for the first screen; percent-encoded in the URI. The confirmation shows the name from onboard_info."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "x-client-rules": [
+    "Only the universal link of the brand website or the app scheme (no aliases), path/host pair-tv; hub mode only when hub, fp, s and k are present.",
+    "The confirming device compares fp with the first 32 hex characters of its own pinned fingerprint and refuses on mismatch or when it has no pin.",
+    "The confirming device shows the fingerprint (first 16 hex characters in groups of 4) like the waiting device, the name, the area choice and the rights from onboard_info, and sends nothing before the user confirms (onboard_lookup is a read).",
+    "The waiting device offers onboarding only when it connected over TLS pinned to the fingerprint from Bonjour; it shows the same short fingerprint next to the QR code."
+  ],
+  "additionalProperties": false
+}

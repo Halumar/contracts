@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_release_end",
+  "description": "End running releases early on each listed child device (kind missing = all releases; entity_id narrows kind entity). Ending is always allowed (only ever stricter). Family manager devices only (effective rule family_manager); otherwise family_error {not_permitted}. Also accepted through the integration relay (POST /api/integration/family) when the device is away. Answer: family_result.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_ids"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_release_end"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "client_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../../common/defs.json#/$defs/uuid"
+      },
+      "description": "Child devices (e.g. all devices of one child). Each is checked on its own (family_result.results)."
+    },
+    "kind": {
+      "$ref": "../../common/defs.json#/$defs/family_release_kind"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    }
+  },
+  "additionalProperties": true
+}

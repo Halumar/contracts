@@ -1,0 +1,565 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile rule catalog",
+  "description": "Catalog of the profile rules: one source for hub (resolver, validation, migration), admin UI (editor, texts) and apps (labels, reason sentences). Semantics: docs/profiles.md. tools/validate.py checks the catalog against schemas/common/profile-rule-values.json and $defs/profile_rule_key, and every resolver vector in fixtures/profiles/resolve against the reference resolver tools/profiles_ref.py.",
+  "type": "object",
+  "required": [
+    "catalog_version",
+    "groups",
+    "rules",
+    "boundaries",
+    "profile_kinds",
+    "reasons",
+    "expiry_presets",
+    "enforcement",
+    "expiry_limits",
+    "notifications",
+    "safety_entities",
+    "guest_access",
+    "limits"
+  ],
+  "properties": {
+    "catalog_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/profile_rule_group"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "group",
+          "label",
+          "help",
+          "type",
+          "default",
+          "default_fixed",
+          "fixed_checkbox",
+          "user_choice_allowed",
+          "default_user_choice",
+          "platforms",
+          "security",
+          "pro",
+          "requires_child_protection",
+          "profile_kinds",
+          "order",
+          "strictest",
+          "boundaries",
+          "prerequisite",
+          "loosening_warning",
+          "replaces",
+          "enforcement",
+          "enforcement_with_hub_path",
+          "enforcement_with_checked_path",
+          "watch_limit"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "../common/defs.json#/$defs/profile_rule_key"
+          },
+          "group": {
+            "$ref": "../common/defs.json#/$defs/profile_rule_group"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "help": {
+            "allOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/localized_text"
+              }
+            ],
+            "description": "One sentence under the label. {brand} = display name from brand.json."
+          },
+          "type": {
+            "enum": [
+              "boolean",
+              "enum",
+              "integer",
+              "object",
+              "list"
+            ],
+            "description": "Shape of the value; the exact schema is schemas/common/profile-rule-values.json#/properties/<key>."
+          },
+          "default": {
+            "description": "Catalog default (value of a new empty profile, and of a rule a profile does not contain yet after an update)."
+          },
+          "default_fixed": {
+            "type": "boolean",
+            "description": "Checkbox “Fixed” of a new empty profile."
+          },
+          "fixed_checkbox": {
+            "type": "boolean",
+            "description": "false = the rule is always fixed (profile only, never adjusted per device)."
+          },
+          "user_choice_allowed": {
+            "type": "boolean",
+            "description": "The value “User's choice” is possible (comfort rules only): the person at the device decides, the profile value is the starting value."
+          },
+          "default_user_choice": {
+            "type": "boolean"
+          },
+          "platforms": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/platform"
+            },
+            "description": "Platforms the rule applies to; elsewhere it resolves to not_applicable."
+          },
+          "security": {
+            "$ref": "../common/defs.json#/$defs/rule_security"
+          },
+          "pro": {
+            "type": "boolean",
+            "description": "The app offers this rule only with Pro; the hub shows a hint and does not check it. For a kids rule it means: the app on the child's device works only with Pro and without Pro controls nothing. It never means that a rule is dropped without Pro."
+          },
+          "requires_child_protection": {
+            "type": "boolean",
+            "description": "Kids rule: applies only to a profile with parental controls (else not_applicable / requires_child_protection)."
+          },
+          "profile_kinds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/profile_kind"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Kinds of profile the rule applies to; on a profile of another kind it resolves to not_applicable / requires_profile_kind. null = every kind."
+          },
+          "order": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "minItems": 2,
+            "items": {
+              "description": "A value of this rule."
+            },
+            "description": "Values from “less allowed” to “more allowed” (booleans and enums). Boundaries cap along this order; the admin UI uses it to detect a loosening."
+          },
+          "strictest": {
+            "description": "Value of the rule for an expired guest (access_expired); null = unchanged (comfort and kids rules)."
+          },
+          "boundaries": {
+            "type": "array",
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": [
+                "boundary",
+                "cap",
+                "reason"
+              ],
+              "properties": {
+                "boundary": {
+                  "$ref": "../common/defs.json#/$defs/rule_boundary"
+                },
+                "cap": {
+                  "description": "Highest allowed value (along order). When cap is the first value of order, or the rule has no order, the boundary always decides the rule."
+                },
+                "reason": {
+                  "$ref": "../common/defs.json#/$defs/rule_reason"
+                },
+                "lifted_by": {
+                  "$ref": "../common/defs.json#/$defs/profile_rule_key",
+                  "description": "Optional: the boundary does not apply while this boolean rule resolves to true (parental controls: the rule watch only when the kids rule kids_watch allows it; hub_only: quick_access and watch only with remote_access). Absent = the boundary always applies."
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "Boundaries that cap the rule. With order: capped along order. Without order (object rules, e.g. setup_devices): an active boundary always decides, the value is cap. A boundary with lifted_by does not apply while that rule resolves to true."
+          },
+          "prerequisite": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "required": [
+              "when",
+              "requires",
+              "otherwise"
+            ],
+            "properties": {
+              "when": {
+                "description": "Value that needs the prerequisite."
+              },
+              "requires": {
+                "enum": [
+                  "remote_pin"
+                ]
+              },
+              "otherwise": {
+                "description": "Value without the prerequisite (fail closed)."
+              }
+            },
+            "additionalProperties": false
+          },
+          "loosening_warning": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/localized_text"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Confirmation text when an admin loosens this rule (profile or device)."
+          },
+          "replaces": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Former keys, columns or settings this rule replaces (documentation)."
+          },
+          "enforcement": {
+            "$ref": "../common/defs.json#/$defs/rule_enforcement",
+            "description": "Who enforces the rule: ha = Home Assistant (shown “Enforced”), hub = the hub (“Enforced”), app = the app only (“Applies in <brand>”)."
+          },
+          "enforcement_with_hub_path": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/rule_enforcement"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Enforcement on a device whose effective rule control_path is hub (no Home Assistant key at home; it reads and switches through the hub, which checks the rule), with or without parental controls; null = the value of the checked path (enforcement_with_checked_path, since the device user is read-only in Home Assistant on the hub path too), else enforcement."
+          },
+          "enforcement_with_checked_path": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/rule_enforcement"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Enforcement on a device whose effective rule control_path is checked or hub (device user read-only in Home Assistant, switching through the integration action); null = same as enforcement. On the hub path enforcement_with_hub_path wins."
+          },
+          "watch_limit": {
+            "enum": [
+              "none",
+              "ordered",
+              "areas",
+              "schedule",
+              "remote_levels",
+              "kinds"
+            ],
+            "description": "How a watch is limited to its phone in this rule (docs/protocol.md “Every watch follows its phone”): the limited value is the meet of both, never a replacement. none = not limited (comfort, display, kids and location rules); ordered = the stricter along order; areas = common area ids and common tags only (all = the other side; empty = no areas); schedule = only the minutes both access hours are open (off = always open; same hub time zone, overnight windows); remote_levels = the lower level for the default and every key either side names (a key of one side compared with the other's resolved level); kinds = enabled only when both are, common kinds only. Every rule must be classified (tools/profile_rules.py)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "effects"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/rule_boundary"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "effects": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "profile_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The profile kinds ($defs/profile_kind) in display order, with labels, an icon and the platforms a device of this kind can have when it is set up (onboard_info.grant offers only kinds that fit the waiting device). guest_access = devices of this kind are set up as guest access with an expiry (guest, house sitter, babysitter). Watches have no kind of their own: a phone sets up its own watch with the watch's default profile.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "plural",
+          "icon",
+          "platforms",
+          "guest_access"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/profile_kind"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "plural": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "icon": {
+            "type": "string",
+            "pattern": "^mdi:[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "platforms": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/platform"
+            }
+          },
+          "guest_access": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "source",
+          "admin",
+          "device"
+        ],
+        "properties": {
+          "code": {
+            "$ref": "../common/defs.json#/$defs/rule_reason"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/rule_source"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Source that goes with this reason; null = profile or device."
+          },
+          "admin": {
+            "allOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/localized_text"
+              }
+            ],
+            "description": "Sentence in the admin UI. Placeholders: {brand} (display name from brand.json), {profile}, {admin}, {value}, {profile_value}, {until}, {then}, {platform}."
+          },
+          "device": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/localized_text"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sentence on the device; null = not shown on the device."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expiry_presets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "rule"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/rule_expiry_preset"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "rule": {
+            "type": "string",
+            "description": "How the hub computes expires_at (hub time zone). Vectors: fixtures/profiles/expiry."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "enforcement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "help"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/rule_enforcement"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "help": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Labels of the enforcement kinds for admin UI and apps (honest display)."
+    },
+    "expiry_limits": {
+      "type": "object",
+      "required": [
+        "min_minutes",
+        "max_days"
+      ],
+      "properties": {
+        "min_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_days": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false,
+      "description": "A temporary device adjustment ends at least min_minutes and at most max_days in the future (else 422 override.expires_at)."
+    },
+    "notifications": {
+      "type": "object",
+      "required": [
+        "important_min_priority",
+        "critical_min_priority"
+      ],
+      "properties": {
+        "important_min_priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "critical_min_priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "additionalProperties": false,
+      "description": "Priority thresholds (notification priority 0-100) of the rule notification_level: important from important_min_priority, critical from critical_min_priority (never suppressed)."
+    },
+    "safety_entities": {
+      "type": "object",
+      "required": [
+        "domains",
+        "binary_sensor_device_classes"
+      ],
+      "properties": {
+        "domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "binary_sensor_device_classes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "description": "Safety entities: notifications about them are never suppressed; with parental controls they are always visible read-only (controlling the alarm stays blocked); “When away” is at least view for them. No delivery promise: no push, the app shows them while open; the product is no alarm system."
+    },
+    "guest_access": {
+      "type": "object",
+      "required": [
+        "default_hours",
+        "max_hours",
+        "presets_hours"
+      ],
+      "properties": {
+        "default_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Hub maximum per grant (authoritative; the apps follow access.expires_at and have no own cap). Extending starts a new grant."
+        },
+        "presets_hours": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object",
+      "required": [
+        "max_profiles",
+        "profile_name_max_length",
+        "note_max_length"
+      ],
+      "properties": {
+        "max_profiles": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "profile_name_max_length": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "note_max_length": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

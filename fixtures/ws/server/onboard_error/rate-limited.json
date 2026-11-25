@@ -1,0 +1,5 @@
+{
+  "type": "onboard_error",
+  "reason": "rate_limited",
+  "message": "Rate limited"
+}

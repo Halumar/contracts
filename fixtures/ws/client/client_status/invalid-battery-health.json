@@ -1,0 +1,7 @@
+{
+  "type": "client_status",
+  "panel": {
+    "battery_temperature": 30,
+    "battery_health": "bad"
+  }
+}

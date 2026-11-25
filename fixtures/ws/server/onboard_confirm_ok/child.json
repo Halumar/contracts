@@ -1,0 +1,19 @@
+{
+  "type": "onboard_confirm_ok",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6c",
+  "client_name": "iPhone Kind",
+  "all_areas": false,
+  "area_names": [
+    "Kinderzimmer",
+    "Wohnzimmer"
+  ],
+  "kind": "child",
+  "profile": {
+    "id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "name": "Kind 6–9"
+  },
+  "owner_label": "Child 1",
+  "expires_at": null,
+  "remote_allowed": false
+}

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Provisioning request (hub -> integration)",
+  "description": "Asks the integration to make sure the device has its own HA user with exactly one long-lived access token and to deliver that token via POST /api/integration/client-token. Sent as WS push provision_client and repeated in GET /api/integration/status provisioning[] until the hub has the token. Handling MUST be idempotent: token_action=ensure reuses the device's existing token (a new access token is derived from the same refresh token, refresh_token_id stays the same); only token_action=rotate mints a new one.",
+  "allOf": [
+    {
+      "$ref": "client-identity.json"
+    }
+  ],
+  "type": "object",
+  "required": [
+    "token_action",
+    "reason"
+  ],
+  "properties": {
+    "request_id": {
+      "$ref": "defs.json#/$defs/uuid",
+      "description": "Correlation id for logs; not used for deduplication."
+    },
+    "token_action": {
+      "enum": [
+        "ensure",
+        "rotate"
+      ],
+      "description": "ensure: create user/token if missing, otherwise re-deliver the current token. rotate: mint a new token for the same user; the integration removes the old one only after the hub acknowledged the new one."
+    },
+    "reason": {
+      "enum": [
+        "pair",
+        "retry",
+        "rotate",
+        "guest_extend",
+        "reprovision"
+      ],
+      "description": "Why the hub asks (logging, UI). pair = newly paired device (status pending); retry = earlier request unanswered; rotate = admin rotate-token; guest_extend = guest extended beyond the token lifetime; reprovision = the hub has no usable token for an active device (e.g. restored backup)."
+    }
+  },
+  "unevaluatedProperties": true
+}

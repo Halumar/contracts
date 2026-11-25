@@ -1,0 +1,9 @@
+{
+  "scope": {
+    "all": true,
+    "client_ids": []
+  },
+  "notify_targets": [
+    "telegram_bot.send_message"
+  ]
+}

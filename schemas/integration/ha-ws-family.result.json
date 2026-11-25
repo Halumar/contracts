@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HA WebSocket result of <ns>/family",
+  "description": "The result field of the HA answer {id, type: result, success: true, result}: exactly the body of POST /api/integration/family – the hub's answer messages (ws/server/family_*, family_error or, for a child device, kids_request_state), 1–10, unchanged. Apps read result.messages[] like on the hub WebSocket (request_id echoed where the hub echoes it). Same shape as integration/family.response.json (kept identical by the integration). Also access_request_update, access_requests, access_request_state and access_request_error.",
+  "type": "object",
+  "required": [
+    "messages"
+  ],
+  "properties": {
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^(family_[a-z_]{1,40}|kids_request_state)$"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

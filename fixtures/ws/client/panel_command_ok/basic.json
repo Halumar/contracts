@@ -1,0 +1,17 @@
+{
+  "type": "panel_command_ok",
+  "id": "7f1c2a3b-0000-4000-8000-00000000b001",
+  "panel": {
+    "screen": "active",
+    "brightness": 0.4,
+    "brightness_mode": "manual",
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "set_brightness",
+      "set_brightness_mode"
+    ]
+  }
+}

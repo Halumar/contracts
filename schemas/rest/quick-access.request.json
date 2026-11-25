@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/quick-access/{entity_id}",
+  "description": "Admin only: sets the quick access level of one entity. level null = back to the domain default. 422 detail types: quick_access.not_allowed (level above the domain max, e.g. camera), quick_access.critical_ack_required (control for a critical entity without critical_ack: true; the Admin UI shows the warning about widgets, Control Center, Apple Watch, CarPlay, Siri and shared HomeView screens first). Every change is audited (quick_access_updated) and sends client_config_updated to the affected devices; the check sensors follow.",
+  "type": "object",
+  "required": [
+    "level"
+  ],
+  "properties": {
+    "level": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/quick_access_level"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "critical_ack": {
+      "type": "boolean",
+      "description": "Confirms the warning for a critical entity (needed for control)."
+    }
+  },
+  "additionalProperties": false
+}

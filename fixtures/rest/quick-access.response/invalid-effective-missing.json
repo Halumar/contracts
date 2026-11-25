@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "entity_id": "lock.front_door",
+      "level": "control",
+      "default": "status",
+      "max": "control",
+      "critical": true,
+      "critical_ack": true,
+      "updated_at": null,
+      "updated_by": null
+    }
+  ]
+}

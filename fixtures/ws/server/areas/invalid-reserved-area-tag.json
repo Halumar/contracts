@@ -1,0 +1,64 @@
+{
+  "type": "areas",
+  "data": [
+    {
+      "id": "a1b2c3d4-0000-4000-8000-000000000001",
+      "name": "Wohnzimmer",
+      "icon": "mdi:sofa",
+      "description": null,
+      "color": "#4CAF50",
+      "card_image_path": "/data/images/0f3c9e2a.jpg",
+      "card_image_url": null,
+      "bg_light_path": null,
+      "bg_light_url": null,
+      "bg_dark_path": null,
+      "bg_dark_url": null,
+      "grid_cols": 4,
+      "dense_section_placement": 1,
+      "sort_order": 0,
+      "is_active": 1,
+      "control_mode": null,
+      "ha_area_id": "living_room",
+      "created_at": "2026-11-18T08:15:00.123456+00:00",
+      "updated_at": "2026-11-18T08:15:00.123456+00:00",
+      "entity_count": 2,
+      "tags": [
+        "*"
+      ],
+      "card_image_src": "/images/0f3c9e2a.jpg",
+      "bg_light_src": null,
+      "bg_dark_src": null,
+      "icon_svg": "M21 9V7C21 5.35 19.65 4 18 4H6C4.35 4 3 5.35 3 7V9C1.35 9 0 10.35 0 12V17C0 18.65 1.35 20 3 20V22H5V20H19V22H21V20C22.65 20 24 18.65 24 17V12C24 10.35 22.65 9 21 9Z"
+    },
+    {
+      "id": "a1b2c3d4-0000-4000-8000-000000000002",
+      "name": "Küche",
+      "icon": "mdi:fridge",
+      "description": null,
+      "color": null,
+      "card_image_path": null,
+      "card_image_url": null,
+      "bg_light_path": null,
+      "bg_light_url": null,
+      "bg_dark_path": null,
+      "bg_dark_url": null,
+      "grid_cols": 4,
+      "dense_section_placement": 1,
+      "sort_order": 1,
+      "is_active": 1,
+      "control_mode": "basic",
+      "ha_area_id": "kitchen",
+      "created_at": "2026-11-18T08:15:00.123456+00:00",
+      "updated_at": "2026-11-18T08:15:00.123456+00:00",
+      "entity_count": 0,
+      "tags": [
+        "family"
+      ],
+      "card_image_src": null,
+      "bg_light_src": null,
+      "bg_dark_src": null,
+      "icon_svg": null
+    }
+  ],
+  "image_base_url": "http://homeassistant.local:8099"
+}

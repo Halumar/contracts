@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "panel_start": {
+      "mode": "area"
+    }
+  }
+}

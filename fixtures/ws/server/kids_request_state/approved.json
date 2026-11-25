@@ -1,0 +1,28 @@
+{
+  "type": "kids_request_state",
+  "request": {
+    "request_id": "b06f7a8c-9d0e-4f1a-9b2c-4d5e6f7a8b9c",
+    "client_id": "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f",
+    "child_name": "iPhone Kind",
+    "owner_label": "Child 3",
+    "category": "stay_up",
+    "note": "Film fertig schauen",
+    "status": "approved",
+    "created_at": "2026-11-19T19:58:00+00:00",
+    "expires_at": "2026-11-19T20:08:00+00:00",
+    "can_approve": true,
+    "answer": {
+      "answer": "yes",
+      "preset": "30m",
+      "until": "2026-11-19T20:30:00+00:00",
+      "message": null,
+      "by": {
+        "kind": "family_manager",
+        "name": "Parent",
+        "owner_label": "Parent"
+      },
+      "at": "2026-11-19T20:00:00+00:00"
+    }
+  },
+  "next_allowed_at": null
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast area_deleted",
+  "description": "Area deleted. Not sent to apps; they get areas_changed.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "area_deleted"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "required": [
+        "area_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

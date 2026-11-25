@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/access-requests/{request_id}/answer",
+  "description": "Admin: answer an open early access request like a recipient device (first answer wins, 409 already_answered with the request). yes needs duration (one of request.durations).",
+  "type": "object",
+  "required": [
+    "answer"
+  ],
+  "properties": {
+    "answer": {
+      "$ref": "../common/defs.json#/$defs/family_answer"
+    },
+    "duration": {
+      "$ref": "../common/defs.json#/$defs/access_request_duration"
+    },
+    "message": {
+      "$ref": "../common/defs.json#/$defs/access_decline_message"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "answer": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "answer"
+        ]
+      },
+      "then": {
+        "required": [
+          "duration"
+        ]
+      }
+    }
+  ]
+}

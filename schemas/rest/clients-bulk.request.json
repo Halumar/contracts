@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/pairing/clients/bulk (body)",
+  "description": "Change several devices at once. Actions: assign_profile (profile_id, discard_overrides), set_own_area (area_id or null), set_override (rule, value, expires/expires_at, note), remove_override (rule). Devices where the action is not possible are skipped with a reason (guest + parental controls, rule fixed, boundary, not applicable). dry_run: preview only (profile-preview.response.json in preview).",
+  "type": "object",
+  "required": [
+    "client_ids",
+    "action"
+  ],
+  "properties": {
+    "client_ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/uuid"
+      }
+    },
+    "action": {
+      "enum": [
+        "assign_profile",
+        "set_own_area",
+        "set_override",
+        "remove_override"
+      ]
+    },
+    "profile_id": {
+      "$ref": "../common/defs.json#/$defs/profile_id"
+    },
+    "discard_overrides": {
+      "type": "boolean",
+      "default": false
+    },
+    "area_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rule": {
+      "$ref": "../common/defs.json#/$defs/profile_rule_key"
+    },
+    "value": {
+      "description": "set_override: value of the rule."
+    },
+    "expires": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/rule_expiry_preset"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Not together with expires (422)."
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "dry_run": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "assign_profile"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "profile_id"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_own_area"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "area_id"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_override"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "rule",
+          "value"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "remove_override"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "rule"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

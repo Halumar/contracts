@@ -1,0 +1,5 @@
+{
+  "type": "access_request_error",
+  "reason": "home_only",
+  "message": "Early access can only be requested at home."
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast entity_removed",
+  "description": "Entity placement change.",
+  "x-audience": "ALL",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "entity_removed"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "entity_id": {
+          "$ref": "../../common/defs.json#/$defs/entity_id"
+        }
+      },
+      "required": [
+        "area_id",
+        "entity_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

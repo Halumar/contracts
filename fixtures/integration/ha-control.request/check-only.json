@@ -1,0 +1,8 @@
+{
+  "entity_ids": [
+    "light.bed_light",
+    "lock.front_door"
+  ],
+  "action": "toggle",
+  "check_only": true
+}

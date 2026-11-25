@@ -1,0 +1,8 @@
+{
+  "action": "announce",
+  "text": "Die Waschmaschine ist fertig",
+  "chime": false,
+  "actor": {
+    "kind": "automation"
+  }
+}

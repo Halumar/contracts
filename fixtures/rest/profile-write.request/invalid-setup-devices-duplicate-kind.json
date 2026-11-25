@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "setup_devices": {
+      "enabled": true,
+      "kinds": [
+        "guest",
+        "guest"
+      ]
+    }
+  }
+}

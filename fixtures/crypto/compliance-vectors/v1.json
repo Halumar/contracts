@@ -1,0 +1,29 @@
+{
+  "label": "hub/compliance/v1",
+  "cases": [
+    {
+      "digest32": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+      "client_id": "11111111-2222-3333-4444-555555555555",
+      "status": "deleted",
+      "ts": 1783130000,
+      "k_sign": "de9ddc4c4e746bf4ca9b8eb80b46aabeddc5f1c22bf778959057877f56baafb4",
+      "sig": "848a2908c6e352e1d86ece58ebc5e9796c8eadd58cdf8c3133fee8b7513fbc31"
+    },
+    {
+      "digest32": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+      "client_id": "11111111-2222-3333-4444-555555555555",
+      "status": "need_token_update",
+      "ts": 1783130000,
+      "k_sign": "de9ddc4c4e746bf4ca9b8eb80b46aabeddc5f1c22bf778959057877f56baafb4",
+      "sig": "b5f14786f6ec6fd07e35d9ff838c17a86f33cd76170c867c7c80bd83cd3c2360"
+    },
+    {
+      "secret": "abababababababababababababababababababababababababababababababab",
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "status": "deleted",
+      "ts": 1783130000,
+      "k_sign": "11ef427a41dbf1750882e5f27d15708dfbba9c12fb49a64942890b41b68dc9c8",
+      "sig": "0d81f7f4b782b8300fe3ebb567af172cd8d5e766e54f849edc5573e277d57d53"
+    }
+  ]
+}

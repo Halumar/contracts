@@ -1,0 +1,5 @@
+{
+  "type": "family_error",
+  "reason": "preset_not_allowed",
+  "message": "Babysitters may answer 15 or 30 minutes or until the end of babysitting"
+}

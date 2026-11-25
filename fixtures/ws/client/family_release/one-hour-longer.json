@@ -1,0 +1,9 @@
+{
+  "type": "family_release",
+  "request_id": "f-3",
+  "client_ids": [
+    "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f"
+  ],
+  "kind": "bedtime",
+  "preset": "1h"
+}

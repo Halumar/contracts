@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command dismiss_notification",
+  "description": "Admin deleted a notification.",
+  "type": "object",
+  "required": [
+    "type",
+    "command",
+    "notification_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "dismiss_notification"
+    },
+    "notification_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

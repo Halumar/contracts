@@ -1,0 +1,247 @@
+{
+  "ha_token": null,
+  "token_error": "decryption_failed",
+  "ha_url": "https://example.ui.nabu.casa",
+  "ha_internal_url": "http://homeassistant.local",
+  "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "tls_port": 8100,
+  "config_sensor": "sensor.halumar_config",
+  "notification_sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+  "home_title": "Zuhause",
+  "home_bg_light": null,
+  "home_bg_dark": "/images/7a1d2c3b.jpg",
+  "control_mode": "full",
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": {
+    "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "name": "Erwachsen",
+    "kind": "person",
+    "rev": 3,
+    "child_protection": false,
+    "managed_by": "Admin"
+  },
+  "rules": {
+    "remote_access": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    },
+    "control_path": {
+      "value": "checked",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    },
+    "setup_devices": {
+      "value": {
+        "enabled": false,
+        "kinds": []
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    },
+    "app_settings": {
+      "value": "open",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "app_settings_biometrics": {
+      "value": false,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "remote_control": {
+      "value": {
+        "default": "control",
+        "domains": {
+          "lock": "view",
+          "alarm_control_panel": "view",
+          "cover:garage": "view",
+          "cover:gate": "view"
+        },
+        "entities": {}
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha_control"
+    },
+    "areas": {
+      "value": {
+        "mode": "all",
+        "area_ids": [],
+        "tags": [],
+        "own_area": false
+      },
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha_control"
+    },
+    "control_mode_max": {
+      "value": "full",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "camera_live": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "quick_access": {
+      "value": "control",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "app"
+    },
+    "watch": {
+      "value": true,
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "hub"
+    },
+    "card_style": {
+      "value": "calm",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "appearance": {
+      "value": "system",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "header": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "search_filter": {
+      "value": true,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "columns": {
+      "value": 2,
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "power_button": {
+      "value": {
+        "enabled": false,
+        "domains": [
+          "light"
+        ]
+      },
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "notification_level": {
+      "value": "all",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "notification_stack": {
+      "value": "banner",
+      "source": "profile",
+      "reason": "user_choice",
+      "locked": false,
+      "fixed": false,
+      "user_choice": true,
+      "enforcement": "app"
+    },
+    "location": {
+      "value": "background",
+      "source": "profile",
+      "reason": "profile",
+      "locked": true,
+      "fixed": false,
+      "enforcement": "ha"
+    }
+  },
+  "quick_access": {
+    "enabled": true,
+    "max": "control",
+    "sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_quick_access",
+    "entities": {
+      "light.living_room_rgbww_lights": "control",
+      "scene.movie_night": "control",
+      "lock.front_door": "control",
+      "cover.garage_door": "status",
+      "sensor.outside_temperature": "status"
+    },
+    "critical": [
+      "lock.front_door",
+      "cover.garage_door"
+    ]
+  },
+  "settings_pin_hash": null,
+  "settings_pin_salt": null,
+  "settings_pin_source": null,
+  "config_hash": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+}

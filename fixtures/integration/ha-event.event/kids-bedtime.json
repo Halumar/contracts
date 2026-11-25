@@ -1,0 +1,13 @@
+{
+  "kind": "kids_bedtime_attempt",
+  "category": "kids",
+  "at": "2026-11-20T20:31:00+00:00",
+  "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+  "device_name": "iPad Kinderzimmer",
+  "owner_label": "Child 4",
+  "entity_id": "light.kids_room",
+  "action": "turn_on",
+  "route": "local",
+  "reason": "blocked_kids_bedtime",
+  "until": "2026-11-21T05:30:00+00:00"
+}

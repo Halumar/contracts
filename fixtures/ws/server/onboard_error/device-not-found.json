@@ -1,0 +1,5 @@
+{
+  "type": "onboard_error",
+  "reason": "device_not_found",
+  "message": "Device not found"
+}

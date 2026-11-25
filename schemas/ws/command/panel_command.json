@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command panel_command",
+  "description": "Control a wall panel or TV, triggered by POST /api/integration/clients/{id}/panel (Home Assistant entity or action, only HA admins and automations) or POST /api/pairing/clients/{id}/panel (admin UI test buttons). The hub has already checked platform, wall panel mode, guest boundary and the rule panel_remote. The app executes it and answers within 5 s with panel_command_ok (incl. the new panel status) or panel_command_error; without an answer the hub reports timeout. Pro is checked by the app (not_pro).",
+  "type": "object",
+  "required": [
+    "type",
+    "command",
+    "id",
+    "action"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "panel_command"
+    },
+    "id": {
+      "$ref": "../../common/defs.json#/$defs/panel_command_id"
+    },
+    "action": {
+      "$ref": "../../common/defs.json#/$defs/panel_action"
+    },
+    "level": {
+      "type": "number",
+      "minimum": 0.05,
+      "maximum": 1,
+      "description": "set_brightness only: backlight 0.05–1 (Home Assistant number 5–100 %)."
+    },
+    "mode": {
+      "$ref": "../../common/defs.json#/$defs/panel_brightness_mode",
+      "description": "set_brightness_mode only."
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "announce only: text to speak and show (never logged)."
+    },
+    "volume": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "announce only: volume in percent; capped by panel_announce.volume_max (missing = volume_max)."
+    },
+    "chime": {
+      "type": "boolean",
+      "description": "announce only: chime before the text (missing = true)."
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/camera_entity_id",
+      "description": "show_camera only: the camera to open."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_brightness"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "level"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "set_brightness_mode"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "mode"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "announce"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "text"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "show_camera"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "required": [
+          "entity_id"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

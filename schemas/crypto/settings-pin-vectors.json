@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Settings-PIN PBKDF2 known-answer vectors",
+  "description": "hash = hex(PBKDF2-HMAC-SHA256(password=utf8(pin), salt=bytes.fromhex(salt), iterations, dkLen)). Recomputed by tools/validate.py.",
+  "type": "object",
+  "required": [
+    "algorithm",
+    "iterations",
+    "dklen",
+    "cases"
+  ],
+  "properties": {
+    "algorithm": {
+      "const": "PBKDF2-HMAC-SHA256"
+    },
+    "iterations": {
+      "const": 100000
+    },
+    "dklen": {
+      "const": 32
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "pin",
+          "salt",
+          "hash"
+        ],
+        "properties": {
+          "pin": {
+            "type": "string"
+          },
+          "salt": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

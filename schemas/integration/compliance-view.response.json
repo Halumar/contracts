@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/<ns>/compliance/{client_id} (HA Core view of the integration)",
+  "description": "Unauthenticated, 1 request/s per IP. Either the neutral body {v:1, status:'unknown', ts:<now>} (unknown client, unsigned status, toggle off) or a signed restricting status relayed verbatim from the hub. 'compliant' is never exposed (indistinguishable from unknown by design). The iPhone and iPad app verifies sig (fixtures/crypto/compliance-vectors), not the age of ts; the Android apps do not poll this view.",
+  "type": "object",
+  "required": [
+    "v",
+    "status",
+    "ts"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "status": {
+      "enum": [
+        "unknown",
+        "need_token_update",
+        "deleted"
+      ]
+    },
+    "ts": {
+      "type": "integer"
+    },
+    "sig": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "unknown"
+          }
+        }
+      },
+      "then": {
+        "not": {
+          "required": [
+            "sig"
+          ]
+        }
+      },
+      "else": {
+        "required": [
+          "sig"
+        ]
+      }
+    }
+  ]
+}

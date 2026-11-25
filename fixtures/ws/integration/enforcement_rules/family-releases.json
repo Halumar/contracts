@@ -1,0 +1,76 @@
+{
+  "type": "enforcement_rules",
+  "data": {
+    "snapshots": [
+      {
+        "version": 1,
+        "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+        "ha_user_id": "fedcba9876543210fedcba9876543210",
+        "issued_at": "2026-11-20T18:00:00+00:00",
+        "rules_hash": "5bb896c8efde0c95209c16970c3be565a8ed1d869fbb16f558c60ae3bcb73edc",
+        "control_path": "checked",
+        "remote_access": false,
+        "child_protection": true,
+        "entities": {
+          "light.kids_room": {
+            "local": "control",
+            "remote": "hidden",
+            "quick": "off"
+          },
+          "media_player.kids_speaker": {
+            "local": "control",
+            "remote": "hidden",
+            "quick": "off"
+          }
+        },
+        "kids": {
+          "time_zone": "Europe/Zurich",
+          "override_until": null,
+          "entities": {
+            "light.kids_room": {
+              "blocked": false,
+              "quiet_hours": [
+                {
+                  "days": [
+                    "mon",
+                    "tue",
+                    "wed",
+                    "thu",
+                    "fri"
+                  ],
+                  "start": "20:00",
+                  "end": "06:30"
+                }
+              ],
+              "color_lock": true,
+              "volume_max": null,
+              "rate_limit": {
+                "max_actions": 6,
+                "window_seconds": 60,
+                "cooldown_seconds": 300
+              },
+              "release_until": "2026-11-20T19:45:00Z"
+            },
+            "media_player.kids_speaker": {
+              "blocked": false,
+              "quiet_hours": [],
+              "color_lock": false,
+              "volume_max": 40,
+              "rate_limit": null
+            }
+          },
+          "bedtime_released_until": "2026-11-20T20:30:00Z",
+          "pause_released_until": null
+        },
+        "access": null,
+        "home_networks": [],
+        "location": "off"
+      }
+    ],
+    "control_paths": {
+      "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b": "checked"
+    },
+    "removed": [],
+    "complete": false
+  }
+}

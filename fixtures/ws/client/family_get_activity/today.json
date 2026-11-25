@@ -1,0 +1,6 @@
+{
+  "type": "family_get_activity",
+  "request_id": "f-4",
+  "since": "2026-11-18T23:00:00+00:00",
+  "limit": 50
+}

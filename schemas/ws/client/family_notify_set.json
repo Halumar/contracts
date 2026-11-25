@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_notify_set",
+  "description": "Switch the automatic child notifications of this device on or off (only kinds with can_disable; kids_release_requested stays on). Goes to this device in the app; the admin decides about Home Assistant notify targets. Family manager devices only (effective rule family_manager); otherwise family_error {not_permitted}. Also accepted through the integration relay (POST /api/integration/family) when the device is away. Answer: family_notify.",
+  "type": "object",
+  "required": [
+    "type",
+    "notify"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_notify_set"
+    },
+    "notify": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "family_notify_kind -> on/off."
+    }
+  },
+  "additionalProperties": true
+}

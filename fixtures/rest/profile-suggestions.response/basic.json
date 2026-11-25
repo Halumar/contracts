@@ -1,0 +1,264 @@
+{
+  "catalog_version": 1,
+  "suggestions": [
+    {
+      "id": "adult",
+      "version": 1,
+      "group": "people",
+      "starter": true,
+      "name": {
+        "de": "Erwachsen",
+        "en": "Adult"
+      },
+      "description": {
+        "de": "Sees and controls everything at home, also when away. Invites guests and adds devices only if you allow it per device.",
+        "en": "Sees and controls everything at home, also when away. Inviting guests and adding devices only if you allow it per device."
+      },
+      "icon": "mdi:account",
+      "color": "#2E7D32",
+      "child_protection": false,
+      "intended_for": "member",
+      "profile_ids": [
+        "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6"
+      ]
+    },
+    {
+      "id": "child",
+      "version": 1,
+      "group": "kids",
+      "starter": true,
+      "name": {
+        "de": "Kind",
+        "en": "Child"
+      },
+      "description": {
+        "de": "Controls only through the hub and only at home. Locks, alarm, garage and cameras are blocked. Bedtime Mon–Fri from 20:00.",
+        "en": "Controls only through the hub and only at home. Locks, alarm, garage and cameras are blocked. Bedtime Mon–Fri from 20:00."
+      },
+      "icon": "mdi:human-child",
+      "color": "#F9A825",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": [
+        "7c1e5a3b-2d4f-4a6b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "id": "guest",
+      "version": 1,
+      "group": "guests",
+      "starter": true,
+      "name": {
+        "de": "Gast",
+        "en": "Guest"
+      },
+      "description": {
+        "de": "Nur in den Bereichen, die du freigibst, und nur zu Hause. Läuft automatisch ab.",
+        "en": "Only in the areas you allow and only at home. Expires automatically."
+      },
+      "icon": "mdi:bag-suitcase",
+      "color": "#6D4C41",
+      "child_protection": false,
+      "intended_for": "guest",
+      "profile_ids": [
+        "8e2f3a4b-5c6d-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "id": "wall_panel",
+      "version": 1,
+      "group": "shared",
+      "starter": true,
+      "name": {
+        "de": "Wandpanel",
+        "en": "Wall panel"
+      },
+      "description": {
+        "de": "Vollbild an der Wand, startet im eigenen Bereich und dunkelt nachts ab. Einstellungen nur mit Fern-PIN, nur zu Hause.",
+        "en": "Full screen on the wall, starts in its own area and dims at night. Settings only with the remote PIN, only at home."
+      },
+      "icon": "mdi:tablet-dashboard",
+      "color": "#00695C",
+      "child_protection": false,
+      "intended_for": "member",
+      "profile_ids": [
+        "9f3a4b5c-6d7e-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "id": "apple_tv",
+      "version": 1,
+      "group": "shared",
+      "starter": true,
+      "name": {
+        "de": "Fernseher",
+        "en": "TV"
+      },
+      "description": {
+        "de": "Alle Bereiche auf dem Fernseher, nur zu Hause. Einstellungen nur mit Fern-PIN.",
+        "en": "All areas on the TV, only at home. Settings only with the remote PIN."
+      },
+      "icon": "mdi:television",
+      "color": "#37474F",
+      "child_protection": false,
+      "intended_for": "member",
+      "profile_ids": [
+        "0a4b5c6d-7e8f-4a9b-8c1d-2e3f4a5b6c7d"
+      ]
+    },
+    {
+      "id": "easy_mode",
+      "version": 1,
+      "group": "people",
+      "starter": false,
+      "name": {
+        "de": "Einfach bedienen",
+        "en": "Easy mode"
+      },
+      "description": {
+        "de": "Grosse, einfache Bedienung ohne Suche und Filter. Einstellungen nur mit Fern-PIN.",
+        "en": "Large, simple controls without search and filter. Settings only with the remote PIN."
+      },
+      "icon": "mdi:human-cane",
+      "color": "#5E35B1",
+      "child_protection": false,
+      "intended_for": "member",
+      "profile_ids": []
+    },
+    {
+      "id": "toddler",
+      "version": 1,
+      "group": "kids",
+      "starter": false,
+      "name": {
+        "de": "Kleinkind (bis 5)",
+        "en": "Toddler (up to 5)"
+      },
+      "description": {
+        "de": "Nur das eigene Zimmer, nur Licht und Musik. Schlafenszeit jeden Tag ab 19:00. Einstellungen ausgeblendet.",
+        "en": "Only the own room, only lights and music. Bedtime every day from 19:00. Settings hidden."
+      },
+      "icon": "mdi:baby-face-outline",
+      "color": "#FB8C00",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": []
+    },
+    {
+      "id": "child_6_9",
+      "version": 1,
+      "group": "kids",
+      "starter": false,
+      "name": {
+        "de": "Kind 6–9",
+        "en": "Child 6–9"
+      },
+      "description": {
+        "de": "Steuert Licht und Storen im eigenen Zimmer. Schlafenszeit Mo–Fr ab 19:30. Weitere Bereiche ergänzt du im Profil.",
+        "en": "Controls lights and blinds in the own room. Bedtime Mon–Fri from 19:30. Add more areas in the profile."
+      },
+      "icon": "mdi:human-child",
+      "color": "#FDD835",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": []
+    },
+    {
+      "id": "child_10_12",
+      "version": 1,
+      "group": "kids",
+      "starter": false,
+      "name": {
+        "de": "Kind 10–12",
+        "en": "Child 10–12"
+      },
+      "description": {
+        "de": "Steuert die Familienbereiche ohne Schloss, Alarm und Kameras. Schlafenszeit Mo–Fr ab 20:30.",
+        "en": "Controls the family areas without lock, alarm and cameras. Bedtime Mon–Fri from 20:30."
+      },
+      "icon": "mdi:account-school",
+      "color": "#7CB342",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": []
+    },
+    {
+      "id": "teen",
+      "version": 1,
+      "group": "kids",
+      "starter": false,
+      "name": {
+        "de": "Teen (13–17)",
+        "en": "Teen (13–17)"
+      },
+      "description": {
+        "de": "Steuert fast alles zu Hause, nur nicht Alarm und Kameras. Unter der Woche ab 22:00 Ruhe.",
+        "en": "Controls almost everything at home except the alarm and cameras. Quiet from 22:00 on weekdays."
+      },
+      "icon": "mdi:account-music",
+      "color": "#43A047",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": []
+    },
+    {
+      "id": "babysitter",
+      "version": 1,
+      "group": "guests",
+      "starter": false,
+      "name": {
+        "de": "Babysitter",
+        "en": "Babysitter"
+      },
+      "description": {
+        "de": "Eigener Bereich und die Bereiche, die du freigibst, ohne Kameras. Nur zu Hause.",
+        "en": "Own area and the areas you allow, without cameras. Only at home."
+      },
+      "icon": "mdi:baby-carriage",
+      "color": "#8D6E63",
+      "child_protection": false,
+      "intended_for": "guest",
+      "profile_ids": []
+    },
+    {
+      "id": "house_sitter",
+      "version": 1,
+      "group": "guests",
+      "starter": false,
+      "name": {
+        "de": "Haushüter & Helfer",
+        "en": "House sitter & helper"
+      },
+      "description": {
+        "de": "Für Haus-, Tier- oder Pflanzensitting: alle Bereiche, auch von unterwegs. Läuft automatisch ab.",
+        "en": "For house, pet or plant sitting: all areas, also when away. Expires automatically."
+      },
+      "icon": "mdi:home-account",
+      "color": "#795548",
+      "child_protection": false,
+      "intended_for": "guest",
+      "profile_ids": [
+        "1b5c6d7e-8f9a-4b0c-9d2e-3f4a5b6c7d8e"
+      ]
+    },
+    {
+      "id": "kids_room_panel",
+      "version": 1,
+      "group": "shared",
+      "starter": false,
+      "name": {
+        "de": "Wandpanel Kinderzimmer",
+        "en": "Kids' room panel"
+      },
+      "description": {
+        "de": "Panel im Kinderzimmer: nur dieser Raum, mit Kindersicherung und Schlafenszeit ab 19:30.",
+        "en": "Panel in the kids' room: only this room, with parental controls and bedtime from 19:30."
+      },
+      "icon": "mdi:tablet",
+      "color": "#FFB300",
+      "child_protection": true,
+      "intended_for": "member",
+      "profile_ids": []
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "get_area",
+  "description": "Request one area with sections, entities (live state) and widgets. Paired clients only get areas of their own scope (their area list by tags, plus areas their notifications link to); other ids are answered with error 'Area not found'. Server paths are stripped and entity states sanitized for paired clients.",
+  "type": "object",
+  "required": [
+    "type",
+    "area_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "get_area"
+    },
+    "area_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

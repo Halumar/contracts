@@ -1,0 +1,140 @@
+name: release
+
+# Tags every contract version that reaches main, so consumers can pin it
+# (.github/contracts-ref in the hub and the integration):
+#
+#   1. gate:    only on main; version from VERSION; CHANGELOG.md needs a
+#               "## [<version>]" section; nothing to do when the tag v<version> and
+#               its GitHub release both exist; a tag on another commit stops the run.
+#   2. tests:   the full validate workflow (schemas, fixtures, AsyncAPI CLI, codegen
+#               check in all four languages and the round trips).
+#   3. release: annotated tag v<version> (unless it exists) and a GitHub release with
+#               the CHANGELOG section (unless it exists); versions with a suffix
+#               (such as 1.1.0-rc.1) are marked pre-release.
+#
+# Pre-releases are tagged too, so consumers can pin them.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: contracts-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    name: Release needed?
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      publish: ${{ steps.check.outputs.publish }}
+      tag_exists: ${{ steps.check.outputs.tag_exists }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version="$(tr -d '[:space:]' < VERSION)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          version_pattern="${version//./\\.}"
+          if ! grep -qE "^##[[:space:]]+\[?v?${version_pattern}\]?([[:space:]]|$)" CHANGELOG.md; then
+            echo "::error file=CHANGELOG.md::CHANGELOG.md has no '## [${version}]' section."
+            exit 1
+          fi
+          # gh_get PATH JQ: prints the JQ value of PATH; status 1 for 404, stops on any other error.
+          gh_get() {
+            if gh api "$1" --jq "$2" > "$RUNNER_TEMP/gh.out" 2> "$RUNNER_TEMP/gh.err"; then
+              cat "$RUNNER_TEMP/gh.out"
+              return 0
+            fi
+            if grep -q "HTTP 404" "$RUNNER_TEMP/gh.err"; then
+              return 1
+            fi
+            echo "::error::GitHub API $1: $(cat "$RUNNER_TEMP/gh.err")" >&2
+            exit 1
+          }
+          tag_exists=false
+          if gh_get "repos/${GITHUB_REPOSITORY}/releases/tags/v${version}" .id > /dev/null; then
+            echo "Contract ${version} is already tagged and released."
+            echo "tag_exists=true" >> "$GITHUB_OUTPUT"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if gh_get "repos/${GITHUB_REPOSITORY}/git/ref/tags/v${version}" .object.type > "$RUNNER_TEMP/type"; then
+            tag_exists=true
+            type="$(cat "$RUNNER_TEMP/type")"
+            sha="$(gh_get "repos/${GITHUB_REPOSITORY}/git/ref/tags/v${version}" .object.sha)"
+            if [ "${type}" = tag ]; then
+              # Annotated tag: the commit it points at.
+              sha="$(gh_get "repos/${GITHUB_REPOSITORY}/git/tags/${sha}" .object.sha)"
+            fi
+            if [ "${sha}" != "${GITHUB_SHA}" ]; then
+              echo "::error::Tag v${version} points at another commit (${sha}), not ${GITHUB_SHA}."
+              exit 1
+            fi
+          fi
+          echo "tag_exists=${tag_exists}" >> "$GITHUB_OUTPUT"
+          if [ "${tag_exists}" = true ]; then
+            echo "Contract ${version} is tagged on this commit but has no release; this run creates the release."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Contract ${version} is not tagged yet; this run tags and releases it."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  tests:
+    name: Validate
+    needs: gate
+    if: needs.gate.outputs.publish == 'true'
+    permissions:
+      contents: read
+    uses: ./.github/workflows/validate.yml
+
+  release:
+    name: Tag and GitHub release
+    needs: [gate, tests]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Tag, notes, release
+        env:
+          VERSION: ${{ needs.gate.outputs.version }}
+          TAG_EXISTS: ${{ needs.gate.outputs.tag_exists }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${TAG_EXISTS}" != true ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "v${VERSION}" -m "Contract ${VERSION}"
+            git push origin "v${VERSION}"
+          fi
+          awk -v v="${VERSION}" '
+            /^##[[:space:]]/ {
+              if (on) exit
+              h = $0
+              sub(/^##[[:space:]]+\[?v?/, "", h)
+              sub(/[][:space:]].*$/, "", h)
+              if (h == v) { on = 1; next }
+            }
+            on { print }
+          ' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          prerelease=()
+          case "${VERSION}" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "v${VERSION}" --verify-tag --title "v${VERSION}" \
+            --notes-file "$RUNNER_TEMP/notes.md" ${prerelease[@]+"${prerelease[@]}"}

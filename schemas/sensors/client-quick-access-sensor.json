@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sensor.<ns>_client_<slug>_<uid8>_quick_access",
+  "description": "Check sensor of one device: the effective quick access of the device, same content as client_config.quick_access. Widgets, controls and intents of the app read it with the device's HA token before every action and act only on what it allows, so an admin revocation acts on the next tap even while the app is closed. state = number of entities with control. Written by the hub via POST /core/api/states/<entity_id> after every change (levels, device max, areas, tags, visibility, pairing, revocation: a revoked device's sensor is deleted). Not persistent in HA (gone after a Core restart until the next resync): a missing sensor means \"not allowed\" (fail closed). Readable with every HA token; contains only entity ids and levels.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^sensor\\.halumar_client_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}_quick_access$",
+      "x-namespace-key": "client_quick_access_sensor_template"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "attributes": {
+      "type": "object",
+      "required": [
+        "client_id",
+        "enabled",
+        "max",
+        "entities",
+        "critical",
+        "updated_at"
+      ],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "client_id": {
+          "$ref": "../common/defs.json#/$defs/client_id"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "max": {
+          "$ref": "../common/defs.json#/$defs/quick_access_device_max"
+        },
+        "entities": {
+          "type": "object",
+          "maxProperties": 500,
+          "additionalProperties": {
+            "enum": [
+              "status",
+              "control"
+            ]
+          }
+        },
+        "critical": {
+          "type": "array",
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "updated_at": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

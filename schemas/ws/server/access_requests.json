@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_requests",
+  "description": "Answer to access_requests_get – the open early access requests this device may answer (oldest first).",
+  "type": "object",
+  "required": [
+    "type",
+    "requests"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_requests"
+    },
+    "requests": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "$ref": "../../common/access-request.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

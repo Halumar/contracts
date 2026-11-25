@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_leave_ok",
+  "description": "Device removed after its client_leave; the hub closes with 1000 right after.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_leave_ok"
+    }
+  },
+  "additionalProperties": true
+}

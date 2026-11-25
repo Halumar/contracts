@@ -1,0 +1,7 @@
+{
+  "uri": "https://www.example.com/open/toggle/light.kitchen",
+  "params": {
+    "view": "toggle",
+    "entity_id": "light.kitchen"
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Control allowlist (data/control-allowlist.json)",
+  "description": "The one source for what the integration action <ns>.control may execute on behalf of a device: per Home Assistant domain the allowed actions and per action the allowed data fields with their types and ranges. Anything not listed is rejected (not_allowed_action, not_allowed_field, not_allowed_value). The action is always one of the entity's own domain; target keys and fields that point at other entities (forbidden_fields) are never allowed, whatever the domain. Domains with release_required (scene, script, automation, remote) only run entities released for the device (rule snapshot entities.<id>.run); scenes and scripts additionally only run when every entity they switch is allowed for the device (run_targets). Generated as a constant for every language (codegen ContractData); the integration validates strictly against it, apps use it to offer only what will be accepted.",
+  "type": "object",
+  "required": [
+    "version",
+    "limits",
+    "forbidden_fields",
+    "own_entities",
+    "run_targets",
+    "domains"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Raised on every change of the list."
+    },
+    "limits": {
+      "type": "object",
+      "required": [
+        "max_entities",
+        "max_data_fields",
+        "max_calls_per_minute"
+      ],
+      "properties": {
+        "max_entities": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Entities per call (a batch such as “all off”)."
+        },
+        "max_data_fields": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Keys in data."
+        },
+        "max_calls_per_minute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Calls per device user and minute (sliding window); more = rate_limited. A batch counts once."
+        }
+      },
+      "additionalProperties": false
+    },
+    "forbidden_fields": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]{1,64}$"
+      },
+      "description": "Never allowed in data: target keys and fields that reference other entities or load arbitrary content (group_members of media_player.join, snapshot_entities of scene.create, variables of scripts, media_content_id of play_media)."
+    },
+    "own_entities": {
+      "const": "blocked",
+      "description": "Entities of the <ns> integration itself (its own platform in the entity registry: wall panel number/select/button, hub buttons and switches) are never operated through <ns>.control, whatever the domain allows; the result reason is own_entity. Admins and calls without a user are not checked by <ns>.control and operate them through the entities themselves. Closes the gap that a device with all areas could dim or wake other panels."
+    },
+    "run_targets": {
+      "type": "object",
+      "required": [
+        "domains",
+        "max_depth",
+        "read_only_domains"
+      ],
+      "description": "Scenes and scripts switch other entities as the system. Running one (an action listed in domains) is allowed only when, besides its own checks and its release, every target is allowed for the device on its own (contract docs/enforcement.md §2 step 4): in the device's snapshot entities, its domain in the allowlist (domains), the level on the route (judged as an unsafe action, except a scene target stored in the safe direction: lock locked, alarm armed), the quick level for origin quick_access, not an entity of the <ns> integration, scenes and scripts among the targets released and checked in turn, and the kids rules of the target (entry, blocked, bedtime, and for scenes color lock and volume cap of the stored state). A failing target refuses the scene or script with blocked_group_member, or with the target's own reason when it is blocked_remote, blocked_quick_access or one of blocked_kids*. Targets of a Home Assistant scene: the entities of its configuration (state attribute entity_id); of a script: the entities Home Assistant references in it (actions, conditions, waits, activated scenes). A scene or script whose targets cannot be determined completely (a scene of another integration, a script that addresses devices, areas, floors or labels) runs on its release alone; with parental controls only while the family manager has released that scene or script (kids.entities.<id>.release_until), else blocked_kids. Targets of automations and remotes are not checked: their release covers them.",
+      "properties": {
+        "domains": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "domain",
+              "actions"
+            ],
+            "properties": {
+              "domain": {
+                "type": "string",
+                "pattern": "^[a-z_]{1,64}$",
+                "description": "A domain with release_required."
+              },
+              "actions": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z_]{1,64}$"
+                },
+                "description": "Actions of the domain that run the targets (turning a script off checks no targets)."
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Domains whose targets are checked, with the actions that run them."
+        },
+        "max_depth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Levels of scenes and scripts inside each other that are followed; a deeper one is refused (blocked_group_member). Cycles end the walk."
+        },
+        "read_only_domains": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]{1,64}$"
+          },
+          "description": "Domains that neither a scene nor a script can switch (sensors, people, zones …): such targets are ignored, for example sensors stored in a scene or read by a script condition. Any other target outside the allowlist refuses the scene or script."
+        }
+      },
+      "additionalProperties": false
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "domain",
+          "release_required",
+          "actions"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "pattern": "^[a-z_]{1,64}$"
+          },
+          "release_required": {
+            "type": "boolean",
+            "description": "true = only entities released for the device (rule snapshot entities.<id>.run is true), else scene_not_released."
+          },
+          "actions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "action",
+                "safe",
+                "reduces",
+                "fields"
+              ],
+              "properties": {
+                "action": {
+                  "type": "string",
+                  "pattern": "^[a-z_]{1,64}$"
+                },
+                "safe": {
+                  "type": "boolean",
+                  "description": "Safe direction (data/quick-access.json safe_direction): also allowed on the level view (lock the lock, arm the alarm)."
+                },
+                "reduces": {
+                  "type": "boolean",
+                  "description": "Makes things quieter or darker: allowed during the kids bedtime. In addition toggle of an entity that is on and volume_mute with is_volume_muted true count as reducing (same as the hub)."
+                },
+                "fields": {
+                  "type": "array",
+                  "maxItems": 30,
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "type",
+                      "class"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[a-z_]{1,64}$"
+                      },
+                      "type": {
+                        "enum": [
+                          "boolean",
+                          "integer",
+                          "number",
+                          "string",
+                          "enum",
+                          "integer_list",
+                          "number_list",
+                          "string_list",
+                          "date",
+                          "time",
+                          "datetime"
+                        ],
+                        "description": "integer = JSON integer (no bool, no fraction); number = integer or finite fraction; *_list = JSON array of that type (min/max per item, min_items/max_items); string_list items limited by max_length; date YYYY-MM-DD, time HH:MM[:SS], datetime ISO 8601."
+                      },
+                      "min": {
+                        "type": "number"
+                      },
+                      "max": {
+                        "type": "number"
+                      },
+                      "min_items": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "max_items": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "max_length": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      },
+                      "values": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "class": {
+                        "anyOf": [
+                          {
+                            "enum": [
+                              "color",
+                              "volume",
+                              "code"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "color = changes color or effect (kids rule color lock); volume = volume level (kids volume cap); code = PIN of a lock or alarm: never logged, never in an event."
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

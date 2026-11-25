@@ -1,0 +1,14 @@
+{
+  "type": "provision_client",
+  "data": {
+    "request_id": "5b0c7a52-9d4e-4c1a-8f3e-2a6b1c0d9e11",
+    "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "display_name": "iPhone",
+    "owner_label": "Admin",
+    "is_guest": false,
+    "remote_allowed": false,
+    "guest_expires_at": null,
+    "token_action": "ensure",
+    "reason": "pair"
+  }
+}

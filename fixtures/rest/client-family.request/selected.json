@@ -1,0 +1,13 @@
+{
+  "scope": {
+    "all": false,
+    "client_ids": [
+      "6c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "7d2b3c4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e",
+      "8e3c4d5f-6a7b-4c8d-8e9f-1a2b3c4d5e6f"
+    ]
+  },
+  "notify_targets": [
+    "notify.mobile_app_iphone_alex"
+  ]
+}

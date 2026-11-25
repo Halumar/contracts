@@ -1,0 +1,7 @@
+{
+  "entity_id": "light.bed_light",
+  "action": "turn_on",
+  "target": {
+    "area_id": "kitchen"
+  }
+}

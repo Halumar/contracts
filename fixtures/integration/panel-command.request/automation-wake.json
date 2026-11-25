@@ -1,0 +1,6 @@
+{
+  "action": "wake",
+  "actor": {
+    "kind": "automation"
+  }
+}

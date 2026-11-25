@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/clients/{client_id}/activity",
+  "description": "Activity feed of one device: newest first, at most max_events entries kept per device (ring buffer, older entries are dropped). Admin-only; 404 for an unknown device. Query limit (1..max_events, default max_events) shortens the list. Removed with the device.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "max_events",
+    "events"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "max_events": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Ring buffer size per device (100)."
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/defs.json#/$defs/device_activity"
+      }
+    }
+  },
+  "additionalProperties": true
+}

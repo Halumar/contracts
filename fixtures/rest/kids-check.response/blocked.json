@@ -1,0 +1,7 @@
+{
+  "allowed": false,
+  "reason": "quiet_hours",
+  "level": "area",
+  "until": "2026-11-20T05:30:00+00:00",
+  "limit": null
+}

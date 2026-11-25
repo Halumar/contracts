@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Expiry vector",
+  "description": "End of a temporary device adjustment for each preset (data/profile-rules.json expiry_presets) at a given time in the hub time zone; DST included. tools/validate.py recomputes them with tools/profiles_ref.py.",
+  "type": "object",
+  "required": [
+    "description",
+    "time_zone",
+    "now",
+    "cases"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "time_zone": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "now": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "preset",
+          "expires_at"
+        ],
+        "properties": {
+          "preset": {
+            "$ref": "../common/defs.json#/$defs/rule_expiry_preset"
+          },
+          "expires_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

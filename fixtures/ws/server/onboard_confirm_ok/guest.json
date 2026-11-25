@@ -1,0 +1,18 @@
+{
+  "type": "onboard_confirm_ok",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6d",
+  "client_name": "Gast 2",
+  "all_areas": false,
+  "area_names": [
+    "Wohnzimmer"
+  ],
+  "kind": "guest",
+  "profile": {
+    "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+    "name": "Gast"
+  },
+  "owner_label": "Guest",
+  "expires_at": "2026-11-23T19:00:00+00:00",
+  "remote_allowed": false
+}

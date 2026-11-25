@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Notifications at events",
+  "description": "GET/PUT /api/settings/event-notifications (admin, CSRF). Log retention, default quiet hours and a list of notification rules: which events (kinds of data/events.json), to which targets (Home Assistant notify actions such as the Companion app, Telegram or e-mail – they reach people with the app closed – and/or paired devices, shown in the app while it is open; every paired device except watches may be chosen, also children and guests), filtered by person, device, profile, area, entity and route, with quiet hours, a threshold against spam and bundling. The hub sends them itself (notify.<service> over its Home Assistant connection, devices through the hub channel); the HA events <ns>_event and <ns>_alarm are always fired, independent of these settings. PUT does not check notify targets against Home Assistant (it may be down); 422 notifications.no_target only for enabled rules without target, 422 notifications.device_unknown for a device that is not paired, a watch or an expired guest, 422 notifications.duplicate_id. A device that is deleted or whose guest access ends is removed from all rules (targets and filters); a rule left without target is switched off. POST /api/settings/event-notifications/test sends a test (rest/event-notifications-test.request.json).",
+  "type": "object",
+  "required": [
+    "retention_days",
+    "rules"
+  ],
+  "properties": {
+    "retention_days": {
+      "type": "integer",
+      "minimum": 7,
+      "maximum": 90,
+      "description": "Log retention (activity, changes, alarms): 7, 30 (default) or 90 days, other values 422; the same value as rest/log-settings.json retention_days."
+    },
+    "quiet_default": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Default quiet hours of the admin UI (Home Assistant's time zone); a rule copies them into quiet_hours. The hub always answers with it (default 22:00–07:00); PUT without it keeps the default."
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "enabled",
+          "kinds",
+          "targets",
+          "filters",
+          "threshold",
+          "bundle_minutes",
+          "quiet_hours"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "kinds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 30,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/event_kind"
+            }
+          },
+          "targets": {
+            "type": "object",
+            "required": [
+              "notify",
+              "devices"
+            ],
+            "properties": {
+              "notify": {
+                "type": "array",
+                "maxItems": 10,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "pattern": "^notify\\.[a-z0-9_]{1,255}$"
+                }
+              },
+              "devices": {
+                "type": "array",
+                "maxItems": 50,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/uuid"
+                }
+              }
+            },
+            "additionalProperties": false,
+            "description": "At least one target for an enabled rule (422 notifications.no_target). devices: any paired device (members, children, guests); a device that is gone is skipped (device_gone)."
+          },
+          "filters": {
+            "type": "object",
+            "required": [
+              "client_ids",
+              "owner_labels",
+              "profile_ids",
+              "area_ids",
+              "entity_ids",
+              "routes"
+            ],
+            "properties": {
+              "client_ids": {
+                "type": "array",
+                "maxItems": 100,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/uuid"
+                }
+              },
+              "owner_labels": {
+                "type": "array",
+                "maxItems": 50,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "description": "Persons (owner label of the devices)."
+              },
+              "profile_ids": {
+                "type": "array",
+                "maxItems": 50,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/uuid"
+                }
+              },
+              "area_ids": {
+                "type": "array",
+                "maxItems": 100,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "maxLength": 64
+                }
+              },
+              "entity_ids": {
+                "type": "array",
+                "maxItems": 200,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/entity_id"
+                },
+                "description": "“Certain devices” (activity)."
+              },
+              "routes": {
+                "type": "array",
+                "maxItems": 3,
+                "uniqueItems": true,
+                "items": {
+                  "$ref": "../common/defs.json#/$defs/control_route"
+                },
+                "description": "[\"external\"] = only activity from away."
+              }
+            },
+            "additionalProperties": false,
+            "description": "Each non-empty list must match (AND between lists, OR inside a list); empty = no filter."
+          },
+          "threshold": {
+            "type": "object",
+            "required": [
+              "count",
+              "window_minutes"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "window_minutes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1440
+              }
+            },
+            "additionalProperties": false,
+            "description": "Notify only from count matching events per device (client_id) within window_minutes (e.g. 3 rejections in 10 minutes); 1/1 = every event."
+          },
+          "bundle_minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440,
+            "description": "Collect matching events this long and send one summary; 0 = at once."
+          },
+          "quiet_hours": {
+            "type": "array",
+            "maxItems": 14,
+            "items": {
+              "type": "object",
+              "required": [
+                "days",
+                "start",
+                "end"
+              ],
+              "properties": {
+                "days": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 7,
+                  "uniqueItems": true,
+                  "items": {
+                    "$ref": "../common/defs.json#/$defs/kids_weekday"
+                  }
+                },
+                "start": {
+                  "type": "string",
+                  "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+                },
+                "end": {
+                  "type": "string",
+                  "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "No notification in these windows (Home Assistant's time zone); events of alarm kinds are bundled and sent at the end, others dropped."
+          },
+          "lead_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 10080
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Expiring kinds (guest_expiring, adjustment_expiring): notify this long before the end; null = default (guests 1440, adjustments 60)."
+          },
+          "delay_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1440
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "integration_outage detected by the hub (push session of the integration gone): notify after this long; null = default 5. With integration_outage and integration_started in one rule, “back again” is only sent after a reported outage."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

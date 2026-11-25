@@ -1,0 +1,13 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-21",
+  "entity_id": "light.kids_room",
+  "reason": "rate_limited",
+  "level": "profile",
+  "until": "2026-11-19T16:05:00+00:00",
+  "retry_after": 300,
+  "limit": {
+    "max_actions": 6,
+    "window_seconds": 60
+  }
+}

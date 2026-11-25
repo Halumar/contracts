@@ -1,0 +1,6 @@
+{
+  "type": "family_rule_set",
+  "client_ids": [],
+  "rule": "kids_volume_max",
+  "value": 60
+}

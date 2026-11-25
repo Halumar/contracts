@@ -1,0 +1,30 @@
+{
+  "type": "family_rule_set",
+  "request_id": "f-2",
+  "client_ids": [
+    "7d2b3c4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e"
+  ],
+  "rule": "kids_quiet_hours",
+  "value": [
+    {
+      "days": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri"
+      ],
+      "start": "20:30",
+      "end": "06:30"
+    },
+    {
+      "days": [
+        "sat",
+        "sun"
+      ],
+      "start": "21:00",
+      "end": "07:00"
+    }
+  ],
+  "note": "Neues Schuljahr"
+}

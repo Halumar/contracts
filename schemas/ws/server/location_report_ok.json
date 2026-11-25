@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "location_report_ok",
+  "description": "Report accepted (the rule allows it). applied true = the hub handed the fix to the integration. applied false = nothing changed in Home Assistant: the fix is older than the last applied one, or no integration took it (not connected); the app may send a newer fix later, and the same fix counts as new again once an integration is connected. Same body as the 200 answer of POST /api/client/location.",
+  "type": "object",
+  "required": [
+    "type",
+    "applied"
+  ],
+  "properties": {
+    "type": {
+      "const": "location_report_ok"
+    },
+    "applied": {
+      "type": "boolean",
+      "description": "true = handed to the integration; false = older than the last applied fix, or no integration took it."
+    }
+  },
+  "additionalProperties": true
+}

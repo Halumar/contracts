@@ -1,0 +1,10 @@
+{
+  "type": "onboard_start",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "client_name": "Pixel Watch",
+  "protocol_version": 1,
+  "platform": "wearos",
+  "app_version": "2026.12.0",
+  "app_build": "12",
+  "device_model": "Google Pixel Watch 4"
+}

@@ -1,0 +1,5 @@
+{
+  "type": "pair_error",
+  "reason": "invalid_request",
+  "message": "client_name must be 100 characters or less"
+}

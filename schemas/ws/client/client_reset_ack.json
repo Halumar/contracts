@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_reset_ack",
+  "description": "Device confirms it wiped its credentials after client_removed. Accepted authenticated, or unauthenticated for exactly the pending id signalled during auth. Purges the tombstone; server answers client_reset_ack_ok and closes 1000.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_reset_ack"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant event <ns>_alarm (data)",
+  "description": "Fired on the HA event bus by the integration for every event of an alarm kind (data/events.json alarm true), in addition to <ns>_event, immediately and without thresholds. Data minimization: only these fields. Only admins can subscribe to it over the WebSocket API.",
+  "type": "object",
+  "required": [
+    "kind",
+    "client_id",
+    "device_name",
+    "entity_id",
+    "reason",
+    "route",
+    "at"
+  ],
+  "properties": {
+    "kind": {
+      "$ref": "../common/defs.json#/$defs/alarm_kind"
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Display name of the device (without brand prefix)."
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_denial_reason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "route": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_route"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "since": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    },
+    "test": {
+      "type": "boolean",
+      "description": "true when <ns>_event of the same test (alarm kind) is fired; absent for real alarms."
+    }
+  },
+  "additionalProperties": false
+}

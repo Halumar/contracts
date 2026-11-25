@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_start",
+  "description": "An unpaired device asks for a one-time onboarding session (unauthenticated sessions only, TLS port only): every app platform (ios, ipados, tvos, android, android_tablet, android_tv; a watch (watchos, wearos) through its phone, which opens the session on the watch's behalf with the watch's public key, confirms it itself and passes the sealed secret on to the watch; the watch keeps that key, the hub keeps its public key to seal the watch's HA access to it, watch_access); web gets onboard_error platform_not_supported. The PIN stays available on every device. It sends its ephemeral X25519 public key and the client info like pair (checked first: a too old app gets upgrade_required + close 4426). Answer: onboard_session (with QR data and the 6-digit code), or onboard_error. A second onboard_start on the same connection replaces the running session (new QR code and code). The connection stays open until the session ends (instead of the 30 s auth timeout). The waiting device asks no question about its role: the confirming device decides what it becomes.",
+  "type": "object",
+  "required": [
+    "type",
+    "public_key",
+    "client_name",
+    "protocol_version",
+    "platform",
+    "app_version"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_start"
+    },
+    "public_key": {
+      "$ref": "../../common/defs.json#/$defs/onboard_public_key"
+    },
+    "client_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version"
+    },
+    "platform": {
+      "$ref": "../../common/defs.json#/$defs/platform"
+    },
+    "app_version": {
+      "$ref": "../../common/defs.json#/$defs/app_version"
+    },
+    "app_build": {
+      "$ref": "../../common/defs.json#/$defs/app_build"
+    },
+    "device_model": {
+      "$ref": "../../common/defs.json#/$defs/device_model"
+    }
+  },
+  "additionalProperties": true
+}

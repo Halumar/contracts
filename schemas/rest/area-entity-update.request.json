@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/areas/{area_id}/entities/{entity_id} (body)",
+  "description": "Admin only (CSRF like every admin write). Partial update of an area entity placement: only the fields sent change. tile replaces the whole object; tile: null resets every tile setting to the default (the hub stores NULL). The hub checks tile against data/tile-capabilities.json for the domain of entity_id and against Home Assistant (run target and secondary sensor must exist; 503 ha_unavailable when Home Assistant cannot be asked, nothing is stored). Errors: 422 with detail[].type = tile.<reason> and detail[].loc = [\"body\", \"tile\", ...]: tile.field_not_allowed, tile.variant_not_allowed, tile.attribute_not_allowed, tile.action_not_allowed, tile.icon_unknown, tile.target_required, tile.target_domain, tile.target_not_found, tile.entity_not_found, tile.hidden_everywhere, tile.too_large. Unknown keys (also inside tile) = 422. Answer: the placement (common/area-entity.json, tile as object). Broadcast entity_updated with changed (ws/broadcast/entity_updated.json).",
+  "type": "object",
+  "properties": {
+    "section_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "display_name": {
+      "description": "Trimmed; empty or only blanks = null (name from Home Assistant).",
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 100,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]*$"
+    },
+    "columns": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "is_visible": {
+      "type": "boolean"
+    },
+    "control_mode": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_mode"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tile": {
+      "description": "Whole tile object (replaces the stored one) or null = reset to default. Strict: only the writable fields of defs.json#/$defs/tile_settings_base.",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "../common/defs.json#/$defs/tile_settings_base"
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,8 @@
+{
+  "tile": {
+    "tap_action": {
+      "action": "run",
+      "target_entity_id": "light.kitchen"
+    }
+  }
+}

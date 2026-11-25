@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "input_boolean.<ns>_area_<slug>_<uid8>",
+  "description": "Per-area activation mirror (all areas). The hub polls it every 5 s; not operable via input_boolean.toggle (no real helper). Deleted areas: state 'unavailable' and attribute deleted=true. Written by the add-on via POST /core/api/states/<entity_id>; not persistent in HA (gone after a Core restart until the next resync). Readable with every HA token.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^input_boolean\\.halumar_area_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}$",
+      "x-namespace-key": "area_switch_template"
+    },
+    "state": {
+      "enum": [
+        "on",
+        "off",
+        "unavailable"
+      ]
+    },
+    "attributes": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "halumar_area_id": {
+          "allOf": [
+            {
+              "$ref": "../common/defs.json#/$defs/uuid"
+            }
+          ],
+          "x-namespace-key": "area_switch_id_attribute"
+        },
+        "editable": {
+          "const": true
+        },
+        "deleted": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

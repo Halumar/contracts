@@ -1,0 +1,6 @@
+{
+  "type": "access_request_error",
+  "reason": "cooldown",
+  "message": "Please wait before asking again.",
+  "retry_after": 420
+}

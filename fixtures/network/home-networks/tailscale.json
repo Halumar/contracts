@@ -1,0 +1,59 @@
+{
+  "name": "tailscale",
+  "input": [
+    {
+      "cidr": "100.64.0.0/10",
+      "name": "Tailscale"
+    },
+    {
+      "cidr": "fd7a:115c:a1e0::/48",
+      "name": "Tailscale"
+    }
+  ],
+  "expect": {
+    "networks": [
+      {
+        "cidr": "100.64.0.0/10",
+        "name": "Tailscale"
+      },
+      {
+        "cidr": "fd7a:115c:a1e0::/48",
+        "name": "Tailscale"
+      }
+    ]
+  },
+  "hosts": [
+    {
+      "address": "100.101.102.103",
+      "home": true
+    },
+    {
+      "address": "100.127.255.254",
+      "home": true
+    },
+    {
+      "address": "100.128.0.1",
+      "home": false
+    },
+    {
+      "address": "100.63.255.255",
+      "home": false
+    },
+    {
+      "address": "fd7a:115c:a1e0:ab12::1",
+      "home": true
+    },
+    {
+      "address": "fd7a:115c:a1e1::1",
+      "home": false
+    },
+    {
+      "address": "::ffff:100.100.1.1",
+      "home": true
+    },
+    {
+      "address": "[fd7a:115c:a1e0::5]",
+      "home": true
+    }
+  ]
+}

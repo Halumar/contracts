@@ -1,0 +1,32 @@
+{
+  "rule": {
+    "id": "0b1c2d3e-4f5a-4b6c-8d7e-9f0a1b2c3d4e",
+    "name": "Entwurf",
+    "enabled": true,
+    "kinds": [
+      "denied"
+    ],
+    "targets": {
+      "notify": [
+        "notify.persistent_notification"
+      ],
+      "devices": []
+    },
+    "filters": {
+      "client_ids": [],
+      "owner_labels": [],
+      "profile_ids": [],
+      "area_ids": [],
+      "entity_ids": [],
+      "routes": []
+    },
+    "threshold": {
+      "count": 3,
+      "window_minutes": 10
+    },
+    "bundle_minutes": 0,
+    "quiet_hours": [],
+    "lead_minutes": null,
+    "delay_minutes": null
+  }
+}

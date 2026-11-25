@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Notification item (push shape)",
+  "description": "Single serializer notification_to_push_payload: item of WS 'notifications', payload of command display_notification (without status) and of the per-client HA notification sensor.",
+  "type": "object",
+  "required": [
+    "notification_id",
+    "title",
+    "notification_type",
+    "popup",
+    "popup_mode",
+    "priority",
+    "color",
+    "action_type",
+    "show_time"
+  ],
+  "properties": {
+    "notification_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 5000
+    },
+    "notification_type": {
+      "enum": [
+        "default",
+        "sticky"
+      ],
+      "description": "Canonical values; the hub also accepts normal and permanent and stores their canonical value."
+    },
+    "popup": {
+      "type": "boolean",
+      "description": "Derived: true exactly when popup_mode is not 'none'."
+    },
+    "popup_mode": {
+      "enum": [
+        "none",
+        "popup",
+        "both",
+        "direct"
+      ]
+    },
+    "scheduled_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 8601; the app schedules a local notification, delivery is immediate."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "color": {
+      "enum": [
+        "none",
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "orange"
+      ]
+    },
+    "action_type": {
+      "enum": [
+        "none",
+        "area",
+        "entity",
+        "url"
+      ]
+    },
+    "action_target": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 2000
+    },
+    "show_time": {
+      "type": "boolean"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "status": {
+      "enum": [
+        "pending",
+        "delivered",
+        "dismissed"
+      ],
+      "description": "Present in the notifications list and the HA sensor, absent in display_notification."
+    },
+    "icon": {
+      "type": "string",
+      "description": "Only present when set."
+    },
+    "icon_svg": {
+      "type": "string",
+      "maxLength": 10000,
+      "description": "Only present when set. Not decoded by the apps (known deviation D1, docs/protocol.md)."
+    }
+  },
+  "additionalProperties": true
+}

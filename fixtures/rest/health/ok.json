@@ -1,0 +1,16 @@
+{
+  "status": "ok",
+  "db": "ok",
+  "version": "2026.12.0",
+  "build": "2026-11-18",
+  "uptime_seconds": 5321,
+  "connected_clients": 3,
+  "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+  "protocol_version": 1,
+  "min_protocol_version": 1,
+  "min_app_version": {
+    "ios": "2026.12.0",
+    "ipados": "2026.12.0",
+    "tvos": "2026.12.0"
+  }
+}

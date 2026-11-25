@@ -1,0 +1,16 @@
+{
+  "client_id": "7a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+  "max_events": 100,
+  "events": [
+    {
+      "id": 13,
+      "client_id": "7a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d",
+      "ts": "2026-11-18T19:03:40+00:00",
+      "event": "device_added",
+      "detail": {
+        "added_client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+        "added_client_name": "Apple TV Wohnzimmer"
+      }
+    }
+  ]
+}

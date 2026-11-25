@@ -1,0 +1,36 @@
+{
+  "retention_days": 30,
+  "rules": [
+    {
+      "id": "7f1e2d3c-4b5a-4968-8776-655443322110",
+      "name": "Alarme an Admin",
+      "enabled": true,
+      "kinds": [
+        "denied",
+        "access_group_restored",
+        "direct_access_attempt",
+        "integration_outage"
+      ],
+      "targets": {
+        "notify": [
+          "script.alarm"
+        ],
+        "devices": []
+      },
+      "filters": {
+        "client_ids": [],
+        "owner_labels": [],
+        "profile_ids": [],
+        "area_ids": [],
+        "entity_ids": [],
+        "routes": []
+      },
+      "threshold": {
+        "count": 3,
+        "window_minutes": 10
+      },
+      "bundle_minutes": 0,
+      "quiet_hours": []
+    }
+  ]
+}

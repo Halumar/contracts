@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast guests_expired",
+  "description": "Expired guests removed (loop every 60 s).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "guests_expired"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "client_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          }
+        }
+      },
+      "required": [
+        "count",
+        "client_ids"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

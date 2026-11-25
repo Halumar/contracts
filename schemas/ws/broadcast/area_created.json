@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast area_created",
+  "description": "Area created or copied. Not sent to apps; they get areas_changed.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "area_created"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "area_id",
+        "name"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

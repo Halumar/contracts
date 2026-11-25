@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite_opened",
+  "description": "Admin audience: a member device opened a guest invitation (never the PIN).",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite_opened"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "invited_by",
+        "expires_at"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+        },
+        "invited_by": {
+          "$ref": "../../common/defs.json#/$defs/device_ref"
+        },
+        "expires_at": {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

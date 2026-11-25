@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "get_client_config",
+  "description": "Request the device configuration (HA token, URLs, managed settings).",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "get_client_config"
+    }
+  },
+  "additionalProperties": true
+}

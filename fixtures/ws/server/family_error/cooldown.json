@@ -1,0 +1,6 @@
+{
+  "type": "family_error",
+  "reason": "cooldown",
+  "message": "Same category declined 3 min ago",
+  "retry_after": 720
+}

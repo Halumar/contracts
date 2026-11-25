@@ -1,0 +1,9 @@
+{
+  "type": "rule_blocked",
+  "request_id": "c1",
+  "entity_id": "camera.front_door",
+  "reason": "blocked",
+  "level": "profile",
+  "until": null,
+  "retry_after": null
+}

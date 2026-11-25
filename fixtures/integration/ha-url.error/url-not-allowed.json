@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "url_not_allowed",
+    "message": "Not HA's external_url or a Nabu Casa address"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "command",
+  "command": "show_entity",
+  "entity_id": "climate.hvac",
+  "control_mode": "full"
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/panel and POST /api/pairing/clients/{id}/panel (4xx/504)",
+  "description": "Error body. Status by code: 404 not_found; 422 deactivated, guest, not_a_panel, remote_off, unsupported, not_connected, invalid, not_in_panel_mode, not_pro, failed; 504 timeout (no answer of the app within 5 s). The integration raises a translated HomeAssistantError with translation_key panel_<code> (never fails silently). Every command – executed or rejected – is logged with the actor (event kinds panel_command / panel_command_rejected).",
+  "type": "object",
+  "required": [
+    "detail"
+  ],
+  "properties": {
+    "detail": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "$ref": "../common/defs.json#/$defs/panel_command_error_code"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

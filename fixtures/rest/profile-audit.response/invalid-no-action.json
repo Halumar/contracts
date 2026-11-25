@@ -1,0 +1,15 @@
+{
+  "entries": [
+    {
+      "id": 1,
+      "ts": "2026-11-19T21:05:00Z",
+      "actor": null,
+      "profile_id": null,
+      "client_id": null,
+      "rule": null,
+      "before": null,
+      "after": null,
+      "note": null
+    }
+  ]
+}

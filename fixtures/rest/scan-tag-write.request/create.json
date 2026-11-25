@@ -1,0 +1,7 @@
+{
+  "name": "Bett Licht aus",
+  "action": {
+    "kind": "turn_off",
+    "entity_id": "light.bed_light"
+  }
+}

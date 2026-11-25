@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_session",
+  "description": "Answer to onboard_start. The device builds its QR code from hub_id, its own pinned fingerprint (not from this message), session_id and its public key (deep-link/onboard-link.json) and shows code under it (“428 913”) for typing on the confirming device. When a confirming device looked it up the hub sends onboard_claimed.",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id",
+    "hub_id",
+    "expires_in",
+    "expires_at",
+    "code"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_session"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "hub_id": {
+      "$ref": "../../common/defs.json#/$defs/hub_instance_id"
+    },
+    "expires_in": {
+      "type": "integer",
+      "const": 300
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/timestamp"
+    },
+    "code": {
+      "$ref": "../../common/defs.json#/$defs/onboard_code",
+      "description": "6-digit code of this session: show it in two groups of three under the QR code. Valid as long as the session, used up by the first successful lookup with it."
+    }
+  },
+  "additionalProperties": true
+}

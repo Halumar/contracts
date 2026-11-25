@@ -1,0 +1,31 @@
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directories:
+      - /tools           # validator (jsonschema, openapi-spec-validator, …)
+      - /tools/codegen   # pydantic at the hub's version (keep in step with the hub)
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      validator:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Not covered by Dependabot (bump by hand): @asyncapi/cli (env ASYNCAPI_CLI in
+  # .github/workflows/validate.yml), the AsyncAPI 3.0.0 JSON Schema (commit + sha256, same
+  # file), typescript in tools/codegen/tests/test_codegen.py, Kotlin and kotlinx.serialization
+  # in tools/codegen/kotlin-check.

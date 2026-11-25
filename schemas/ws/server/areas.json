@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "areas",
+  "description": "Answer to get_areas.",
+  "type": "object",
+  "required": [
+    "type",
+    "data",
+    "image_base_url"
+  ],
+  "properties": {
+    "type": {
+      "const": "areas"
+    },
+    "data": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/area.json"
+      }
+    },
+    "image_base_url": {
+      "type": "string",
+      "description": "app_url or derived from the WS URL; prefix for *_src paths."
+    }
+  },
+  "additionalProperties": true
+}

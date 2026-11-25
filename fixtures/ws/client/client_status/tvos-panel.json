@@ -1,0 +1,16 @@
+{
+  "type": "client_status",
+  "connection_type": "ethernet",
+  "battery_state": "unknown",
+  "panel": {
+    "screen": "screensaver",
+    "panel_mode": true,
+    "brightness": null,
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload"
+    ]
+  }
+}

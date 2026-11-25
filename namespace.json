@@ -1,0 +1,137 @@
+{
+  "$schema": "./schemas/meta/namespace.schema.json",
+  "description": "Single source for every value that depends on the technical namespace. The namespace is halumar and frozen. Functional names (cookies hub_session/hub_csrf, header X-Hub-Integration-Version, env HUB_*, compliance label hub/compliance/v1) do not depend on the namespace and are not listed. Display names belong to brand.json.",
+  "current": "halumar",
+  "literal_scope": [
+    "namespace.json",
+    "README.md",
+    "openapi/hub.openapi.json",
+    "openapi/ha-compliance-view.openapi.json",
+    "asyncapi/hub-ws.asyncapi.yaml",
+    "schemas/**/*.json",
+    "fixtures/**/*.json",
+    "tools/snapshot_openapi.py",
+    "tools/validate.py",
+    "brand.json",
+    "tools/brand/**",
+    "docs/*.md"
+  ],
+  "values": {
+    "ha_domain": {
+      "value": "halumar",
+      "used_in": "HA integration domain, service domain (halumar.start_pairing), config entry, custom_components/<domain>"
+    },
+    "ha_control_action": {
+      "value": "halumar.control",
+      "used_in": "HA action through which devices with the control path checked switch; apps call it as call_service domain halumar, service control"
+    },
+    "ha_ws_family_command": {
+      "value": "halumar/family",
+      "used_in": "HA WebSocket command of the family manager away from home (schemas/integration/ha-ws-family.command.json)"
+    },
+    "ha_ws_family_subscribe_command": {
+      "value": "halumar/family/subscribe",
+      "used_in": "HA WebSocket subscription to the family pushes (schemas/integration/ha-ws-family-subscribe.command.json)"
+    },
+    "ha_alarm_event": {
+      "value": "halumar_alarm",
+      "used_in": "HA event fired by the integration for every alarm event"
+    },
+    "ha_event_event": {
+      "value": "halumar_event",
+      "used_in": "HA event fired for every event of the taxonomy (data/events.json)"
+    },
+    "ha_tag_scanned_event": {
+      "value": "halumar_tag_scanned",
+      "used_in": "HA event fired by the integration when a device resolved a tag (schemas/integration/ha-tag-scanned.event.json)"
+    },
+    "ha_event_prefix": {
+      "value": "halumar_",
+      "used_in": "HA events halumar_client_connected, halumar_client_disconnected, halumar_client_area_changed, halumar_pairing_started, halumar_pairing_stopped, halumar_guest_expired, halumar_event and halumar_alarm"
+    },
+    "ha_device_identifier_hub": {
+      "value": "halumar_hub",
+      "used_in": "HA device registry identifier of the hub device, GET /api/integration/devices"
+    },
+    "ha_device_identifier_client_template": {
+      "value": "halumar_client_{client_id}",
+      "used_in": "GET /api/integration/devices"
+    },
+    "supervisor_discovery_service": {
+      "value": "halumar",
+      "used_in": "config.yaml discovery: [<service>], Supervisor discovery payload"
+    },
+    "addon_slug": {
+      "value": "halumar",
+      "used_in": "config.yaml slug, add-on folder in halumar/hub, image ghcr.io/halumar/{arch}-hub (the image name is functional, not namespaced)"
+    },
+    "bonjour_service_type": {
+      "value": "_halumar._tcp.local.",
+      "used_in": "mDNS announcement of the hub; discovered by the apps (Info.plist NSBonjourServices without .local. on Apple, network service discovery on Android)"
+    },
+    "deep_link_scheme": {
+      "value": "halumar",
+      "used_in": "pairing QR / copy link halumar://pair?..., iOS CFBundleURLSchemes and the Android intent filters (the only accepted scheme, no aliases)"
+    },
+    "deep_link_pair_prefix": {
+      "value": "halumar://pair"
+    },
+    "deep_link_pair_tv_prefix": {
+      "value": "halumar://pair-tv",
+      "used_in": "onboarding QR of the Apple TV as development link halumar://pair-tv#… (simulators without Associated Domains); production QR is https://<brand website>/pair-tv#…; also the direct-mode TV sign-in link"
+    },
+    "deep_link_tag_prefix": {
+      "value": "halumar://t",
+      "used_in": "development form of the tag link halumar://t/<tag_id> (docs/links.md); production https://<brand website>/t/<tag_id> (Associated Domains, Android App Links)"
+    },
+    "deep_link_open_prefix": {
+      "value": "halumar://open",
+      "used_in": "app form of the open link halumar://open/<view> (docs/links.md): officially allowed next to the preferred https://<brand website>/open/<view>, opens views only; for automations on devices without verified universal links / App Links (e.g. Google TV via androidtv_remote)"
+    },
+    "sensor_prefix": {
+      "value": "sensor.halumar_",
+      "used_in": "all sensors the hub mirrors"
+    },
+    "config_sensor": {
+      "value": "sensor.halumar_config",
+      "used_in": "client_config.config_sensor; the area overview sensor the hub writes"
+    },
+    "area_sensor_template": {
+      "value": "sensor.halumar_area_{slug}_{uid8}"
+    },
+    "guests_sensor": {
+      "value": "sensor.halumar_guests"
+    },
+    "client_notification_sensor_template": {
+      "value": "sensor.halumar_client_{slug}_{uid8}_notifications",
+      "used_in": "client_config.notification_sensor (clients never derive it themselves)"
+    },
+    "client_quick_access_sensor_template": {
+      "value": "sensor.halumar_client_{slug}_{uid8}_quick_access",
+      "used_in": "client_config.quick_access.sensor, check sensor of widgets and controls; clients never derive it themselves"
+    },
+    "area_switch_template": {
+      "value": "input_boolean.halumar_area_{slug}_{uid8}"
+    },
+    "area_switch_id_attribute": {
+      "value": "halumar_area_id",
+      "used_in": "attribute of input_boolean.<ns>_area_*"
+    },
+    "ha_compliance_path": {
+      "value": "/api/halumar/compliance/{client_id}",
+      "used_in": "HA Core HTTP view registered by the integration, polled by the iPhone and iPad app"
+    },
+    "ha_device_token_client_name_prefix": {
+      "value": "halumar:",
+      "used_in": "client_name of the long-lived token of a per-device HA user: halumar:<client_id>, after a rotation halumar:<client_id>/<hex6>. Marks integration-owned device users for the reconcile (integration const.DEVICE_TOKEN_CLIENT_NAME_PREFIX)."
+    },
+    "integration_hub_object_id_prefix": {
+      "value": "halumar_hub_",
+      "used_in": "object ids of the integration hub entities (sensor.halumar_hub_version, button.halumar_hub_start_pairing, ...); built from the domain, never from the display name"
+    },
+    "integration_client_object_id_template": {
+      "value": "halumar_[guest_]{client_slug}_{entity}",
+      "used_in": "object ids of the integration client entities (sensor.halumar_wall_tablet_notifications)"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/profiles/from-device (body)",
+  "description": "Create a profile from a device: the device's profile values with all its adjustments (not the values clamped by boundaries), child_protection, fixed and user_choice of its profile. assign (default true): the device gets the new profile and loses its adjustments (they are profile values now).",
+  "type": "object",
+  "required": [
+    "client_id",
+    "name"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "name": {
+      "$ref": "../common/defs.json#/$defs/profile_name"
+    },
+    "assign": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "additionalProperties": false
+}

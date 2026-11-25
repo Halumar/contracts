@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast client_status_updated",
+  "description": "Device status changed (ADMIN and integration only). No position: only whether and how the device shares it.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_status_updated"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "device_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "app_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "battery_level": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "connection_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "current_area_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "current_area_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location_shared": {
+          "anyOf": [
+            {
+              "$ref": "../../common/defs.json#/$defs/location_shared"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Last reported value (memory of the hub); null = not reported yet."
+        },
+        "location_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Time of the last accepted fix (memory of the hub)."
+        },
+        "last_seen": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "is_connected": {
+          "type": "boolean"
+        },
+        "battery_state": {
+          "anyOf": [
+            {
+              "$ref": "../../common/defs.json#/$defs/battery_state"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Last reported value (memory of the hub)."
+        },
+        "low_power": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "panel": {
+          "anyOf": [
+            {
+              "$ref": "../../common/panel-status.json"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Last panel status."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "is_connected"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate of an area",
+  "description": "Which entities of the area give its room temperature and humidity (docs/room-climate.md). The hub decides with what only it knows (registry entity_category, device name and model, the device's Home Assistant area); the apps compute the value from the live states. source admin: the one entity the admin picked (no value while it has none). source auto: the median of the entities of the measure's device_domains that report device_attribute, else the median of the sensors with a numeric state (data/room-climate.json). Absent (older hub, direct mode, demo): the apps apply the same rule to the area's visible placements with what they know (entity_id, names, device_class).",
+  "type": "object",
+  "required": [
+    "temperature",
+    "humidity"
+  ],
+  "properties": {
+    "temperature": {
+      "$ref": "room-climate-pick.json"
+    },
+    "humidity": {
+      "$ref": "room-climate-pick.json"
+    }
+  },
+  "additionalProperties": true
+}

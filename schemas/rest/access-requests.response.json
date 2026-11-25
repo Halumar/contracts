@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/access-requests",
+  "description": "Admin: early access requests – the open ones and the ones of the last 7 days (newest first, at most 100), and the running early accesses. The admin answers any open request (POST /api/access-requests/{request_id}/answer) and ends an early access (DELETE /api/pairing/clients/{client_id}/early-access).",
+  "type": "object",
+  "required": [
+    "requests",
+    "early"
+  ],
+  "properties": {
+    "requests": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "../common/access-request.json"
+      }
+    },
+    "early": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "device_name",
+          "early"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "device_name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "../common/defs.json#/$defs/owner_label"
+          },
+          "early": {
+            "$ref": "../common/defs.json#/$defs/access_early"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

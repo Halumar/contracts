@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/profiles/{profile_id}/duplicate, POST /api/profile-suggestions/{suggestion_id} (body, optional)",
+  "description": "Name of the new profile. Missing: duplicate → “Kopie von <name>” / “Copy of <name>”; suggestion → its name in the hub language, with “(2)”, “(3)” … when taken.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "../common/defs.json#/$defs/profile_name"
+    }
+  },
+  "additionalProperties": false
+}

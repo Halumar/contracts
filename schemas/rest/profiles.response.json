@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/profiles",
+  "description": "All profiles, sorted by name.",
+  "type": "object",
+  "required": [
+    "profiles",
+    "max_profiles"
+  ],
+  "properties": {
+    "profiles": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "$ref": "profile.json"
+      }
+    },
+    "max_profiles": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "additionalProperties": true
+}

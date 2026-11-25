@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/notifications/ack (200)",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "acked",
+    "skipped"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "acked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

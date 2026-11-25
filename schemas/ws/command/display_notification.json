@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command display_notification",
+  "description": "Real-time notification push (POST /api/notifications, POST /api/integration/notify). Fields as notification item without status. A notification for a watch is pushed to the phone that set it up (client_id is the phone's); the phone's system shows it on the watch.",
+  "type": "object",
+  "required": [
+    "type",
+    "command"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "display_notification"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "$ref": "../../common/notification-item.json"
+    }
+  ],
+  "not": {
+    "required": [
+      "status"
+    ]
+  }
+}

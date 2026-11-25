@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "watch_access",
+  "description": "The Home Assistant access of a watch, sealed to the watch's key. Answer to watch_access_get, and pushed unasked to every connection of the device that set the watch up when the watch's access changes (new or rotated HA token, profile, rules, remote access, access hours). The phone passes sealed on unchanged; it cannot open it. status: ready = sealed carries the watch's client_config; pending = the watch holds a key that is not usable yet: not issued, or held back until the integration has the watch's rules, or being replaced (client_config.token_error); a push follows; gone = there is no watch of this device with this id (deleted, locked, or set up by another device): the watch forgets its access.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id",
+    "status"
+  ],
+  "properties": {
+    "type": {
+      "const": "watch_access"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "pending",
+        "gone"
+      ]
+    },
+    "sealed": {
+      "type": "object",
+      "description": "Exactly with status ready (tools/validate.py). HPKE base mode (RFC 9180, DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305) to the public key the watch paired with (onboard_start of its phone); info = \"hub/watch-access/v1\", aad = client_id as ASCII. Plaintext: crypto/watch-access-plaintext.json. Known-answer vector: fixtures/crypto/onboard-seal-vectors case watch-access-v1.",
+      "required": [
+        "suite",
+        "enc",
+        "ciphertext"
+      ],
+      "properties": {
+        "suite": {
+          "const": "X25519-SHA256-ChaCha20Poly1305"
+        },
+        "enc": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$",
+          "description": "HPKE encapsulated key (32 bytes), base64url without padding."
+        },
+        "ciphertext": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "maxLength": 262144,
+          "description": "AEAD ciphertext incl. 16-byte tag, base64url without padding."
+        }
+      },
+      "additionalProperties": false,
+      "x-sensitive": true
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/watch_removed_reason",
+      "description": "Only with status gone for a child's watch the hub removed with a write: why (the phone tells its user). The hub keeps it for that phone, so a phone that was offline gets it with the gone it fetches later (watch_access_get). Missing = no reason given."
+    }
+  },
+  "additionalProperties": true
+}

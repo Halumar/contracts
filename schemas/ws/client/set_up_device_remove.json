@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "set_up_device_remove",
+  "description": "Remove a device or guest this device set up (like the admin's “Remove”: disconnected, removed together with its HA user). Only devices whose set_up_by is this device. Answer: set_up_device_removed, or onboard_error {device_not_found}.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "set_up_device_remove"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

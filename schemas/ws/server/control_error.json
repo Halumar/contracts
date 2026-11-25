@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "control_error",
+  "description": "A request of the hub path (control, state_subscribe, history_get, forecast_get, camera_image_get, media_image_get) failed without a rule. Same body as the 4xx/5xx answers of POST /api/client/control.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "reason"
+  ],
+  "properties": {
+    "type": {
+      "const": "control_error"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/control_request_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/control_error_reason"
+    },
+    "retry_after": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Seconds until the hub accepts the request again; only with reason rate_limited, else missing or null."
+    }
+  },
+  "additionalProperties": true
+}

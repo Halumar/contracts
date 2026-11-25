@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pair_error",
+  "description": "Pairing failed. `reason` is machine-readable; `message` is English text for logs only. The PIN stays valid unless the reason says otherwise.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "pair_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/pair_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Human-readable English text for logs; not for display, not stable."
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "kids_request_state",
+  "description": "State of the child's own request (answer to kids_request / kids_request_cancel, and pushed when answered or expired). The app shows child-friendly texts (data/family.json child_texts, decline_messages); answer.by carries only kind and the owner label/first name for the child.",
+  "type": "object",
+  "required": [
+    "type",
+    "request"
+  ],
+  "properties": {
+    "type": {
+      "const": "kids_request_state"
+    },
+    "request": {
+      "$ref": "../../common/family-request.json"
+    },
+    "next_allowed_at": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

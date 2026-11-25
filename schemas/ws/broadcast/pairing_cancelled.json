@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast pairing_cancelled",
+  "description": "PIN window cancelled.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "pairing_cancelled"
+    },
+    "data": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": true,
+      "maxProperties": 0
+    }
+  },
+  "additionalProperties": true
+}

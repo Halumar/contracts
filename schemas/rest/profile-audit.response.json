@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/profile-audit",
+  "description": "Admin only: history of the profile model with before/after, newest first (\"Verlauf\" of the device page and the profile editor). Query client_id and/or profile_id filter, limit 1–500 (default 100). Persistent in the hub (table profile_audit). The remote PIN never appears (remote_pin_set/profile_remote_pin_set carry only whether a PIN is set).",
+  "type": "object",
+  "required": [
+    "entries"
+  ],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "ts",
+          "action",
+          "actor",
+          "profile_id",
+          "client_id",
+          "rule",
+          "before",
+          "after",
+          "note"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Increasing per hub."
+          },
+          "ts": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "action": {
+            "$ref": "../common/defs.json#/$defs/profile_audit_action"
+          },
+          "actor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Who made the change: HA user name of the admin, \"integration\", the brand name for expired adjustments, \"Migration v9\"; null = unknown."
+          },
+          "profile_id": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/profile_id"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/profile_rule_key"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rule of override_* entries."
+          },
+          "before": {
+            "description": "State before (shape per action, e.g. {value, expires_at} for override_*, {profile_id} for profile_assigned, {own_area_id} for own_area_set, the profile for profile_updated); null = none."
+          },
+          "after": {
+            "description": "State after, same shapes as before; null = none (deleted, expired)."
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Note of the adjustment, \"bulk\", \"Migration v9\" or null."
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

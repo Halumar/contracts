@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Onboarding seal (HPKE) known-answer vectors",
+  "description": "onboard_ok.sealed: HPKE base mode (RFC 9180) DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305, sequence number 0. Case rfc9180-a.2.1-seq0 is the RFC test vector A.2.1 (first encryption); case onboard-v1 uses info \"hub/onboard/v1\", aad = session id (ASCII) and the plaintext JSON {client_id, secret}; case watch-access-v1 uses info \"hub/watch-access/v1\", aad = client_id (ASCII) and a sealed watch access (crypto/watch-access-plaintext.json, watch_access.sealed). tools/validate.py recomputes enc and ct from sk_e and checks that sk_r opens ct; the hub and the apps (CryptoKit HPKE.Recipient) open every case.",
+  "type": "object",
+  "required": [
+    "suite",
+    "kem_id",
+    "kdf_id",
+    "aead_id",
+    "mode",
+    "cases"
+  ],
+  "properties": {
+    "suite": {
+      "const": "X25519-SHA256-ChaCha20Poly1305"
+    },
+    "kem_id": {
+      "const": 32
+    },
+    "kdf_id": {
+      "const": 1
+    },
+    "aead_id": {
+      "const": 3
+    },
+    "mode": {
+      "const": 0
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "sk_r",
+          "pk_r",
+          "sk_e",
+          "enc",
+          "info",
+          "aad",
+          "pt",
+          "ct"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sk_r": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "pk_r": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "sk_e": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "enc": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "info": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{2})*$"
+          },
+          "aad": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{2})*$"
+          },
+          "pt": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{2})*$"
+          },
+          "ct": {
+            "type": "string",
+            "pattern": "^([0-9a-f]{2})*$"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

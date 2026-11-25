@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/kick (200)",
+  "description": "Closes the client's sockets with 4004 (no reset); closed=0 when offline.",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "closed"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "closed": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.access",
+  "description": "Access of the device: member or guest, set when pairing and never changed. Guests: expires_at is the hub's authoritative end (no own cap in the apps; the hub limits a grant to guest_access.max_hours of data/profile-rules.json and announces an extension with guest_extended / client_config_updated). After expires_at the hub rejects the device (auth_error guest_expired) and the app locks everything (fail closed). hours = access right now (access hours, access switch). request = “Ask for early access”.",
+  "type": "object",
+  "required": [
+    "kind",
+    "expires_at",
+    "hours",
+    "time_zone"
+  ],
+  "properties": {
+    "kind": {
+      "$ref": "defs.json#/$defs/device_access"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Guests: end of the access (always set). Members: null."
+    },
+    "set_up_by": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/set_up_by_shown"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Member device that set up this device (confirmed its onboarding or invited it as a guest), only as the device may show it: name and method, never the client_id of that device. null or missing after the admin PIN."
+    },
+    "time_zone": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "IANA time zone of the hub (Home Assistant's time_zone; UTC when Home Assistant names none or an unknown one). The windows of the rule access_hours are in this zone: the app computes every window edge (the next window start after until, the end of a window it opens by itself) in it, never in the device's own zone. Sent to every device, also without access hours."
+    },
+    "hours": {
+      "$ref": "defs.json#/$defs/access_now",
+      "description": "Access right now (access hours and access switch). open false: the device stays paired, the hub sends no areas, states or quick access entries and refuses control (rule_blocked access_closed), ha_token and ha_url are null; the app shows only “Access again from {opens_at}” (or “No access right now” without opens_at). The hub sends client_config_updated at every change (window start/end, switch). The app also switches on its own at until/opens_at."
+    },
+    "request": {
+      "$ref": "access-request-config.json",
+      "description": "Present while the effective rule access_requests is on."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "guest"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expires_at": {
+            "$ref": "defs.json#/$defs/timestamp"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

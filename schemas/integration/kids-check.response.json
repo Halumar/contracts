@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/kids-check (answer)",
+  "type": "object",
+  "required": [
+    "allowed",
+    "reason",
+    "until"
+  ],
+  "properties": {
+    "allowed": {
+      "type": "boolean"
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/kids_check_reason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "allowed": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason": {
+            "$ref": "../common/defs.json#/$defs/kids_check_reason"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

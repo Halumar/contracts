@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sensor.<ns>_guests",
+  "description": "Guest overview; state = number of guests. Written by the hub via POST /core/api/states/<entity_id>; not persistent in HA (gone after a Core restart until the next resync). Readable with every HA token.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^sensor\\.halumar_guests$",
+      "x-namespace-key": "guests_sensor"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "attributes": {
+      "type": "object",
+      "required": [
+        "guests"
+      ],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "unit_of_measurement": {
+          "const": "guests"
+        },
+        "updated_at": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        "guests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "client_id",
+              "is_connected",
+              "expires_at"
+            ],
+            "properties": {
+              "client_id": {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              "is_connected": {
+                "type": "boolean"
+              },
+              "expires_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

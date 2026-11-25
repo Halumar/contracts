@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET/PUT /api/settings/home-networks",
+  "description": "Admin only. Further networks that count as at home (admin UI Settings > Network), default empty. PUT replaces the whole list and answers with the stored, normalized one: host bits are cleared (100.64.1.2/10 -> 100.64.0.0/10), exact duplicates and networks inside another one are merged into the larger one (its name wins, else the first name), the result is sorted (IPv4 before IPv6, then by address). Refused with 422 and detail {code, cidr?, message}: home_network_invalid (not a CIDR), home_network_public (outside 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10, fc00::/7), home_networks_too_many (more than 10 entries); nothing is stored then. A change is written to the audit log (home_networks_set), pushed to every connected app (client_config_updated, client_config.home_networks) and to the integration (part of every rule snapshot, so rules_hash changes). Templates of the admin UI: Tailscale = 100.64.0.0/10 plus optionally fd7a:115c:a1e0::/48; WireGuard and ZeroTier have no fixed range (input with example only).",
+  "type": "object",
+  "required": [
+    "networks"
+  ],
+  "properties": {
+    "networks": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "cidr"
+        ],
+        "properties": {
+          "cidr": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "description": "IPv4 or IPv6 network in CIDR notation; the answer carries the canonical form ($defs/home_network_cidr)."
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 40,
+            "description": "Optional label, e.g. Tailscale or Office VPN; trimmed, empty = null."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

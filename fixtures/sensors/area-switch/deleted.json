@@ -1,0 +1,9 @@
+{
+  "entity_id": "input_boolean.halumar_area_kuche_a1b2c3d4",
+  "state": "unavailable",
+  "attributes": {
+    "friendly_name": "Halumar: Küche (deleted)",
+    "icon": "mdi:delete",
+    "deleted": true
+  }
+}

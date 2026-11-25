@@ -1,0 +1,5 @@
+{
+  "request_id": "w-1",
+  "entity_id": "light.kids_room",
+  "service": "turn_off"
+}

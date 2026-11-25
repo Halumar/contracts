@@ -1,0 +1,69 @@
+{
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+  "max_events": 100,
+  "events": [
+    {
+      "id": 7,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T14:02:11.123456+00:00",
+      "event": "connected",
+      "detail": {
+        "app_version": "2026.12.0",
+        "app_build": "6",
+        "protocol_version": 1
+      }
+    },
+    {
+      "id": 6,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T14:02:11.120001+00:00",
+      "event": "app_updated",
+      "detail": {
+        "previous_app_version": "2026.11.0",
+        "app_version": "2026.12.0"
+      }
+    },
+    {
+      "id": 5,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T13:40:00.000000+00:00",
+      "event": "upgrade_required",
+      "detail": {
+        "reason": "app_version",
+        "app_version": "2026.11.0",
+        "protocol_version": 1
+      }
+    },
+    {
+      "id": 4,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T12:00:00.000000+00:00",
+      "event": "disconnected",
+      "detail": null
+    },
+    {
+      "id": 3,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T09:30:00.000000+00:00",
+      "event": "token_rotated",
+      "detail": null
+    },
+    {
+      "id": 2,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T08:15:02.000000+00:00",
+      "event": "token_issued",
+      "detail": null
+    },
+    {
+      "id": 1,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T08:15:00.000000+00:00",
+      "event": "paired",
+      "detail": {
+        "platform": "ios",
+        "app_version": "2026.11.0"
+      }
+    }
+  ]
+}

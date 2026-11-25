@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "notifications",
+  "description": "Answer to get_notifications: active notifications in push shape (with status).",
+  "type": "object",
+  "required": [
+    "type",
+    "notifications"
+  ],
+  "properties": {
+    "type": {
+      "const": "notifications"
+    },
+    "notifications": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/notification-item.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

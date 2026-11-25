@@ -1,0 +1,84 @@
+{
+  "type": "enforcement_rules",
+  "data": {
+    "snapshots": [
+      {
+        "version": 1,
+        "client_id": "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e",
+        "ha_user_id": "7e63ef95c1d24a0f9b8e2d4c6a1f3b5d",
+        "issued_at": "2026-11-20T18:00:00+00:00",
+        "rules_hash": "c11bfc28dccdda5bc41dd7dcf52359720c519077ba139915e2339039b3c03228",
+        "control_path": "direct",
+        "remote_access": true,
+        "child_protection": false,
+        "entities": {
+          "light.living_room_rgbww_lights": {
+            "local": "control",
+            "remote": "control",
+            "quick": "control"
+          },
+          "lock.front_door": {
+            "local": "control",
+            "remote": "view",
+            "quick": "status"
+          },
+          "cover.garage_door": {
+            "local": "control",
+            "remote": "view",
+            "quick": "status"
+          },
+          "scene.movie_night": {
+            "local": "control",
+            "remote": "control",
+            "quick": "control",
+            "run": true
+          }
+        },
+        "kids": {
+          "time_zone": "Europe/Zurich",
+          "override_until": null,
+          "entities": {
+            "light.kids_room": {
+              "blocked": false,
+              "quiet_hours": [
+                {
+                  "days": [
+                    "mon",
+                    "tue",
+                    "wed",
+                    "thu",
+                    "fri"
+                  ],
+                  "start": "20:00",
+                  "end": "06:30"
+                }
+              ],
+              "color_lock": true,
+              "volume_max": null,
+              "rate_limit": {
+                "max_actions": 6,
+                "window_seconds": 60,
+                "cooldown_seconds": 300
+              }
+            },
+            "media_player.kids_speaker": {
+              "blocked": false,
+              "quiet_hours": [],
+              "color_lock": false,
+              "volume_max": 40,
+              "rate_limit": null
+            }
+          }
+        },
+        "access": null,
+        "home_networks": [],
+        "location": "off"
+      }
+    ],
+    "control_paths": {
+      "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e": "direct"
+    },
+    "removed": [],
+    "complete": false
+  }
+}

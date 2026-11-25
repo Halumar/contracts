@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast entity_updated",
+  "description": "Entity placement change (PUT /api/areas/{area_id}/entities/{entity_id}). Sent to admin sessions, the integration and every paired app that may read the area (authz read scope: active area in the app's list); apps reload the area with get_area. Never sent to apps outside the area's scope.",
+  "x-audience": "TARGETED",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "entity_updated"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "entity_id": {
+          "$ref": "../../common/defs.json#/$defs/entity_id"
+        },
+        "changed": {
+          "description": "Hint which fields changed (e.g. [\"tile\"], [\"display_name\", \"tile\"]). Absent = unknown. Apps reload the area either way.",
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]{1,32}$"
+          }
+        }
+      },
+      "required": [
+        "area_id",
+        "entity_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

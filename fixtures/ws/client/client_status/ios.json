@@ -1,0 +1,8 @@
+{
+  "type": "client_status",
+  "device_name": "iPhone",
+  "battery_level": 87,
+  "connection_type": "wifi",
+  "current_area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+  "location_shared": "background"
+}

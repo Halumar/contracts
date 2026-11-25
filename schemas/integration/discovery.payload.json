@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Supervisor discovery payload (service <ns>)",
+  "description": "Announced on every start of the hub (the integration token is rotated before). Consumed by config_flow.async_step_hassio.",
+  "type": "object",
+  "required": [
+    "host",
+    "port",
+    "api_token",
+    "version"
+  ],
+  "properties": {
+    "host": {
+      "type": "string",
+      "description": "Hostname of the hub in the hassio network."
+    },
+    "port": {
+      "const": 8099
+    },
+    "api_token": {
+      "allOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/secret"
+        }
+      ],
+      "x-sensitive": true,
+      "description": "Integration token (plain text, only to HA Core)."
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

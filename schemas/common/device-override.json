@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Device adjustment",
+  "description": "Adjustment of one profile rule on one device: only for rules that are not fixed in the profile, never against a boundary. At most one per device and rule. A temporary adjustment (expires_at) is deleted by the hub at its end (audit override_expired, author = the hub), and the profile value applies again. The hub deletes an adjustment that equals the profile value and every adjustment of a rule that becomes fixed (with preview).",
+  "type": "object",
+  "required": [
+    "rule",
+    "value",
+    "user_choice",
+    "expires_at",
+    "note",
+    "created_by",
+    "created_at"
+  ],
+  "properties": {
+    "rule": {
+      "$ref": "defs.json#/$defs/profile_rule_key"
+    },
+    "value": {
+      "description": "Value (schema: profile-rule-values.json#/properties/<rule>)."
+    },
+    "user_choice": {
+      "type": "boolean",
+      "description": "true = the person at the device decides (rules with user_choice_allowed); value is the starting value."
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "null = permanent."
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Optional note of the admin."
+    },
+    "created_by": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Display name of who set it: admin, or the family manager device."
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "origin": {
+      "$ref": "defs.json#/$defs/family_override_origin"
+    },
+    "created_by_client_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Family manager device that set it (origin family_manager), else null or missing."
+    }
+  },
+  "additionalProperties": true
+}

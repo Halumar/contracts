@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/family/notify-answer (answer)",
+  "description": "applied = the answer was carried out; already_answered = someone was faster (request shows who); expired = the request ended; invalid = unknown or used token; not_allowed = a Yes would loosen a fixed rule (the right of the linked family manager is gone or the profile changed). The integration may update the notification (tag) with a short result text.",
+  "type": "object",
+  "required": [
+    "result"
+  ],
+  "properties": {
+    "result": {
+      "enum": [
+        "applied",
+        "already_answered",
+        "expired",
+        "invalid",
+        "not_allowed"
+      ]
+    },
+    "request": {
+      "anyOf": [
+        {
+          "$ref": "../common/family-request.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

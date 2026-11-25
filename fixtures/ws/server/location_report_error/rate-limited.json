@@ -1,0 +1,5 @@
+{
+  "type": "location_report_error",
+  "reason": "rate_limited",
+  "retry_after": 3
+}

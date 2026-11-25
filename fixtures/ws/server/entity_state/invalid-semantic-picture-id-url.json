@@ -1,0 +1,11 @@
+{
+  "type": "entity_state",
+  "entity_id": "media_player.living_room",
+  "state": {
+    "entity_id": "media_player.living_room",
+    "state": "playing",
+    "attributes": {
+      "hub_picture_id": "/api/media_player_proxy/media_player.living_room"
+    }
+  }
+}

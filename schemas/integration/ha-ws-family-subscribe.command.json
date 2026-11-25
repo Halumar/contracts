@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HA WebSocket subscription <ns>/family/subscribe",
+  "description": "Subscribes the calling HA user's paired device to the family pushes the hub sends for it with family_relay (ws/integration/family_relay.json). Answer: HA result {success: true, result: null}; then one HA event message {id, type: event, event} per push, event = ha-ws-family.event.json. Unsubscribe with the HA command unsubscribe_events {subscription: id} or by closing the socket. Same user checks as <ns>/family.",
+  "type": "object",
+  "required": [
+    "id",
+    "type"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*/family/subscribe$",
+      "description": "<ns>/family/subscribe – the value of namespace.json ha_ws_family_subscribe_command.",
+      "x-namespace-key": "ha_ws_family_subscribe_command"
+    }
+  },
+  "additionalProperties": false
+}

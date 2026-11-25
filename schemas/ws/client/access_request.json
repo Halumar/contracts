@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request",
+  "description": "A device outside its access hours asks for early access (button on “Access again from …”, client_config.access.request.available). note optional (at most 80 characters, plain text). Only over the hub WebSocket (the integration relay answers home_only). The hub checks: effective rule access_requests, access hours enabled, closed by the schedule (switch_off while the switch is off, not_closed while open), one open request per device, requests_per_hour, the cooldown after a No, someone to answer. Answer: access_request_state (open) or access_request_error.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 80
+    }
+  },
+  "additionalProperties": true
+}

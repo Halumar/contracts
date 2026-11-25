@@ -1,0 +1,200 @@
+{
+  "type": "setup_grant",
+  "platform": "ios",
+  "purpose": "onboard",
+  "grant": {
+    "tags": [],
+    "all_areas": true,
+    "areas": [
+      {
+        "id": "d18b03ba-0f49-4fea-8d96-e25af54def81",
+        "name": "Wohnzimmer",
+        "icon": "mdi:sofa"
+      },
+      {
+        "id": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+        "name": "Küche",
+        "icon": "mdi:silverware-fork-knife"
+      },
+      {
+        "id": "5b1e7c2a-3d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Büro",
+        "icon": "mdi:desk"
+      },
+      {
+        "id": "7a2c9e4b-1d3f-4b5a-9c8d-2e4f6a8b0c1d",
+        "name": "Kinderzimmer",
+        "icon": "mdi:teddy-bear"
+      }
+    ],
+    "kinds": [
+      {
+        "kind": "guest",
+        "profiles": [
+          {
+            "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+            "name": "Gast",
+            "kind": "guest",
+            "description": null,
+            "icon": "mdi:account-clock",
+            "color": "#6941C6",
+            "child_protection": false,
+            "area_choice": true,
+            "remote_access": false,
+            "remote_choice": true,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          }
+        ]
+      },
+      {
+        "kind": "child",
+        "profiles": [
+          {
+            "id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+            "name": "Kind 6–9",
+            "kind": "child",
+            "description": null,
+            "icon": "mdi:human-child",
+            "color": null,
+            "child_protection": true,
+            "area_choice": true,
+            "remote_access": false,
+            "remote_choice": false,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          },
+          {
+            "id": "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+            "name": "Teen (13–17)",
+            "kind": "child",
+            "description": null,
+            "icon": null,
+            "color": null,
+            "child_protection": true,
+            "area_choice": true,
+            "remote_access": false,
+            "remote_choice": false,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          }
+        ]
+      },
+      {
+        "kind": "house_sitter",
+        "profiles": [
+          {
+            "id": "7c9e1b3d-5f7a-4b9c-8d0e-2f4a6c8e0a2b",
+            "name": "Haushüter & Helfer",
+            "kind": "house_sitter",
+            "description": null,
+            "icon": null,
+            "color": null,
+            "child_protection": false,
+            "area_choice": true,
+            "remote_access": true,
+            "remote_choice": true,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": true,
+              "windows": [
+                {
+                  "days": [
+                    "mon",
+                    "tue",
+                    "wed",
+                    "thu",
+                    "fri",
+                    "sat",
+                    "sun"
+                  ],
+                  "start": "07:00",
+                  "end": "21:00"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "babysitter",
+        "profiles": [
+          {
+            "id": "9f1a2b3c-4d5e-4f60-8a7b-9c0d1e2f3a4b",
+            "name": "Babysitter",
+            "kind": "babysitter",
+            "description": null,
+            "icon": "mdi:baby-carriage",
+            "color": "#6941C6",
+            "child_protection": false,
+            "area_choice": true,
+            "remote_access": false,
+            "remote_choice": false,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": true,
+              "windows": [
+                {
+                  "days": [
+                    "mon",
+                    "tue",
+                    "wed",
+                    "thu",
+                    "fri",
+                    "sat",
+                    "sun"
+                  ],
+                  "start": "17:00",
+                  "end": "01:00"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "managers_choice": true,
+    "managers": [
+      {
+        "client_id": "0f1e2d3c-4b5a-4968-8778-695a4b3c2d1e",
+        "name": "iPhone Papa",
+        "owner_label": "Papa",
+        "all_children": false,
+        "is_self": true
+      },
+      {
+        "client_id": "1e2d3c4b-5a69-4877-8695-a4b3c2d1e0f1",
+        "name": "iPhone Mama",
+        "owner_label": "Mama",
+        "all_children": true,
+        "is_self": false
+      }
+    ],
+    "guest_access": {
+      "default_hours": 24,
+      "max_hours": 2160,
+      "presets_hours": [
+        24,
+        72,
+        168,
+        336,
+        720
+      ]
+    },
+    "own_watch": false
+  }
+}

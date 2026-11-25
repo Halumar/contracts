@@ -1,0 +1,18 @@
+{
+  "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+  "max_events": 100,
+  "events": [
+    {
+      "id": 12,
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "ts": "2026-11-18T19:03:40+00:00",
+      "event": "paired",
+      "detail": {
+        "platform": "tvos",
+        "app_version": "2026.12.0",
+        "method": "onboard",
+        "confirmed_by": "7a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+      }
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "type": "onboard_info",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "hub_id": "8b7e3b10-2c4d-4e5f-9a0b-1c2d3e4f5a6b",
+  "client_name": "Apple TV",
+  "platform": "tvos",
+  "app_version": "2026.12.0",
+  "device_model": "AppleTV14,1",
+  "expires_at": "2026-11-20T19:07:11+00:00",
+  "grant": {
+    "tags": [
+      "family"
+    ],
+    "all_areas": false,
+    "areas": [
+      {
+        "id": "d18b03ba-0f49-4fea-8d96-e25af54def81",
+        "name": "Wohnzimmer",
+        "icon": "mdi:sofa"
+      },
+      {
+        "id": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+        "name": "Küche",
+        "icon": "mdi:silverware-fork-knife"
+      }
+    ],
+    "kinds": [
+      {
+        "kind": "tv",
+        "profiles": [
+          {
+            "id": "4a5b6c7d-8e9f-4a0b-9c1d-2e3f4a5b6c7d",
+            "name": "Fernseher",
+            "kind": "tv",
+            "description": null,
+            "icon": null,
+            "color": null,
+            "child_protection": false,
+            "area_choice": false,
+            "profile_areas": {
+              "all_areas": true,
+              "area_names": [
+                "Wohnzimmer",
+                "Küche",
+                "Büro",
+                "Kinderzimmer"
+              ]
+            },
+            "remote_access": false,
+            "remote_choice": false,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          }
+        ]
+      }
+    ],
+    "managers_choice": false,
+    "managers": [
+      {
+        "client_id": "0f1e2d3c-4b5a-4968-8778-695a4b3c2d1e",
+        "name": "iPhone Papa",
+        "owner_label": "Papa",
+        "all_children": false,
+        "is_self": true
+      },
+      {
+        "client_id": "1e2d3c4b-5a69-4877-8695-a4b3c2d1e0f1",
+        "name": "iPhone Mama",
+        "owner_label": "Mama",
+        "all_children": true,
+        "is_self": false
+      }
+    ],
+    "guest_access": {
+      "default_hours": 24,
+      "max_hours": 2160,
+      "presets_hours": [
+        24,
+        72,
+        168,
+        336,
+        720
+      ]
+    },
+    "own_watch": false
+  }
+}

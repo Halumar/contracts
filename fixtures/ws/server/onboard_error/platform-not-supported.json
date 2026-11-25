@@ -1,0 +1,5 @@
+{
+  "type": "onboard_error",
+  "reason": "platform_not_supported",
+  "message": "This device pairs with the PIN"
+}

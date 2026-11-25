@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "kids_request_cancel",
+  "description": "The child withdraws its own open request. Answer: kids_request_state (cancelled); the family managers get family_request.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "kids_request_cancel"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/family_request_id"
+    }
+  },
+  "additionalProperties": true
+}

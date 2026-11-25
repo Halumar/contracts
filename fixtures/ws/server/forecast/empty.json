@@ -1,0 +1,7 @@
+{
+  "type": "forecast",
+  "request_id": "f4",
+  "entity_id": "weather.home",
+  "forecast_type": "twice_daily",
+  "forecast": []
+}

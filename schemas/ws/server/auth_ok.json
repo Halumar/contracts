@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "auth_ok",
+  "description": "Authentication succeeded. Sent immediately for ingress/integration sessions, after 'auth' for paired clients. A repeated 'auth' on an authenticated session yields {type: auth_ok, message: 'Already authenticated'} without client_id. Always carries protocol_version, min_protocol_version and min_app_version.",
+  "type": "object",
+  "required": [
+    "type",
+    "protocol_version",
+    "min_protocol_version",
+    "min_app_version"
+  ],
+  "properties": {
+    "type": {
+      "const": "auth_ok"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/client_id"
+    },
+    "is_guest": {
+      "const": true
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/timestamp"
+    },
+    "message": {
+      "type": "string"
+    },
+    "protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version",
+      "description": "Protocol version of the hub. An app that cannot speak it (hub too old for the app) shows 'update the hub'."
+    },
+    "min_protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version",
+      "description": "Lowest client protocol version the hub serves."
+    },
+    "min_app_version": {
+      "$ref": "../../common/defs.json#/$defs/min_app_version"
+    }
+  },
+  "additionalProperties": true,
+  "anyOf": [
+    {
+      "required": [
+        "client_id"
+      ]
+    },
+    {
+      "required": [
+        "message"
+      ]
+    }
+  ],
+  "dependentRequired": {
+    "is_guest": [
+      "expires_at"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "command",
+  "command": "panel_command",
+  "id": "0d6b2c8a-4f1e-4b7a-9c3d-2e5f6a7b8c9d",
+  "action": "announce",
+  "text": "Es hat geklingelt",
+  "volume": 60,
+  "chime": true
+}

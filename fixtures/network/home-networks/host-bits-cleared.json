@@ -1,0 +1,23 @@
+{
+  "name": "host-bits-cleared",
+  "input": [
+    {
+      "cidr": " 100.101.102.103/10 ",
+      "name": "  Tailscale  "
+    }
+  ],
+  "expect": {
+    "networks": [
+      {
+        "cidr": "100.64.0.0/10",
+        "name": "Tailscale"
+      }
+    ]
+  },
+  "hosts": [
+    {
+      "address": "100.64.0.1",
+      "home": true
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Location status (integration)",
+  "description": "POST /api/integration/location-status (integration token). After an accepted <ns>.report_location the integration tells the hub that the device shares its location – metadata only, never coordinates. The hub keeps location_shared and location_at in memory (admin UI, paired-client, client_status_updated) and stores battery_level like client_status. Best effort, not retried. 404 unknown client.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "background",
+    "ts"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "background": {
+      "type": "boolean"
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time of the fix."
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "battery_level": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite",
+  "description": "A new guest invitation of this device. pin and deep_link are secret for 5 minutes: show them only on the inviting screen (large QR code of deep_link, the PIN to type). deep_link is the canonical pairing link (deep-link/pairing-link.json, with tls_port/fp when the hub has a certificate); a guest scans it with the camera or types the PIN in the app. grant = what the guest gets (admin defaults, display only).",
+  "type": "object",
+  "required": [
+    "type",
+    "invite_id",
+    "pin",
+    "deep_link",
+    "url",
+    "expires_in",
+    "expires_at",
+    "grant"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite"
+    },
+    "invite_id": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+    },
+    "pin": {
+      "$ref": "../../common/defs.json#/$defs/pin",
+      "x-sensitive": true
+    },
+    "deep_link": {
+      "type": "string",
+      "maxLength": 512,
+      "x-sensitive": true,
+      "description": "Canonical pairing deep link with the PIN (deep-link/pairing-link.json uri)."
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^https?://[^/]+$",
+      "description": "Base URL of the hub encoded in deep_link (for manual entry)."
+    },
+    "expires_in": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 300
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/timestamp"
+    },
+    "grant": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_grant"
+    }
+  },
+  "additionalProperties": true
+}

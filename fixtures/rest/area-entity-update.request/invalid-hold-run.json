@@ -1,0 +1,7 @@
+{
+  "tile": {
+    "hold_action": {
+      "action": "run"
+    }
+  }
+}

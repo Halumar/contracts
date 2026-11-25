@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile suggestions",
+  "description": "Profile suggestions shipped with the hub. starter = created at the first start of the hub; all are in the gallery and can be added any number of times. Adding copies the suggestion into an independent profile (values = catalog defaults overlaid with rules; fixed and user_choice as listed); an update of this file never changes existing profiles or devices. A higher version makes the hub offer “new version of the suggestion” for profiles whose origin has an older version (only with preview and confirmation).",
+  "type": "object",
+  "required": [
+    "catalog_version",
+    "suggestions"
+  ],
+  "properties": {
+    "catalog_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Catalog version the suggestions were written for."
+    },
+    "suggestions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "version",
+          "group",
+          "kind",
+          "starter",
+          "name",
+          "description",
+          "icon",
+          "color",
+          "child_protection",
+          "intended_for",
+          "default_for",
+          "rules",
+          "fixed",
+          "user_choice"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/profile_suggestion_id"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "group": {
+            "enum": [
+              "people",
+              "kids",
+              "guests",
+              "shared"
+            ]
+          },
+          "kind": {
+            "$ref": "../common/defs.json#/$defs/profile_kind",
+            "description": "Kind of the profile created from this suggestion."
+          },
+          "starter": {
+            "type": "boolean"
+          },
+          "name": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "description": {
+            "allOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/localized_text"
+              }
+            ],
+            "description": "Summary sentence of the profile card."
+          },
+          "icon": {
+            "type": "string",
+            "pattern": "^mdi:[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9A-F]{6}$"
+          },
+          "child_protection": {
+            "type": "boolean"
+          },
+          "intended_for": {
+            "$ref": "../common/defs.json#/$defs/device_access",
+            "description": "Gallery grouping only; any profile can be assigned to members and guests (guests: not with parental controls)."
+          },
+          "default_for": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/default_profile_slot"
+            },
+            "description": "Starter suggestions: default profile of these device types after the first start."
+          },
+          "area_patterns": {
+            "type": "array",
+            "maxItems": 40,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 30,
+              "pattern": "^[a-zäöüß]+$"
+            },
+            "description": "When the admin adds the suggestion, the hub preselects the active areas whose name has a word starting with one of these lower-case prefixes (case-insensitive, any language) into areas.area_ids of the new profile (only for areas mode selected). The admin sees and changes the choice; the profile keeps concrete areas (copied)."
+          },
+          "rules": {
+            "$ref": "../common/profile-rule-values.json",
+            "description": "Values that differ from the catalog defaults."
+          },
+          "fixed": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "description": "Complete list of rules with checkbox “Fixed”."
+          },
+          "user_choice": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "description": "Complete list of rules with “User's choice”."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

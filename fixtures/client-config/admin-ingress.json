@@ -1,0 +1,36 @@
+{
+  "ha_token": null,
+  "ha_url": null,
+  "ha_internal_url": "http://homeassistant.local",
+  "config_sensor": "sensor.halumar_config",
+  "home_title": null,
+  "home_bg_light": null,
+  "home_bg_dark": null,
+  "control_mode": "full",
+  "settings_pin_hash": null,
+  "settings_pin_salt": null,
+  "access": {
+    "kind": "member",
+    "expires_at": null,
+    "hours": {
+      "open": true,
+      "reason": null,
+      "until": null,
+      "opens_at": null,
+      "schedule": false,
+      "switch": null
+    },
+    "time_zone": "Europe/Zurich"
+  },
+  "profile": null,
+  "rules": {},
+  "quick_access": {
+    "enabled": false,
+    "max": "status",
+    "sensor": null,
+    "entities": {},
+    "critical": []
+  },
+  "settings_pin_source": null,
+  "message": "HA token is only available for paired clients"
+}

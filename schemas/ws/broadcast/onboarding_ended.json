@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast onboarding_ended",
+  "description": "An onboarding session ended. result: confirmed (client_id = the new device, confirmed_by = the confirming device), declined, expired, cancelled (admin), invalidated (key or hub mismatch), replaced (new code on the same connection), disconnected (the waiting device closed the connection).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboarding_ended"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "result"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "result": {
+          "$ref": "../../common/defs.json#/$defs/onboarding_result"
+        },
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "confirmed_by": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

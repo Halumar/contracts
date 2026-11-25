@@ -1,0 +1,4 @@
+{
+  "type": "location_report_error",
+  "reason": "not_hub_controlled"
+}

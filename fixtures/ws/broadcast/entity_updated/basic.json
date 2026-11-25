@@ -1,0 +1,7 @@
+{
+  "type": "entity_updated",
+  "data": {
+    "area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+    "entity_id": "light.bed_light"
+  }
+}

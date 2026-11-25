@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "forecast",
+  "description": "Answer to forecast_get, the entries of weather.get_forecasts as Home Assistant returns them (datetime, condition, temperature, templow, precipitation, precipitation_probability, wind_speed, is_daytime …), at most 240. Empty when the entity offers no forecast of this type.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id",
+    "forecast_type",
+    "forecast"
+  ],
+  "properties": {
+    "type": {
+      "const": "forecast"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "type": "string",
+      "pattern": "^weather\\.[a-z0-9_]+$",
+      "maxLength": 255
+    },
+    "forecast_type": {
+      "enum": [
+        "daily",
+        "hourly",
+        "twice_daily"
+      ]
+    },
+    "forecast": {
+      "type": "array",
+      "maxItems": 240,
+      "items": {
+        "type": "object",
+        "required": [
+          "datetime"
+        ],
+        "properties": {
+          "datetime": {
+            "type": "string"
+          },
+          "condition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "temperature": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "templow": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "is_daytime": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

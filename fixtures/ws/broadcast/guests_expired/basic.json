@@ -1,0 +1,9 @@
+{
+  "type": "guests_expired",
+  "data": {
+    "count": 1,
+    "client_ids": [
+      "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+    ]
+  }
+}

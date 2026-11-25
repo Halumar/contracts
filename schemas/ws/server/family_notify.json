@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_notify",
+  "description": "Automatic child notifications of this device after family_notify_set (also in client_config.family.notify).",
+  "type": "object",
+  "required": [
+    "type",
+    "notify"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_notify"
+    },
+    "notify": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "family_notify_kind -> on/off."
+    }
+  },
+  "additionalProperties": true
+}

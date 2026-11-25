@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/events",
+  "description": "Integration token only. Batch of integration events for the log tab. Sent at most every 10 s (sooner from 20 events). While the hub is unreachable the integration keeps at most 500 events in memory (oldest dropped first, counted in dropped) and sends them later; nothing is written to disk. The hub stores them with its log retention and derives alarms (threshold of rejections in rest/log-settings.json alarm_threshold; the log tab, docs/log.md). Idempotent per event id.",
+  "type": "object",
+  "required": [
+    "events",
+    "dropped"
+  ],
+  "properties": {
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "$ref": "../common/enforcement-event.json"
+      }
+    },
+    "dropped": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Events lost since the last accepted batch (queue full)."
+    }
+  },
+  "additionalProperties": false
+}

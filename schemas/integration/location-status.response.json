@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Location status answer",
+  "description": "What the hub now shows for the device.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "location_shared",
+    "location_at"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "location_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

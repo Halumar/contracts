@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_error",
+  "description": "Onboarding failed, to the waiting device or to the confirming device. reason is machine-readable; message is English text for logs only. session_id is set when the error refers to a known session id of the request.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/onboard_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    }
+  },
+  "additionalProperties": true
+}

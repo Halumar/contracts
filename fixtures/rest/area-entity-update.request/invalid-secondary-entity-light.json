@@ -1,0 +1,8 @@
+{
+  "tile": {
+    "secondary": {
+      "source": "entity",
+      "entity_id": "light.kitchen"
+    }
+  }
+}

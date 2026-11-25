@@ -1,0 +1,13 @@
+{
+  "type": "ha_event",
+  "data": {
+    "kind": "guest_paired",
+    "category": "guests",
+    "at": "2026-11-20T18:00:00+00:00",
+    "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+    "device_name": "iPhone Gast",
+    "owner_label": null,
+    "profile_id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+    "until": "2026-11-21T18:00:00+00:00"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "type": "onboard_info",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "hub_id": "8b7e3b10-2c4d-4e5f-9a0b-1c2d3e4f5a6b",
+  "client_name": "Apple Watch",
+  "platform": "watchos",
+  "app_version": "2026.12.0",
+  "device_model": "Watch7,1",
+  "expires_at": "2026-11-20T19:07:11+00:00",
+  "grant": {
+    "tags": [],
+    "all_areas": true,
+    "areas": [
+      {
+        "id": "d18b03ba-0f49-4fea-8d96-e25af54def81",
+        "name": "Wohnzimmer",
+        "icon": "mdi:sofa"
+      },
+      {
+        "id": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+        "name": "Küche",
+        "icon": "mdi:silverware-fork-knife"
+      },
+      {
+        "id": "5b1e7c2a-3d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Büro",
+        "icon": "mdi:desk"
+      },
+      {
+        "id": "7a2c9e4b-1d3f-4b5a-9c8d-2e4f6a8b0c1d",
+        "name": "Kinderzimmer",
+        "icon": "mdi:teddy-bear"
+      }
+    ],
+    "kinds": [
+      {
+        "kind": "child",
+        "profiles": [
+          {
+            "id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+            "name": "Kind 10–12",
+            "kind": "child",
+            "description": null,
+            "icon": "mdi:human-child",
+            "color": null,
+            "child_protection": true,
+            "area_choice": false,
+            "remote_access": true,
+            "remote_choice": false,
+            "start_area_choice": false,
+            "access_hours_choice": false,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          }
+        ]
+      }
+    ],
+    "managers_choice": false,
+    "managers": [],
+    "guest_access": {
+      "default_hours": 24,
+      "max_hours": 2160,
+      "presets_hours": [
+        24,
+        72,
+        168,
+        336,
+        720
+      ]
+    },
+    "own_watch": false,
+    "child_watch": {
+      "role": "adult"
+    }
+  }
+}

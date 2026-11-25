@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant action <ns>.report_location (answer)",
+  "description": "Response of <ns>.report_location (return_response true). applied false = the fix is older than the last one of the device and was ignored. (The hub way answers applied false also when no integration took the fix: ws/server/location_report_ok.json.)",
+  "type": "object",
+  "required": [
+    "applied"
+  ],
+  "properties": {
+    "applied": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

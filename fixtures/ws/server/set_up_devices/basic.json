@@ -1,0 +1,37 @@
+{
+  "type": "set_up_devices",
+  "devices": [
+    {
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6d",
+      "name": "Gast 2",
+      "owner_label": "Guest",
+      "platform": "ios",
+      "access": "guest",
+      "expires_at": "2026-11-23T19:00:00+00:00",
+      "profile": {
+        "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+        "name": "Gast",
+        "kind": "guest"
+      },
+      "method": "invite",
+      "set_up_at": "2026-11-20T19:01:00+00:00",
+      "is_connected": true
+    },
+    {
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6c",
+      "name": "iPhone Kind",
+      "owner_label": "Child 1",
+      "platform": "ios",
+      "access": "member",
+      "expires_at": null,
+      "profile": {
+        "id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+        "name": "Kind 6–9",
+        "kind": "child"
+      },
+      "method": "onboard",
+      "set_up_at": "2026-11-20T18:40:00+00:00",
+      "is_connected": false
+    }
+  ]
+}

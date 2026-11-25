@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Log entry",
+  "description": "One entry of the log tab of the hub (GET /api/log): activity (who switched what), change (profile audit, pairing, guests, parent releases, integration starts) or alarm (rejections from a threshold, direct access attempts, integration outages). Names (device, owner, profile) are stored with the entry and replaced by the current name while the device/profile exists. No action data, codes, IP addresses, PINs or tokens.",
+  "type": "object",
+  "required": [
+    "id",
+    "ts",
+    "category",
+    "kind",
+    "event_kind",
+    "source",
+    "client_id",
+    "device_name",
+    "owner_label",
+    "profile_id",
+    "profile_name",
+    "area_id",
+    "area_name",
+    "entity_id",
+    "entity_name",
+    "action",
+    "route",
+    "origin",
+    "control_path",
+    "result",
+    "reason",
+    "count",
+    "since",
+    "until",
+    "actor",
+    "detail",
+    "device_exists",
+    "profile_exists",
+    "unread",
+    "important"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Ascending; paging with before_id."
+    },
+    "ts": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "category": {
+      "enum": [
+        "activity",
+        "change",
+        "alarm"
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]{1,64}$",
+      "description": "Fine-grained kind: an event kind of data/events.json, a profile audit action ($defs/profile_audit_action) or a hub kind (device_revoked, kids_release, kids_pause_lifted, integration_dropped, ha_key_withdrawn = the device stopped holding a Home Assistant key (control_path hub without remote access) and the integration has accepted the replacement, so the key the app held no longer works (the hub keeps the device user's new token for the hub path)). device_set_up: detail kind, method (onboard|invite), set_up_by {client_id, name}; actor = name of the setting-up device; texts “Child's iPhone set up by Dad as Child 6–9”. home_networks_set (category change): detail before/after = lists of CIDR. Clients show an unknown kind generically."
+    },
+    "event_kind": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$",
+          "description": "Kind of the taxonomy (data/events.json, $defs/event_kind) when the entry is one; null for changes without a taxonomy kind (e.g. override_set)."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "enum": [
+        "hub",
+        "integration",
+        "ha"
+      ],
+      "description": "ha = HA call_service event of a device user that switches directly (control path direct)."
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "owner_label": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 60
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "area_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "area_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "route": {
+      "anyOf": [
+        {
+          "enum": [
+            "local",
+            "external",
+            "unknown"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "origin": {
+      "anyOf": [
+        {
+          "enum": [
+            "app",
+            "quick_access"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "control_path": {
+      "anyOf": [
+        {
+          "enum": [
+            "checked",
+            "direct",
+            "hub"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result": {
+      "anyOf": [
+        {
+          "enum": [
+            "ok",
+            "denied"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$",
+          "description": "control_denial_reason (rejections and alarms)."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "count": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "since": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "actor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "detail": {
+      "anyOf": [
+        {
+          "type": "object",
+          "description": "Kind-specific: before/after/rule/note (audit), derived/window_minutes/entities (rejection alarm), live (hub outage detection), reliability, ha_group, version, method, sent[] (where it was notified: target, name, status handed_over|failed|shown|waiting_for_app, rule, at)."
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device_exists": {
+      "type": "boolean"
+    },
+    "profile_exists": {
+      "type": "boolean"
+    },
+    "unread": {
+      "type": "boolean",
+      "description": "Alarm not marked as read."
+    },
+    "important": {
+      "type": "boolean",
+      "description": "Entry counts as important: log category alarm, or event_kind/kind marked important in data/events.json. Same rule as the filter important=true of GET /api/log."
+    }
+  },
+  "additionalProperties": false
+}

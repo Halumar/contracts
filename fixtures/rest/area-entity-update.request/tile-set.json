@@ -1,0 +1,23 @@
+{
+  "display_name": "Stehlampe",
+  "columns": 2,
+  "tile": {
+    "icon": "mdi:floor-lamp",
+    "variant": "slider",
+    "secondary": {
+      "source": "attribute",
+      "attribute": "brightness"
+    },
+    "tap_action": {
+      "action": "toggle"
+    },
+    "hold_action": {
+      "action": "more_info"
+    },
+    "confirm": false,
+    "accent": "light",
+    "hidden_on": [
+      "tv"
+    ]
+  }
+}

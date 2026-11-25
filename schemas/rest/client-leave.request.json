@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/client/leave",
+  "description": "REST twin of WS client_leave for a device without a hub socket: the watch signs itself off through its phone or directly over the pinned TLS port. Authorization: Bearer <client secret> of the device itself; 401 for an unknown, revoked or deleted device. client_id must be the device of the secret, otherwise 422 and nothing changes. The hub removes the device like client_leave (no tombstone, HA user removed by the integration, client_kicked {reason: left}, audit client_left) and answers 200 client_leave_ok.",
+  "type": "object",
+  "required": [
+    "client_id"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": false
+}

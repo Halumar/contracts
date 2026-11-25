@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Answer of POST /api/log/read",
+  "description": "Number of alarms newly marked as read. Admin sessions get the broadcast log_read {ids, all}.",
+  "type": "object",
+  "required": [
+    "marked"
+  ],
+  "properties": {
+    "marked": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/scan-tags (response)",
+  "description": "All tags of the hub, newest first; at most max.",
+  "type": "object",
+  "required": [
+    "tags",
+    "max"
+  ],
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/scan-tag.json"
+      }
+    },
+    "max": {
+      "type": "integer",
+      "const": 100
+    }
+  },
+  "additionalProperties": false
+}

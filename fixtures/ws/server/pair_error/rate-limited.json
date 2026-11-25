@@ -1,0 +1,5 @@
+{
+  "type": "pair_error",
+  "reason": "rate_limited",
+  "message": "Too many pairing attempts. Please try again later."
+}

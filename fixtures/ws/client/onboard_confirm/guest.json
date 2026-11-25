@@ -1,0 +1,15 @@
+{
+  "type": "onboard_confirm",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "hub_id": "8b7e3b10-2c4d-4e5f-9a0b-1c2d3e4f5a6b",
+  "kind": "guest",
+  "profile_id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+  "client_name": "Gast 2",
+  "owner_label": "Guest",
+  "expires_at": "2026-11-23T19:00:00Z",
+  "remote": false,
+  "area_ids": [
+    "d18b03ba-0f49-4fea-8d96-e25af54def81"
+  ]
+}

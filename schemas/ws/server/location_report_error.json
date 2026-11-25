@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "location_report_error",
+  "description": "Report refused; never contains coordinates. Same body as the 4xx answers of POST /api/client/location.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason"
+  ],
+  "properties": {
+    "type": {
+      "const": "location_report_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/location_report_reason"
+    },
+    "retry_after": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "rate_limited only: seconds until the next report is accepted."
+    }
+  },
+  "additionalProperties": true
+}

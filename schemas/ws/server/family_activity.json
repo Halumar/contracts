@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_activity",
+  "description": "Activity of the children (answer to family_get_activity). summary counts today (hub time zone) per child device; next_cursor null = no more entries.",
+  "type": "object",
+  "required": [
+    "type",
+    "items",
+    "next_cursor"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_activity"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/family-activity-item.json"
+      }
+    },
+    "next_cursor": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 128
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "summary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "actions",
+          "blocked",
+          "requests"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "actions": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "blocked": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "requests": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "bedtime_attempts": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

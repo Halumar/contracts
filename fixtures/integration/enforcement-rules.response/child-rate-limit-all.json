@@ -1,0 +1,75 @@
+{
+  "snapshots": [
+    {
+      "version": 1,
+      "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+      "ha_user_id": "fedcba9876543210fedcba9876543210",
+      "issued_at": "2026-11-20T18:00:00+00:00",
+      "rules_hash": "4b41ea61cc4750fbfb8274e01e277f2a9cda554ce9fbdfc63c5a6f221bb49678",
+      "control_path": "checked",
+      "remote_access": false,
+      "child_protection": true,
+      "entities": {
+        "light.kids_room": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        },
+        "media_player.kids_speaker": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        }
+      },
+      "kids": {
+        "time_zone": "Europe/Zurich",
+        "override_until": null,
+        "entities": {
+          "light.kids_room": {
+            "blocked": false,
+            "quiet_hours": [
+              {
+                "days": [
+                  "mon",
+                  "tue",
+                  "wed",
+                  "thu",
+                  "fri"
+                ],
+                "start": "20:00",
+                "end": "06:30"
+              }
+            ],
+            "color_lock": true,
+            "volume_max": null,
+            "rate_limit": {
+              "max_actions": 6,
+              "window_seconds": 60,
+              "cooldown_seconds": 300
+            }
+          },
+          "media_player.kids_speaker": {
+            "blocked": false,
+            "quiet_hours": [],
+            "color_lock": false,
+            "volume_max": 40,
+            "rate_limit": null
+          }
+        },
+        "rate_limit_all": {
+          "enabled": true,
+          "max_actions": 12,
+          "max_entities": 4,
+          "window_seconds": 60,
+          "cooldown_seconds": 300
+        }
+      },
+      "access": null,
+      "home_networks": [],
+      "location": "off"
+    }
+  ],
+  "control_paths": {
+    "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b": "checked"
+  }
+}

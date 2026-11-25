@@ -1,0 +1,13 @@
+{
+  "client_id": "c1d2e3f4-0000-4000-8000-0000000000a1",
+  "platform": "ios",
+  "is_connected": false,
+  "is_panel": false,
+  "panel": null,
+  "battery_level": 80,
+  "battery_state": "unplugged",
+  "panel_ha": null,
+  "remote": false,
+  "supported_actions": [],
+  "updated_at": null
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "session_expired",
+  "description": "Admin web-UI session (session cookie, client_id 'admin') ended: expired, evicted or logged out. Followed by close 4401; the UI returns to its login page. Never sent to apps.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "session_expired"
+    }
+  },
+  "additionalProperties": true
+}

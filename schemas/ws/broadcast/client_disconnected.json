@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast client_disconnected",
+  "description": "Last connection of a paired client closed, ping timeout, or tombstone purged.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_disconnected"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

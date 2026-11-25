@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Access hours vector",
+  "description": "Access of a device right now from its effective rule access_hours and its access switch, in the hub time zone (DST included). tools/validate.py recomputes every case with tools/access_ref.py; hub and integration run the same vectors. A case may carry early (an early access); it opens the device outside its windows until early.until, followed by windows that start before it ends.",
+  "type": "object",
+  "required": [
+    "description",
+    "time_zone",
+    "access_hours",
+    "cases"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "time_zone": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "device_time_zone": {
+      "type": "string",
+      "maxLength": 64,
+      "description": "Zone of the device clock for the app tests: an app runs the cases with this as its own zone and must get the same result, because the window edges follow time_zone (client_config.access.time_zone). The reference ignores it."
+    },
+    "access_hours": {
+      "$ref": "../common/defs.json#/$defs/access_hours"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "now",
+          "switch",
+          "expected"
+        ],
+        "properties": {
+          "now": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "switch": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected": {
+            "$ref": "../common/defs.json#/$defs/access_now"
+          },
+          "early": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/access_early"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Running early access of the device (input); expected.early repeats it while until is after now."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

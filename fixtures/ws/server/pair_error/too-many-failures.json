@@ -1,0 +1,5 @@
+{
+  "type": "pair_error",
+  "reason": "too_many_failures",
+  "message": "Pairing PIN invalidated after too many failed attempts"
+}

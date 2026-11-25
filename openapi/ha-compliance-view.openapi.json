@@ -1,0 +1,82 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "HA compliance view (served by the integration inside Home Assistant Core)",
+    "version": "1.0.0",
+    "summary": "Token-less compliance channel for apps that only reach Home Assistant.",
+    "description": "Registered by the companion integration as an HTTP view in HA Core (requires_auth = False, 1 request/s per IP). It relays the opaque compliance blobs from GET /api/integration/status (clients[].compliance and tombstones[]). The iPhone and iPad app polls it; the Android apps do not use it. The path contains the namespace (namespace.json key ha_compliance_path).",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "x-namespace": "halumar"
+  },
+  "servers": [
+    {
+      "url": "{ha_url}",
+      "description": "ha_internal_url or ha_url from client_config",
+      "variables": {
+        "ha_url": {
+          "default": "http://homeassistant.local:8123"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/api/halumar/compliance/{client_id}": {
+      "get": {
+        "operationId": "get_compliance",
+        "tags": [
+          "compliance"
+        ],
+        "security": [],
+        "x-auth": "public",
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Neutral body or a relayed signed restricting status (schema).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../schemas/integration/compliance-view.response.json"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit (1 request/s per IP).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "const": "rate_limited"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "compliance"
+    }
+  ]
+}

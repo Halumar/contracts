@@ -1,0 +1,8 @@
+{
+  "is_guest": true,
+  "guest_expires_hours": 24,
+  "guest_tags": [
+    "guest"
+  ],
+  "profile": "Gast"
+}

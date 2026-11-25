@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration update_client_identity",
+  "description": "Hub -> integration push session only. The device was renamed, its owner label, remote access or guest expiry changed. The integration updates the HA user (name, local_only). When local_only changes, or a guest expiry is no longer covered by the token lifetime, it rotates the token (new token delivered via POST /api/integration/client-token, old token removed after the acknowledgement; HA closes open sessions of the removed token, so the app re-authenticates under the new rules). Carries the full identity (not a diff), so applying it twice is harmless. The same state is also visible in GET /api/integration/status clients[], which the integration reconciles on every poll.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "update_client_identity"
+    },
+    "data": {
+      "$ref": "../../common/client-identity.json"
+    }
+  },
+  "additionalProperties": true
+}

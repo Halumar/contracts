@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Paired client (Admin API, GET /api/pairing/clients[/{id}], PATCH response)",
+  "description": "A paired device as the admin UI lists it: access, profile, own area and adjustments; the effective rules are in GET …/effective. Rights and remote access are profile rules.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "is_active",
+    "access",
+    "expires_at",
+    "has_ha_token",
+    "owner_label",
+    "profile_id",
+    "profile_name",
+    "profile_kind",
+    "child_protection",
+    "own_area_id",
+    "override_count",
+    "temporary_override_count",
+    "has_remote_pin",
+    "remote_allowed",
+    "ha_user_id",
+    "ha_token_status",
+    "platform",
+    "app_version",
+    "app_build",
+    "device_model",
+    "protocol_version",
+    "update_required",
+    "access_now",
+    "location_shared",
+    "location_at",
+    "location_rule",
+    "location_required"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "name": {
+      "$ref": "../common/defs.json#/$defs/display_name"
+    },
+    "is_active": {
+      "type": "boolean"
+    },
+    "access": {
+      "$ref": "../common/defs.json#/$defs/device_access"
+    },
+    "expires_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Guests: end of the access; members: null."
+    },
+    "set_up_by": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/set_up_by"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Member device that set up this device (onboarding or guest invitation); null after the admin PIN. Admin UI “Set up by”."
+    },
+    "profile_kind": {
+      "$ref": "../common/defs.json#/$defs/profile_kind",
+      "description": "Kind of the device's profile."
+    },
+    "has_ha_token": {
+      "type": "boolean",
+      "description": "true = the device holds a Home Assistant key that Home Assistant still accepts: a delivered key (its effective control_path is checked or direct, or hub with effective remote access: a read-only key), or a withdrawn key whose replacement the integration has not confirmed yet (the old token stays valid until then). false = the device holds none (Hub only without remote access, or a withdrawn key after the integration confirmed the rotation). When a device stops holding a key (control_path becomes hub, remote access ends on Hub only; log entry ha_key_withdrawn; at guest expiry the hub removes the device and its Home Assistant user instead) and when its access closes, the hub rotates the token, so a key the app held before stops working as soon as the integration has removed it (until then it keeps working, and the hub keeps trying). Whether the HA user is set up at all is ha_token_status."
+    },
+    "control_path": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_path_rule"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Effective Home Assistant access of the device (rule control_path after the platform mapping: on tvos, android_tv, watchos and wearos hub is checked). hub = no key unless remote access gives a read-only one (has_ha_token), checked = read-only key, direct = full key. null = the hub could not resolve the device's rules (the cause is in the hub's log; remote_allowed is null too): the key state is unknown, and has_ha_token then only says whether a token exists at all. Missing on older hubs."
+    },
+    "owner_label": {
+      "$ref": "../common/defs.json#/$defs/owner_label"
+    },
+    "profile_id": {
+      "$ref": "../common/defs.json#/$defs/profile_id"
+    },
+    "profile_name": {
+      "$ref": "../common/defs.json#/$defs/profile_name"
+    },
+    "child_protection": {
+      "type": "boolean",
+      "description": "Parental controls of the profile (kids rules enforced by the hub and the integration; whether the device holds a Home Assistant key is set by the rule control_path, has_ha_token)."
+    },
+    "own_area_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "override_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "temporary_override_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "has_remote_pin": {
+      "type": "boolean"
+    },
+    "remote_allowed": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Effective rule remote_access (read only; changed through the profile or an adjustment). The HA user of the device is local_only exactly when this is false. null = the device's rules could not be resolved: only together with control_path null; then access, remote access and key level are unknown."
+    },
+    "ha_user_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/ha_id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "HA user of this device (set by the integration); null while pending."
+    },
+    "ha_token_status": {
+      "$ref": "../common/defs.json#/$defs/ha_token_status",
+      "description": "HA user of the device on the hub: pending = waiting for the integration to create the user and deliver its token; active = user and token stored on the hub. On the hub path active means the hub holds the token for its calls of <ns>.control; the device itself holds it only when it holds a key (has_ha_token)."
+    },
+    "ha_token_pending_since": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "UTC timestamp since the device waits for its token, null when not pending."
+    },
+    "platform": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/platform"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Last reported by the app in auth/pair; null until reported."
+    },
+    "app_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "app_build": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "device_model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "protocol_version": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "update_required": {
+      "type": "boolean"
+    },
+    "access_now": {
+      "$ref": "../common/defs.json#/$defs/access_now",
+      "description": "Access right now (device page: “Access now: open until 23:30” / “closed until Mon 18:00” / “closed – switch off”)."
+    },
+    "location_rule": {
+      "anyOf": [
+        {
+          "enum": [
+            "off",
+            "foreground",
+            "background"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Effective rule location of the device; null = the rule does not apply (kind, platform)."
+    },
+    "location_required": {
+      "type": "boolean",
+      "description": "Effective rule location_required (false when it does not apply). With location_shared none the admin UI shows “not shared (required)”."
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "What the app shares (last report, memory of the hub); null = not reported since the hub started."
+    },
+    "location_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Time of the last accepted fix (memory of the hub), never the position."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "access": {
+            "const": "guest"
+          }
+        },
+        "required": [
+          "access"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expires_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "child_protection": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

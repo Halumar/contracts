@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_result",
+  "description": "Result of family_rule_set, family_rule_reset, family_release, family_release_end per child device. status ok or error with reason (family_error_reason); a partial success is normal (e.g. one child's profile fixes the rule).",
+  "type": "object",
+  "required": [
+    "type",
+    "op",
+    "results"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_result"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "op": {
+      "$ref": "../../common/defs.json#/$defs/family_op"
+    },
+    "results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "status"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "error"
+            ]
+          },
+          "reason": {
+            "$ref": "../../common/defs.json#/$defs/family_error_reason"
+          },
+          "until": {
+            "anyOf": [
+              {
+                "$ref": "../../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "error"
+                }
+              },
+              "required": [
+                "status"
+              ]
+            },
+            "then": {
+              "required": [
+                "reason"
+              ]
+            }
+          }
+        ],
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

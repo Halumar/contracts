@@ -1,0 +1,115 @@
+{
+  "client_id": "7c1e9a52-3b4d-4f8e-a6c2-9d0b1e2f3a4b",
+  "issued_at": "2026-11-20T14:05:12.345Z",
+  "config": {
+    "ha_token": "FAKE-HA-LLAT-NOT-A-REAL-TOKEN",
+    "ha_url": "https://example.ui.nabu.casa",
+    "ha_internal_url": "http://homeassistant.local",
+    "tls_fingerprint": "abababababababababababababababababababababababababababababababab",
+    "tls_port": 8100,
+    "config_sensor": "sensor.halumar_config",
+    "notification_sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+    "home_title": "Zuhause",
+    "home_bg_light": null,
+    "home_bg_dark": "/images/7a1d2c3b.jpg",
+    "control_mode": "full",
+    "access": {
+      "kind": "member",
+      "expires_at": null,
+      "hours": {
+        "open": true,
+        "reason": null,
+        "until": null,
+        "opens_at": null,
+        "schedule": false,
+        "switch": null
+      },
+      "time_zone": "Europe/Zurich"
+    },
+    "profile": {
+      "id": "5d0e1f2a-3b4c-4d5e-8f60-718293a4b5c6",
+      "name": "Erwachsen",
+      "kind": "person",
+      "rev": 3,
+      "child_protection": false,
+      "managed_by": "Admin"
+    },
+    "rules": {
+      "remote_access": {
+        "value": true,
+        "source": "profile",
+        "reason": "profile",
+        "locked": true,
+        "fixed": false,
+        "enforcement": "ha"
+      },
+      "remote_control": {
+        "value": {
+          "default": "control",
+          "domains": {
+            "lock": "view",
+            "alarm_control_panel": "view",
+            "cover:garage": "view",
+            "cover:gate": "view"
+          },
+          "entities": {}
+        },
+        "source": "profile",
+        "reason": "profile",
+        "locked": true,
+        "fixed": false,
+        "enforcement": "app"
+      },
+      "areas": {
+        "value": {
+          "mode": "all",
+          "area_ids": [],
+          "tags": [],
+          "own_area": false
+        },
+        "source": "profile",
+        "reason": "profile",
+        "locked": true,
+        "fixed": false,
+        "enforcement": "app"
+      },
+      "control_mode_max": {
+        "value": "full",
+        "source": "profile",
+        "reason": "profile",
+        "locked": true,
+        "fixed": false,
+        "enforcement": "app"
+      },
+      "quick_access": {
+        "value": "control",
+        "source": "profile",
+        "reason": "profile",
+        "locked": true,
+        "fixed": false,
+        "enforcement": "app"
+      }
+    },
+    "quick_access": {
+      "enabled": true,
+      "max": "control",
+      "sensor": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_quick_access",
+      "entities": {
+        "light.living_room_rgbww_lights": "control",
+        "scene.movie_night": "control",
+        "lock.front_door": "control",
+        "cover.garage_door": "status",
+        "sensor.outside_temperature": "status"
+      },
+      "critical": [
+        "lock.front_door",
+        "cover.garage_door"
+      ]
+    },
+    "settings_pin_hash": null,
+    "settings_pin_salt": null,
+    "settings_pin_source": null,
+    "config_hash": "sha256:5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e"
+  },
+  "extra": 1
+}

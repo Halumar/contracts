@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate setting of one measure (area page)",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "pick",
+    "value",
+    "options"
+  ],
+  "properties": {
+    "entity_id": {
+      "description": "The admin's choice; null = automatic.",
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "pick": {
+      "$ref": "room-climate-pick.json"
+    },
+    "value": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "The room value the apps show now (rule applied to the live states); null = none."
+    },
+    "unit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "unit_of_measurement of the first entity the value comes from (a thermostat: % for humidity, null for temperature)."
+    },
+    "options": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "name",
+          "tier",
+          "in_room",
+          "excluded",
+          "value"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "defs.json#/$defs/entity_id"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the placement, else friendly_name, else entity_id."
+          },
+          "tier": {
+            "enum": [
+              "device",
+              "sensor"
+            ],
+            "description": "device = thermostat (device_domains, first tier), sensor = sensor of the device class."
+          },
+          "in_room": {
+            "type": "boolean",
+            "description": "The entity, or its device, is assigned to the Home Assistant area of this area (preferred over entities only placed here)."
+          },
+          "excluded": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why it never counts automatically: an exclude group id of data/room-climate.json (fridge, outdoor ...) or entity_category; null = it may count."
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Current value; null = unavailable or not numeric."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

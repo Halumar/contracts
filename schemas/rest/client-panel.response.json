@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/clients/{client_id}/panel",
+  "description": "Status card of the device page in the admin UI (every device except watches and guests): last status, battery, what appears in Home Assistant and the effective panel rules.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "platform",
+    "is_connected",
+    "is_panel",
+    "panel",
+    "battery_level",
+    "battery_state",
+    "panel_ha",
+    "remote",
+    "updated_at"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "platform": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/platform"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "is_connected": {
+      "type": "boolean"
+    },
+    "is_panel": {
+      "type": "boolean",
+      "description": "The device is a panel by its rules (iPad or Android tablet with kiosk on, Apple TV, Android TV) and not a guest."
+    },
+    "panel": {
+      "anyOf": [
+        {
+          "$ref": "../common/panel-status.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Last reported status (kept after disconnect, shown as stale)."
+    },
+    "battery_level": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "battery_state": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/battery_state"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "low_power": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "panel_ha": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "sensors",
+            "controls"
+          ],
+          "properties": {
+            "sensors": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "../common/defs.json#/$defs/panel_ha_sensor"
+              },
+              "description": "Sensor entities to create: rule panel_sensors limited to the platform. Wall panels (iPad, Android tablet) get screen with the other allowed values, TVs (Apple TV, Android TV) only screen; every other device gets app (“app active”) for the rule value screen; illuminance only with light_sensor."
+            },
+            "controls": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "$ref": "../common/defs.json#/$defs/panel_control"
+              },
+              "description": "Control entities to create: only wall panels (iPad, Android tablet) and TVs (Apple TV, Android TV) with panel_remote on (tablets all, TVs wake/screensaver/home/reload). Empty on every other device and with panel_remote off."
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Entities of this device in Home Assistant, decided by the hub: null = none (guest, deactivated, or a platform without status: watchos, wearos). Every other device gets the sensors its rule panel_sensors allows; controls only wall panels and TVs. The integration creates exactly these entities on the existing client device and removes the others."
+    },
+    "remote": {
+      "type": "boolean",
+      "description": "Effective rule panel_remote (false when not a panel)."
+    },
+    "supported_actions": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/defs.json#/$defs/panel_action"
+      },
+      "description": "Actions the admin UI may offer as test buttons (platform ∩ reported actions)."
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "When the panel status was last reported (UTC ISO 8601)."
+    }
+  },
+  "additionalProperties": true
+}

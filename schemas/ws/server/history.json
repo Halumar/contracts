@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "history",
+  "description": "Answer to history_get. states oldest first: the state at the start of the period, then every significant change (Home Assistant recorder, minimal response, no attributes). At most 1000 points; with more the hub keeps evenly spaced points including the first and the last and sets truncated. unavailable/unknown are kept (the app skips them).",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id",
+    "hours",
+    "states",
+    "truncated"
+  ],
+  "properties": {
+    "type": {
+      "const": "history"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 168
+    },
+    "states": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "object",
+        "required": [
+          "state",
+          "last_changed"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "last_changed": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

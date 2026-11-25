@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "watch_access_get",
+  "description": "A phone asks for the current Home Assistant access of the watch it set up (watchos, wearos). A watch never has a hub socket of its own; its phone carries the access, sealed to the watch's key, so the phone cannot read it. Only on an authenticated socket of the device that set the watch up (set_up_by, method onboard). Answer: watch_access (status ready, pending or gone).",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "watch_access_get"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid",
+      "description": "The watch device."
+    }
+  },
+  "additionalProperties": true
+}

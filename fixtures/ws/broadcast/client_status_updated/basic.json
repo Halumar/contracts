@@ -1,0 +1,17 @@
+{
+  "type": "client_status_updated",
+  "data": {
+    "id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "name": "Wohnzimmer-Panel",
+    "device_name": "iPad (10th generation)",
+    "app_version": "2026.7.7",
+    "battery_level": 87,
+    "connection_type": "wifi",
+    "current_area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+    "last_seen": "2026-11-18T08:15:00.123456+00:00",
+    "current_area_name": "Wohnzimmer",
+    "is_connected": true,
+    "location_shared": "none",
+    "location_at": null
+  }
+}

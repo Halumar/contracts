@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/pairing/clients/{client_id}/profile (body)",
+  "description": "Assign a profile to a device. Adjustments of rules the new profile fixes are deleted; discard_overrides deletes all. A guest device cannot get a profile with parental controls (422 profile.guest_child_protection). When the device stops holding a Home Assistant key (the new profile is on Hub only without remote access) the hub withdraws the HA token (rotation, the device reads and switches through the hub); when it starts holding one, it gets its own HA token again. Answer: paired-client.json; ?dry_run=true: profile-preview.response.json.",
+  "type": "object",
+  "required": [
+    "profile_id"
+  ],
+  "properties": {
+    "profile_id": {
+      "$ref": "../common/defs.json#/$defs/profile_id"
+    },
+    "discard_overrides": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false
+}

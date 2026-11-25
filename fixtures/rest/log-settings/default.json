@@ -1,0 +1,8 @@
+{
+  "retention_days": 30,
+  "hidden_owners": [],
+  "alarm_threshold": {
+    "count": 3,
+    "window_minutes": 10
+  }
+}

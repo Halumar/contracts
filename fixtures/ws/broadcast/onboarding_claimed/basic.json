@@ -1,0 +1,10 @@
+{
+  "type": "onboarding_claimed",
+  "data": {
+    "id": "6b1f0e2a-3c4d-4e5f-8a9b-0c1d2e3f4a5b",
+    "claimed_by": {
+      "client_id": "0f1e2d3c-4b5a-4968-8778-695a4b3c2d1e",
+      "name": "iPhone Papa"
+    }
+  }
+}

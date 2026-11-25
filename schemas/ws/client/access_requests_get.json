@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_requests_get",
+  "description": "A recipient device reads the open early access requests it may answer (after connecting, or when the app opens). Over the hub WebSocket or away through <ns>/family. Answer: access_requests.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_requests_get"
+    }
+  },
+  "additionalProperties": true
+}

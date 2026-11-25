@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/log/notify-targets",
+  "description": "Targets for notifications at events: the notify.* actions of Home Assistant (without the entity-based notify.send_message) and every paired device the admin may choose except watches (they have no hub connection and show the notifications of their phone; also children and guests; kind child = shown in the app while the device is at home, guest = until the access ends, expired guests are left out). error ha_unavailable when Home Assistant could not be asked (devices still listed).",
+  "type": "object",
+  "required": [
+    "notify",
+    "devices",
+    "error"
+  ],
+  "properties": {
+    "notify": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "service",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "service": {
+            "type": "string",
+            "pattern": "^notify\\.[a-z0-9_]{1,255}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "owner_label",
+          "platform",
+          "kind",
+          "expires_at"
+        ],
+        "properties": {
+          "client_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "platform": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "member",
+              "child",
+              "guest"
+            ]
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "error": {
+      "anyOf": [
+        {
+          "enum": [
+            "ha_unavailable"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

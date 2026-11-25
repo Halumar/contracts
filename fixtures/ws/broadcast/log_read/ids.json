@@ -1,0 +1,10 @@
+{
+  "type": "log_read",
+  "data": {
+    "ids": [
+      41,
+      42
+    ],
+    "all": false
+  }
+}

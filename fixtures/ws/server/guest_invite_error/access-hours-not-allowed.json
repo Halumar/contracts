@@ -1,0 +1,5 @@
+{
+  "type": "guest_invite_error",
+  "reason": "access_hours_not_allowed",
+  "message": "Access hours not allowed"
+}

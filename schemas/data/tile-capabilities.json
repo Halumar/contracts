@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tile capabilities per domain (data/tile-capabilities.json)",
+  "description": "The one source for what tile settings a domain allows. Read by the hub (422 for anything else), the Admin UI (only allowed options are offered) and the apps (values not allowed for the domain fall back to the default). Lookup: the first entry of domains[] whose domains list contains the entity domain, else the entry with \"_other\". Generated as a constant for every language (codegen ContractData).",
+  "type": "object",
+  "required": [
+    "version",
+    "defaults",
+    "always",
+    "run_targets",
+    "secondary_entity_domains",
+    "domains"
+  ],
+  "properties": {
+    "version": {
+      "description": "Data version, raised with every change of this file.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "defaults": {
+      "description": "Value that applies when a field is null or absent.",
+      "type": "object",
+      "required": [
+        "variant",
+        "tap_action",
+        "hold_action",
+        "secondary"
+      ],
+      "properties": {
+        "variant": {
+          "$ref": "../common/defs.json#/$defs/tile_variant"
+        },
+        "tap_action": {
+          "$ref": "../common/defs.json#/$defs/tile_action_kind"
+        },
+        "hold_action": {
+          "$ref": "../common/defs.json#/$defs/tile_hold_action_kind"
+        },
+        "secondary": {
+          "$ref": "../common/defs.json#/$defs/tile_secondary_source"
+        }
+      }
+    },
+    "always": {
+      "description": "Values allowed for every domain in addition to the per-domain lists.",
+      "type": "object",
+      "required": [
+        "tap_actions",
+        "hold_actions",
+        "secondary_sources"
+      ],
+      "properties": {
+        "tap_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "../common/defs.json#/$defs/tile_action_kind"
+          }
+        },
+        "hold_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "../common/defs.json#/$defs/tile_hold_action_kind"
+          }
+        },
+        "secondary_sources": {
+          "description": "attribute and entity are governed per domain (attributes, secondary_entity).",
+          "type": "array",
+          "items": {
+            "$ref": "../common/defs.json#/$defs/tile_secondary_source"
+          }
+        }
+      }
+    },
+    "run_targets": {
+      "description": "Domains a run action may target and the fixed service the app calls (never with service data).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "domain",
+          "service"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "service": {
+            "type": "string",
+            "pattern": "^[a-z_]+\\.[a-z_]+$"
+          }
+        }
+      }
+    },
+    "secondary_entity_domains": {
+      "description": "Domains a secondary.entity_id may have.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+      }
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "domains",
+          "variants",
+          "attributes",
+          "tap_actions",
+          "icon",
+          "accent",
+          "secondary_entity",
+          "confirm",
+          "confirm_always",
+          "run_self"
+        ],
+        "properties": {
+          "domains": {
+            "description": "HA domains of this row; \"_other\" = every domain not listed elsewhere.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^([a-z_]+|_other)$"
+            }
+          },
+          "variants": {
+            "description": "Allowed variants; the default (defaults.variant) is always included.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/tile_variant"
+            }
+          },
+          "attributes": {
+            "description": "Attributes allowed for secondary.source=attribute (empty = attribute not allowed).",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]{1,64}$"
+            }
+          },
+          "tap_actions": {
+            "description": "Tap actions allowed in addition to always.tap_actions (toggle, run).",
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/tile_action_kind"
+            }
+          },
+          "icon": {
+            "description": "tile.icon allowed (false where the symbol carries the state: lock, alarm, siren).",
+            "type": "boolean"
+          },
+          "accent": {
+            "description": "tile.accent allowed (false where the color carries the state).",
+            "type": "boolean"
+          },
+          "secondary_entity": {
+            "description": "secondary.source=entity allowed.",
+            "type": "boolean"
+          },
+          "confirm": {
+            "description": "tile.confirm allowed (only meaningful with toggle/run).",
+            "type": "boolean"
+          },
+          "confirm_always": {
+            "description": "The app always confirms (lock, alarm panel), independent of tile.confirm.",
+            "type": "boolean"
+          },
+          "run_self": {
+            "description": "The entity itself is a run target (scene, script, button): run with target = own entity is the natural tap action.",
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

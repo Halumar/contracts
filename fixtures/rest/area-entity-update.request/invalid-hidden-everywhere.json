@@ -1,0 +1,9 @@
+{
+  "tile": {
+    "hidden_on": [
+      "phone",
+      "tablet",
+      "tv"
+    ]
+  }
+}

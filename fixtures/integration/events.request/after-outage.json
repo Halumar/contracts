@@ -1,0 +1,18 @@
+{
+  "events": [
+    {
+      "id": "0b1c2d3e-4f50-4617-8293-a4b5c6d7e8f9",
+      "type": "integration_started",
+      "at": "2026-11-20T17:59:58+00:00",
+      "version": "2026.12.0"
+    },
+    {
+      "id": "1c2d3e4f-5061-4728-93a4-b5c6d7e8f9a0",
+      "type": "integration_outage",
+      "at": "2026-11-20T17:59:58+00:00",
+      "since": "2026-11-20T09:12:00+00:00",
+      "reliability": "best_effort"
+    }
+  ],
+  "dropped": 37
+}

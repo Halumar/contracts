@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request_error",
+  "description": "An early access message failed. reason is machine-readable ($defs/access_request_error_reason); message English text for logs only. request echoes the current state for already_answered; retry_after (seconds) for rate_limited, request_limit and cooldown.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/access_request_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "request": {
+      "$ref": "../../common/access-request.json"
+    },
+    "retry_after": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": true
+}

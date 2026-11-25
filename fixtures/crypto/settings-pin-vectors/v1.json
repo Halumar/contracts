@@ -1,0 +1,17 @@
+{
+  "algorithm": "PBKDF2-HMAC-SHA256",
+  "iterations": 100000,
+  "dklen": 32,
+  "cases": [
+    {
+      "pin": "1234",
+      "salt": "000102030405060708090a0b0c0d0e0f",
+      "hash": "869e6c8350c5beb0acc399fbaac3b60d220433896b26a647734d0d8f1586e1fa"
+    },
+    {
+      "pin": "98765432",
+      "salt": "f0e1d2c3b4a5968778695a4b3c2d1e0f",
+      "hash": "3f9b185b883200f7b26a4c9f2611e75c448fce9b7fc171750a44e87f07de455d"
+    }
+  ]
+}

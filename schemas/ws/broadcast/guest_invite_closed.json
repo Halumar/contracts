@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite_closed",
+  "description": "Admin audience: a guest invitation ended (result; client_id of the new guest when paired).",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite_closed"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "result"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+        },
+        "result": {
+          "$ref": "../../common/defs.json#/$defs/guest_invite_result"
+        },
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

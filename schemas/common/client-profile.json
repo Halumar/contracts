@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.profile",
+  "description": "Profile of the device. Every device has exactly one profile; the app shows its name (“Managed by {managed_by} · Profile: {name}”). child_protection = parental controls: the device is on the hub path and controls through the hub where it is reachable (WS control, POST /api/client/control); when it holds a key (rule control_path checked, or hub with remote access) it uses it while the hub is not reachable (<ns>.control, client_config.kids.away ha), otherwise it has no HA key (ha_token and ha_url null); client_config.kids carries the rules. A change of the profile, its rules, a device adjustment or its expiry sends client_config_updated.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "rev",
+    "child_protection",
+    "kind"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/profile_id"
+    },
+    "name": {
+      "$ref": "defs.json#/$defs/profile_name"
+    },
+    "kind": {
+      "$ref": "defs.json#/$defs/profile_kind",
+      "description": "Kind of the profile: the app starts accordingly (child view, wall panel, TV kiosk) only through the rules; the kind itself changes no rule."
+    },
+    "rev": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Revision of the profile; increases with every saved change."
+    },
+    "child_protection": {
+      "type": "boolean",
+      "description": "Parental controls."
+    },
+    "managed_by": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Display name of the hub admin (Home Assistant owner) for texts on the device; null = unknown."
+    }
+  },
+  "additionalProperties": true
+}

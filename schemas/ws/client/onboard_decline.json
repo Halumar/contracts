@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_decline",
+  "description": "The user of the confirming device declined. Ends the session; the waiting device gets onboard_error {reason: declined}. Answered with onboard_error only when the session does not exist (no success message).",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_decline"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    }
+  },
+  "additionalProperties": true
+}

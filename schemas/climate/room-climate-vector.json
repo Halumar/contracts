@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate vector",
+  "description": "Shared test vector of the room climate rule (data/room-climate.json, docs/room-climate.md): the placements of one area with their live state and, for the hub, their registry entry. expect.room_climate = what the hub sends (area.room_climate), expect.value = the room values the apps show with it, expect.local = the values an app computes without room_climate (only entity_id, names, device_class), expect.primary_sensor = the one sensor of widgets and watch, expect.options = the area page list (optional). tools/room_climate_ref.py is the reference; hub and apps port it and run these vectors.",
+  "type": "object",
+  "required": [
+    "name",
+    "ha_area_id",
+    "entities",
+    "expect"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "ha_area_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "admin": {
+      "type": "object",
+      "properties": {
+        "temperature": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "humidity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "state"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "display_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Placement is_visible; default true."
+          },
+          "state": {
+            "description": "Live state as in get_area; null = unavailable to the hub.",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "state",
+                  "attributes"
+                ],
+                "properties": {
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "attributes": {
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "registry": {
+            "description": "Entity registry entry with its device (hub only); null = not in the registry.",
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "entity_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "original_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "device_class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "original_device_class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "area_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "device": {
+                    "anyOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "name_by_user": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "model": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "area_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expect": {
+      "type": "object",
+      "required": [
+        "room_climate",
+        "value",
+        "local",
+        "primary_sensor"
+      ],
+      "properties": {
+        "room_climate": {
+          "$ref": "../common/room-climate.json"
+        },
+        "value": {
+          "type": "object",
+          "required": [
+            "temperature",
+            "humidity"
+          ],
+          "properties": {
+            "temperature": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "humidity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "local": {
+          "type": "object",
+          "required": [
+            "temperature",
+            "humidity"
+          ],
+          "properties": {
+            "temperature": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "humidity": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "primary_sensor": {
+          "type": "object",
+          "required": [
+            "temperature",
+            "humidity"
+          ],
+          "properties": {
+            "temperature": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "humidity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "options": {
+          "type": "object",
+          "description": "Per measure the area page list without names and values: entity_id, tier, in_room, excluded.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/profiles/{id}/check (answer)",
+  "type": "object",
+  "required": [
+    "allowed"
+  ],
+  "properties": {
+    "allowed": {
+      "type": "boolean"
+    },
+    "service": {
+      "type": "string"
+    },
+    "adjusted": {
+      "type": "object"
+    },
+    "reason": {
+      "$ref": "../common/defs.json#/$defs/rule_blocked_reason"
+    },
+    "level": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/rule_level"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "limit": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "allowed": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "reason",
+          "level",
+          "until"
+        ]
+      },
+      "else": {
+        "required": [
+          "service"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

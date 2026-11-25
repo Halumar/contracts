@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/family (answer)",
+  "description": "The hub's answer messages (ws/server/family_*, family_error or, for a child device, kids_request_state), the integration returns them unchanged to the HA WebSocket caller. 403 not_permitted when the device has no effective right (or is not a member); 429 rate_limited.",
+  "type": "object",
+  "required": [
+    "messages"
+  ],
+  "properties": {
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^(family_[a-z_]{1,40}|kids_request_state)$"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

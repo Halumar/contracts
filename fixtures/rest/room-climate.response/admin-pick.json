@@ -1,0 +1,52 @@
+{
+  "temperature": {
+    "entity_id": "sensor.window_temperature",
+    "pick": {
+      "source": "admin",
+      "entity_ids": [
+        "sensor.window_temperature"
+      ]
+    },
+    "value": 20.0,
+    "unit": "°C",
+    "options": [
+      {
+        "entity_id": "climate.living_room",
+        "name": "Heizung",
+        "tier": "device",
+        "in_room": false,
+        "excluded": null,
+        "value": 22.5
+      },
+      {
+        "entity_id": "sensor.window_temperature",
+        "name": "Fenster",
+        "tier": "sensor",
+        "in_room": false,
+        "excluded": null,
+        "value": 20.0
+      }
+    ]
+  },
+  "humidity": {
+    "entity_id": null,
+    "pick": {
+      "source": "auto",
+      "entity_ids": [
+        "climate.living_room"
+      ]
+    },
+    "value": 46,
+    "unit": "%",
+    "options": [
+      {
+        "entity_id": "climate.living_room",
+        "name": "Heizung",
+        "tier": "device",
+        "in_room": false,
+        "excluded": null,
+        "value": 46
+      }
+    ]
+  }
+}

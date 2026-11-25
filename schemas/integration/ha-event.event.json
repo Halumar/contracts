@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant event <ns>_event (data)",
+  "description": "Fired on the HA event bus for every event of the taxonomy (data/events.json), immediately and without thresholds, so owners can build their own automations (no automation engine in <brand>; notifications with targets, filters, quiet hours and bundling belong to the hub, rest/event-notifications.json). Kinds with source integration are fired by the integration itself, kinds with source hub when the hub sends ws/integration/ha_event; a test (test true) of any kind also comes from the hub. Data minimization: only these fields, never action data, codes, IP addresses or tokens. Only admins can subscribe to it over the WebSocket API.",
+  "type": "object",
+  "required": [
+    "kind",
+    "category",
+    "at"
+  ],
+  "properties": {
+    "kind": {
+      "$ref": "../common/defs.json#/$defs/event_kind"
+    },
+    "category": {
+      "$ref": "../common/defs.json#/$defs/event_category"
+    },
+    "at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "device_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Display name of the device (without brand prefix)."
+    },
+    "owner_label": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 50
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Person the device belongs to."
+    },
+    "profile_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "route": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_route"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/control_denial_reason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "access_reason": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/access_closed_reason"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "access_opened/access_closed: why access changed (schedule = access hours, switch = access switch)."
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "since": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Bedtime/pause end, adjustment or guest expiry; access_opened: end of the access window (null = no end); access_closed: next opening (null = unknown)."
+    },
+    "tag_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/tag_id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "tag_scanned only."
+    },
+    "tag_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 60
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "tag_scanned only: name of the tag in the hub."
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/tag_scan_result"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "tag_scanned only."
+    },
+    "test": {
+      "type": "boolean",
+      "description": "true for “Send test” of a notification rule (POST /api/settings/event-notifications/test): the hub sends it for any kind, also kinds with source integration, and the integration fires it unchanged with test true so automations can be tried out (and filter it). Absent for real events."
+    }
+  },
+  "additionalProperties": false
+}

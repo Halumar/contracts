@@ -1,0 +1,10 @@
+{
+  "type": "onboarding_started",
+  "data": {
+    "id": "6b1f0e2a-3c4d-4e5f-8a9b-0c1d2e3f4a5b",
+    "client_name": "Apple TV Wohnzimmer",
+    "platform": "tvos",
+    "device_model": "AppleTV14,1",
+    "expires_at": "2026-11-18T19:07:11+00:00"
+  }
+}

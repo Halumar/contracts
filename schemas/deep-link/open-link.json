@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Open link (open a view)",
+  "description": "Link that opens a view in the app, e.g. from a Home Assistant notification or automation (doorbell → camera). Fixed because it is stored in users' automations and blueprints: https://<website>/open/<view> (preferred) or the app form <scheme>://open/<view> (officially allowed: for automations on devices without verified universal links or App Links, e.g. Google TV). Both forms behave the same. Views: camera/<entity_id> (a camera entity) and area/<area_id> (hub area UUID or Home Assistant area id). A link only opens a view, it never triggers an action; the profile of the device decides what it may see (hidden cameras and areas open the start screen). On TVs Home Assistant opens the link (Apple TV media_player.play_media url, Google TV remote.turn_on activity) or uses panel_command show_camera.",
+  "type": "object",
+  "required": [
+    "uri",
+    "params"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string",
+      "pattern": "^(https://[a-z0-9.-]+/open|halumar://open)/(camera/camera\\.[a-z0-9_]+|area/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|[a-z0-9_]{1,64}))$",
+      "x-namespace-key": "deep_link_open_prefix"
+    },
+    "params": {
+      "type": "object",
+      "required": [
+        "view"
+      ],
+      "properties": {
+        "view": {
+          "enum": [
+            "camera",
+            "area"
+          ]
+        },
+        "entity_id": {
+          "$ref": "../common/defs.json#/$defs/camera_entity_id"
+        },
+        "area_id": {
+          "anyOf": [
+            {
+              "$ref": "../common/defs.json#/$defs/uuid"
+            },
+            {
+              "type": "string",
+              "pattern": "^[a-z0-9_]{1,64}$",
+              "description": "Home Assistant area id (areas[].ha_area_id)."
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "view": {
+                "const": "camera"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "entity_id"
+            ],
+            "not": {
+              "required": [
+                "area_id"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "view": {
+                "const": "area"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "area_id"
+            ],
+            "not": {
+              "required": [
+                "entity_id"
+              ]
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "x-client-rules": [
+    "Only the brand website or the app scheme (both official) with path /open/ and one of the views; unknown views open the start screen (reserved for later views, never an action).",
+    "Never switch, confirm or start anything from a link; picture-in-picture starts only by the user or as the platform allows.",
+    "Check visibility with the device's profile and areas like a tap in the app; a hidden or unknown camera/area opens the start screen without a message that names it.",
+    "area/<id>: a UUID is a hub area id, otherwise the Home Assistant area id (first hub area with that ha_area_id)."
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/family/notify-answer",
+  "description": "Integration token only. A button of an actionable Home Assistant notification for a child's request was pressed (event mobile_app_notification_action, action <NS>_FAMILY_<token>). The token (16 random bytes, base64url) is single-use, bound to one request and one notify action (data/family.json notify_actions) and dies with the request; the hub stores only its SHA-256. ha_user_name and notify_service are recorded in the log (route ha_notification). Not a login: whoever holds the notification can answer it, therefore only targets the admin linked to a family manager or chose for kids_release_requested get buttons.",
+  "type": "object",
+  "required": [
+    "token"
+  ],
+  "properties": {
+    "token": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{22}$",
+      "x-sensitive": true
+    },
+    "notify_service": {
+      "type": "string",
+      "pattern": "^notify\\.[a-z0-9_]{1,64}$"
+    },
+    "ha_user_name": {
+      "type": "string",
+      "maxLength": 100
+    }
+  },
+  "additionalProperties": false
+}

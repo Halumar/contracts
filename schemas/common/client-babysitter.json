@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.babysitter",
+  "description": "Present exactly on a device of kind babysitter whose effective rule babysitter_requests is on. active = it gets the children's requests now (access open, requests switched on in the house settings, connected to the hub = at home); presets = the durations it may give with a Yes (access_end only while access_until is known). It sees no earlier requests, no activity, no log and no rules of the children. Answers: family_answer; open requests: family_get_requests (only open ones). Requests arrive as family_request with answer_presets.",
+  "type": "object",
+  "required": [
+    "active",
+    "presets",
+    "access_until"
+  ],
+  "properties": {
+    "active": {
+      "type": "boolean"
+    },
+    "presets": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "defs.json#/$defs/family_release_preset"
+      },
+      "description": "Subset of data/family.json babysitter.presets."
+    },
+    "access_until": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "End of the running access window = end of a Yes “until the end of babysitting”; null = no known end (no access hours) or closed."
+    }
+  },
+  "additionalProperties": true
+}

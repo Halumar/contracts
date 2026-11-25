@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command show_entity",
+  "description": "Open the detail view of an entity, triggered by POST /api/integration/clients/{id}/show_entity.",
+  "type": "object",
+  "required": [
+    "type",
+    "command",
+    "entity_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "show_entity"
+    },
+    "entity_id": {
+      "type": "string"
+    },
+    "control_mode": {
+      "$ref": "../../common/defs.json#/$defs/control_mode"
+    }
+  },
+  "additionalProperties": true
+}

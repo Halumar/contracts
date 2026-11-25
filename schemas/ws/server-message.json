@@ -1,0 +1,361 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Any hub -> client message",
+  "description": "Discriminated by 'type' (and 'command' for type=command). guest_extended and notification_created exist in two shapes (targeted/broadcast, admin/integration). Also the hub -> integration requests in integration/ (sent only to the integration push session).",
+  "anyOf": [
+    {
+      "$ref": "heartbeat/ping.json"
+    },
+    {
+      "$ref": "heartbeat/pong.json"
+    },
+    {
+      "$ref": "server/area.json"
+    },
+    {
+      "$ref": "server/areas.json"
+    },
+    {
+      "$ref": "server/auth_error.json"
+    },
+    {
+      "$ref": "server/auth_ok.json"
+    },
+    {
+      "$ref": "server/auth_required.json"
+    },
+    {
+      "$ref": "server/auth_timeout.json"
+    },
+    {
+      "$ref": "server/client_config.json"
+    },
+    {
+      "$ref": "server/client_removed.json"
+    },
+    {
+      "$ref": "server/client_reset_ack_ok.json"
+    },
+    {
+      "$ref": "server/client_leave_ok.json"
+    },
+    {
+      "$ref": "server/watch_access.json"
+    },
+    {
+      "$ref": "server/client_status_ok.json"
+    },
+    {
+      "$ref": "server/error.json"
+    },
+    {
+      "$ref": "server/guest_extended.json"
+    },
+    {
+      "$ref": "server/notification_ack_ok.json"
+    },
+    {
+      "$ref": "server/notification_dismiss_ok.json"
+    },
+    {
+      "$ref": "server/notifications.json"
+    },
+    {
+      "$ref": "server/pair_error.json"
+    },
+    {
+      "$ref": "server/pair_ok.json"
+    },
+    {
+      "$ref": "server/session_expired.json"
+    },
+    {
+      "$ref": "server/subscribed.json"
+    },
+    {
+      "$ref": "server/upgrade_required.json"
+    },
+    {
+      "$ref": "command/clear_notifications.json"
+    },
+    {
+      "$ref": "command/dismiss_notification.json"
+    },
+    {
+      "$ref": "command/display_notification.json"
+    },
+    {
+      "$ref": "command/navigate_to_area.json"
+    },
+    {
+      "$ref": "command/refresh.json"
+    },
+    {
+      "$ref": "command/show_entity.json"
+    },
+    {
+      "$ref": "command/panel_command.json"
+    },
+    {
+      "$ref": "broadcast/area_created.json"
+    },
+    {
+      "$ref": "broadcast/area_deleted.json"
+    },
+    {
+      "$ref": "broadcast/area_updated.json"
+    },
+    {
+      "$ref": "broadcast/areas_deleted.json"
+    },
+    {
+      "$ref": "broadcast/areas_changed.json"
+    },
+    {
+      "$ref": "broadcast/client_config_updated.json"
+    },
+    {
+      "$ref": "broadcast/client_connected.json"
+    },
+    {
+      "$ref": "broadcast/client_disconnected.json"
+    },
+    {
+      "$ref": "broadcast/client_kicked.json"
+    },
+    {
+      "$ref": "broadcast/client_paired.json"
+    },
+    {
+      "$ref": "broadcast/client_status_updated.json"
+    },
+    {
+      "$ref": "broadcast/clients_cleared.json"
+    },
+    {
+      "$ref": "broadcast/device_activity.json"
+    },
+    {
+      "$ref": "broadcast/entity_added.json"
+    },
+    {
+      "$ref": "broadcast/entity_removed.json"
+    },
+    {
+      "$ref": "broadcast/entity_updated.json"
+    },
+    {
+      "$ref": "broadcast/guest_extended.json"
+    },
+    {
+      "$ref": "broadcast/guests_expired.json"
+    },
+    {
+      "$ref": "broadcast/layout_updated.json"
+    },
+    {
+      "$ref": "broadcast/profiles_changed.json"
+    },
+    {
+      "$ref": "broadcast/family_changed.json"
+    },
+    {
+      "$ref": "broadcast/access_requests_changed.json"
+    },
+    {
+      "$ref": "broadcast/log_entry.json"
+    },
+    {
+      "$ref": "broadcast/log_read.json"
+    },
+    {
+      "$ref": "broadcast/notification_created.integration.json"
+    },
+    {
+      "$ref": "broadcast/notification_created.json"
+    },
+    {
+      "$ref": "broadcast/notification_deleted.json"
+    },
+    {
+      "$ref": "broadcast/notification_delivered.json"
+    },
+    {
+      "$ref": "broadcast/notification_dismissed.json"
+    },
+    {
+      "$ref": "broadcast/notifications_cleared.json"
+    },
+    {
+      "$ref": "broadcast/pairing_cancelled.json"
+    },
+    {
+      "$ref": "broadcast/pairing_started.json"
+    },
+    {
+      "$ref": "broadcast/section_created.json"
+    },
+    {
+      "$ref": "broadcast/section_deleted.json"
+    },
+    {
+      "$ref": "broadcast/section_updated.json"
+    },
+    {
+      "$ref": "broadcast/widget_created.json"
+    },
+    {
+      "$ref": "broadcast/widget_deleted.json"
+    },
+    {
+      "$ref": "broadcast/widget_updated.json"
+    },
+    {
+      "$ref": "integration/provision_client.json"
+    },
+    {
+      "$ref": "integration/update_client_identity.json"
+    },
+    {
+      "$ref": "integration/deprovision_client.json"
+    },
+    {
+      "$ref": "integration/enforcement_rules.json"
+    },
+    {
+      "$ref": "integration/ha_event.json"
+    },
+    {
+      "$ref": "integration/client_location.json"
+    },
+    {
+      "$ref": "server/onboard_confirm_ok.json"
+    },
+    {
+      "$ref": "server/onboard_error.json"
+    },
+    {
+      "$ref": "server/onboard_info.json"
+    },
+    {
+      "$ref": "server/onboard_ok.json"
+    },
+    {
+      "$ref": "server/onboard_session.json"
+    },
+    {
+      "$ref": "broadcast/onboarding_ended.json"
+    },
+    {
+      "$ref": "broadcast/onboarding_started.json"
+    },
+    {
+      "$ref": "broadcast/onboarding_claimed.json"
+    },
+    {
+      "$ref": "server/guest_invite.json"
+    },
+    {
+      "$ref": "server/guest_invite_ended.json"
+    },
+    {
+      "$ref": "server/guest_invite_error.json"
+    },
+    {
+      "$ref": "broadcast/guest_invite_opened.json"
+    },
+    {
+      "$ref": "broadcast/guest_invite_closed.json"
+    },
+    {
+      "$ref": "server/control_ok.json"
+    },
+    {
+      "$ref": "server/rule_blocked.json"
+    },
+    {
+      "$ref": "server/control_error.json"
+    },
+    {
+      "$ref": "server/state_subscribed.json"
+    },
+    {
+      "$ref": "server/entity_state.json"
+    },
+    {
+      "$ref": "server/history.json"
+    },
+    {
+      "$ref": "server/location_report_ok.json"
+    },
+    {
+      "$ref": "server/location_report_error.json"
+    },
+    {
+      "$ref": "server/tag_result.json"
+    },
+    {
+      "$ref": "server/forecast.json"
+    },
+    {
+      "$ref": "server/camera_image.json"
+    },
+    {
+      "$ref": "server/media_image.json"
+    },
+    {
+      "$ref": "server/family_children.json"
+    },
+    {
+      "$ref": "server/family_child_updated.json"
+    },
+    {
+      "$ref": "server/family_result.json"
+    },
+    {
+      "$ref": "server/family_requests.json"
+    },
+    {
+      "$ref": "server/family_request.json"
+    },
+    {
+      "$ref": "server/family_activity.json"
+    },
+    {
+      "$ref": "server/family_notify.json"
+    },
+    {
+      "$ref": "server/family_error.json"
+    },
+    {
+      "$ref": "server/kids_request_state.json"
+    },
+    {
+      "$ref": "server/access_request_state.json"
+    },
+    {
+      "$ref": "server/access_request_update.json"
+    },
+    {
+      "$ref": "server/access_requests.json"
+    },
+    {
+      "$ref": "server/access_request_error.json"
+    },
+    {
+      "$ref": "integration/family_relay.json"
+    },
+    {
+      "$ref": "server/onboard_claimed.json"
+    },
+    {
+      "$ref": "server/setup_grant.json"
+    },
+    {
+      "$ref": "server/set_up_devices.json"
+    },
+    {
+      "$ref": "server/set_up_device_removed.json"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PATCH /api/pairing/clients/{client_id} (body)",
+  "description": "Name and owner label of a device. Everything else is a profile rule (PUT …/profile, …/overrides/{rule_key}) or a device property with its own endpoint (…/own-area, …/remote-pin). Unknown fields: 422.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "owner_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 50
+    }
+  },
+  "additionalProperties": false
+}

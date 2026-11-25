@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quick access defaults per domain (data/quick-access.json)",
+  "description": "The one source for the quick access rules (widgets, controls, App Intents) of hub, Admin UI and apps. Lookup like tile-capabilities: the first entry of domains[] whose domains list contains the entity domain, else the entry with \"_other\". Effective level of an entity for a device = min(admin level or default, domain max, device max quick_access_max); critical entities start at status (default capped) and need critical_ack for control. Only entities in the device's read scope (areas/tags, is_visible) count. Generated as a constant for every language (codegen ContractData).",
+  "type": "object",
+  "required": [
+    "version",
+    "domains"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Data version, raised with every change of this file."
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "domains",
+          "default",
+          "max",
+          "critical",
+          "critical_device_classes",
+          "safe_direction"
+        ],
+        "properties": {
+          "domains": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            }
+          },
+          "default": {
+            "$ref": "../common/defs.json#/$defs/quick_access_level",
+            "description": "Level without an admin choice."
+          },
+          "max": {
+            "$ref": "../common/defs.json#/$defs/quick_access_level",
+            "description": "Highest level the admin may choose (off = fixed off)."
+          },
+          "critical": {
+            "type": "boolean",
+            "description": "Every entity of the domain is critical: default capped at status, control only with critical_ack, widgets never switch it in the unsafe direction, controls require an unlocked device."
+          },
+          "critical_device_classes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            },
+            "description": "Entities with one of these device_class values are critical (e.g. cover garage/gate/door), even if critical is false."
+          },
+          "safe_direction": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "lock",
+              "arm",
+              null
+            ],
+            "description": "The direction a widget or control may switch directly (lock = lock.lock, arm = alarm_control_panel.alarm_arm_* without code_arm_required). The other direction (unlock, disarm) always opens the app with its confirmation. null = no direction rule."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

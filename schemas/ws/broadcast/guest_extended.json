@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast guest_extended",
+  "description": "Guest expiry extended.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_extended"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "expires_at": {
+          "$ref": "../../common/defs.json#/$defs/utc_expiry"
+        }
+      },
+      "required": [
+        "client_id",
+        "expires_at"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

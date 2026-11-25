@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home networks vector",
+  "description": "Shared test vector: normalizing the admin input of PUT /api/settings/home-networks (expect = the stored list or the 422 code) and whether addresses count as at home with the result. tools/home_networks_ref.py is the reference; hub, integration and apps port it and run these vectors.",
+  "type": "object",
+  "required": [
+    "name",
+    "input",
+    "expect"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "input": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "cidr"
+        ],
+        "properties": {
+          "cidr": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expect": {
+      "type": "object",
+      "description": "Either networks (the stored list, as GET /api/settings/home-networks answers) or error (the 422 code); tools/validate.py checks that exactly one is present.",
+      "properties": {
+        "networks": {
+          "$ref": "../rest/home-networks.json#/properties/networks"
+        },
+        "error": {
+          "enum": [
+            "home_network_invalid",
+            "home_network_public",
+            "home_networks_too_many"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "hosts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "address",
+          "home"
+        ],
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "home": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

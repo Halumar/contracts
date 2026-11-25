@@ -1,0 +1,23 @@
+{
+  "type": "forecast",
+  "request_id": "f1",
+  "entity_id": "weather.home",
+  "forecast_type": "daily",
+  "forecast": [
+    {
+      "datetime": "2026-11-21T11:00:00+00:00",
+      "condition": "cloudy",
+      "temperature": 8.0,
+      "templow": 2.5,
+      "precipitation": 0.4,
+      "precipitation_probability": 30,
+      "wind_speed": 12.0
+    },
+    {
+      "datetime": "2026-11-22T11:00:00+00:00",
+      "condition": "sunny",
+      "temperature": 10.5,
+      "templow": 1.0
+    }
+  ]
+}

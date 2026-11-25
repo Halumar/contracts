@@ -1,0 +1,15 @@
+{
+  "type": "command",
+  "command": "display_notification",
+  "notification_id": "9d1c0a6e-1111-4111-8111-000000000002",
+  "title": "x",
+  "message": null,
+  "notification_type": "default",
+  "popup": false,
+  "popup_mode": "none",
+  "priority": 50,
+  "color": "none",
+  "action_type": "none",
+  "show_time": true,
+  "status": "pending"
+}

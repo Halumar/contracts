@@ -1,0 +1,9 @@
+{
+  "results": [
+    {
+      "target": "notify.mobile_app_x",
+      "status": "sent"
+    }
+  ],
+  "ha_event": "handed_over"
+}

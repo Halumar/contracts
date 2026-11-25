@@ -1,0 +1,5 @@
+{
+  "type": "auth_error",
+  "reason": "revoked",
+  "message": "Client revoked"
+}

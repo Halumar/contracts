@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Access switch (integration)",
+  "description": "POST /api/integration/access-switch. The integration forwards a change of switch.<ns>_<name>_access made by a Home Assistant admin or an automation (the switch refuses every other user, <ns>.control refuses it as own_entity). The hub stores it, logs access_opened/access_closed with by ha, pushes the snapshot and the device's client_config. 404 unknown client, 409 no_access_switch.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "on"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "on": {
+      "type": "boolean"
+    },
+    "user": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 100
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Display name of the HA admin who switched (null = automation or system)."
+    }
+  },
+  "additionalProperties": false
+}

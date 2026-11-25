@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Family manager catalog",
+  "description": "Data of the right family manager for hub, admin UI and apps: which rules family managers may adjust on child devices, request categories with the rule that must not be fixed, release durations, child texts, automatic notifications, defaults and limits. Its events (kids_release_requested, kids_request_answered, kids_request_expired, family_change) are part of the event taxonomy in data/events.json. Semantics: docs/family.md.",
+  "type": "object",
+  "required": [
+    "version",
+    "manageable_rules",
+    "never_release_domains",
+    "request_categories",
+    "release_presets",
+    "decline_messages",
+    "child_texts",
+    "notify_defaults",
+    "notify_actions",
+    "babysitter",
+    "settings_defaults",
+    "limits"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "manageable_rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "label"
+        ],
+        "properties": {
+          "rule": {
+            "$ref": "../common/defs.json#/$defs/profile_rule_key"
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "never_release_domains": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]{1,64}$"
+      },
+      "uniqueItems": true
+    },
+    "request_categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "release_kind",
+          "requires_unfixed",
+          "child_label",
+          "manager_label",
+          "presets",
+          "default_preset"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/family_request_category"
+          },
+          "release_kind": {
+            "$ref": "../common/defs.json#/$defs/family_release_kind"
+          },
+          "requires_unfixed": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "uniqueItems": true
+          },
+          "child_label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "manager_label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "presets": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/family_release_preset"
+            },
+            "uniqueItems": true
+          },
+          "default_preset": {
+            "$ref": "../common/defs.json#/$defs/family_release_preset"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "release_presets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "minutes",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/family_release_preset"
+          },
+          "minutes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "rule": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "decline_messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "manager_label",
+          "child_text"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/family_decline_message"
+          },
+          "manager_label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "child_text": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "child_texts": {
+      "type": "object",
+      "required": [
+        "sent",
+        "approved",
+        "declined",
+        "expired",
+        "cooldown",
+        "unavailable"
+      ],
+      "properties": {
+        "sent": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        },
+        "approved": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        },
+        "declined": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        },
+        "expired": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        },
+        "cooldown": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        },
+        "unavailable": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        }
+      },
+      "additionalProperties": false
+    },
+    "notify_defaults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "enabled",
+          "can_disable",
+          "bundle"
+        ],
+        "properties": {
+          "kind": {
+            "$ref": "../common/defs.json#/$defs/family_notify_kind"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "can_disable": {
+            "type": "boolean"
+          },
+          "bundle": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notify_actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "answer",
+          "preset",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]{1,16}$"
+          },
+          "answer": {
+            "$ref": "../common/defs.json#/$defs/family_answer"
+          },
+          "preset": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/family_release_preset"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "babysitter": {
+      "type": "object",
+      "description": "What a babysitter device (kind babysitter, rule babysitter_requests) may answer. presets = the only durations of a Yes (access_end = until the end of its running access window); categories = requests it receives; unlock_device only for an entity that no blocked device type or exception blocks (else the Yes is refused and the request stays open for the parents). Labels for the apps; answered_by for the parents' view.",
+      "required": [
+        "presets",
+        "categories",
+        "answer_labels",
+        "answered_by"
+      ],
+      "properties": {
+        "presets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "../common/defs.json#/$defs/family_release_preset"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "../common/defs.json#/$defs/family_request_category"
+          }
+        },
+        "answer_labels": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          }
+        },
+        "answered_by": {
+          "$ref": "../common/defs.json#/$defs/localized_text"
+        }
+      },
+      "additionalProperties": false
+    },
+    "settings_defaults": {
+      "$ref": "../rest/family-settings.json"
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,21 @@
+{
+  "type": "history",
+  "request_id": "h3",
+  "entity_id": "binary_sensor.kids_room_window",
+  "hours": 8,
+  "states": [
+    {
+      "state": "off",
+      "last_changed": "2026-11-20T10:00:00+00:00"
+    },
+    {
+      "state": "on",
+      "last_changed": "2026-11-20T12:31:09.512+00:00"
+    },
+    {
+      "state": "off",
+      "last_changed": "2026-11-20T12:40:00+00:00"
+    }
+  ],
+  "truncated": false
+}

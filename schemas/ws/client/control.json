@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "control",
+  "description": "A device on the hub path (parental controls or the effective rule control_path hub) controls one entity through the hub. service is the service name of the entity's domain (light.turn_on -> service turn_on); target keys in data (entity_id, device_id, area_id, label_id, floor_id) are dropped, the target is always entity_id. data at most 4 KB. The hub checks that the device is paired and active, its access, the visibility of the entity and, with parental controls, the kids rules, and calls Home Assistant as the device's HA user (<ns>.control, which checks the rule snapshot again). Other devices get control_error {not_hub_controlled}. Answer: control_ok, rule_blocked or control_error (with the same request_id).",
+  "type": "object",
+  "required": [
+    "type",
+    "entity_id",
+    "service"
+  ],
+  "properties": {
+    "type": {
+      "const": "control"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "maxLength": 64
+    },
+    "data": {
+      "type": "object",
+      "description": "Service data (brightness_pct, volume_level …)."
+    }
+  },
+  "additionalProperties": true
+}

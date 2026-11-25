@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "history_get",
+  "description": "A device on the hub path (parental controls or the effective rule control_path hub; with a key it reads Home Assistant itself away from home) asks for the history of one visible entity for the sensor charts. The hub reads Home Assistant's recorder (significant changes, no attributes) for the last hours and answers history with the same request_id; failures are control_error (not_hub_controlled, not_visible, invalid_request, ha_error, ha_unavailable, rate_limited). Same visibility as state_subscribe (entity placed in one of the device's readable areas, or the run target of such a tile).",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id",
+    "hours"
+  ],
+  "properties": {
+    "type": {
+      "const": "history_get"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 168,
+      "description": "Hours back from now (the apps offer 1, 4, 8, 12, 24, 72 and 168)."
+    }
+  },
+  "additionalProperties": true
+}

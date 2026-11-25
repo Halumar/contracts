@@ -1,0 +1,5 @@
+{
+  "type": "pair_error",
+  "reason": "platform_not_allowed",
+  "message": "this profile is not offered on this device type"
+}

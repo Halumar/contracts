@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Home Assistant action <ns>.report_location (fields)",
+  "description": "Integration action for the position of a device with a Home Assistant key (docs/location.md): works at home and away (Nabu Casa, external URL), also for read-only device users (control path checked). Allowed for every authenticated user; only device users of the integration with a rule snapshot get anything done (others: not_a_device, rules_missing). The integration checks the rule location of the snapshot (off → location_not_allowed, background fix with foreground → location_background_not_allowed), the age of ts (location_stale) and one report per 5 s per device (rate_limited), updates the device's device_tracker and sends the hub only metadata (POST /api/integration/location-status, never coordinates). Refusals raise ServiceValidationError (translation_domain <ns>, translation_key = $defs/location_report_reason). Called by apps over the HA WebSocket (call_service domain <ns>, service report_location, service_data = this object, return_response true) or REST POST /api/services/<ns>/report_location?return_response. Apps never call device_tracker.see.",
+  "type": "object",
+  "required": [
+    "latitude",
+    "longitude",
+    "accuracy",
+    "background",
+    "ts"
+  ],
+  "properties": {
+    "latitude": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "longitude": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "accuracy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100000,
+      "description": "Horizontal accuracy in m."
+    },
+    "altitude": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": -1000,
+      "maximum": 100000
+    },
+    "vertical_accuracy": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100000
+    },
+    "speed": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1000,
+      "description": "m/s."
+    },
+    "course": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 360
+    },
+    "battery_level": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "background": {
+      "type": "boolean",
+      "description": "Fix taken while the app was not in the foreground."
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time of the fix (UTC)."
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "What the app shares now; forwarded to the hub (admin UI)."
+    }
+  },
+  "additionalProperties": false
+}

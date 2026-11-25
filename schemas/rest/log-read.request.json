@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/log/read",
+  "description": "Mark alarms as read: some (ids) or all (all: true), exactly one of them (422 otherwise). Answer {marked}. Admin sessions get the broadcast log_read.",
+  "type": "object",
+  "properties": {
+    "ids": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "all": {
+      "const": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/clear_notifications (200)",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "command",
+    "cleared",
+    "ws_sent"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "command": {
+      "const": "clear_notifications"
+    },
+    "cleared": {
+      "type": "integer"
+    },
+    "ws_sent": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

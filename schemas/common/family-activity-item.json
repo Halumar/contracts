@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Activity entry of a child",
+  "description": "Read view of the log for family managers: only entries of child devices in the scope, only these fields (no IP addresses, no data values except the effective volume/brightness, no adult activity), at most data/family.json activity_days back and never longer than the log retention.",
+  "type": "object",
+  "required": [
+    "id",
+    "at",
+    "client_id",
+    "kind"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "child_name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "kind": {
+      "$ref": "defs.json#/$defs/family_activity_kind"
+    },
+    "entity_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_name": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 255
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[a-z_]{1,64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reason": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/rule_blocked_reason"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rule": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/profile_rule_key"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/family_request_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "until": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Bundled identical entries (e.g. 12 × the same light within 10 minutes)."
+    },
+    "by": {
+      "anyOf": [
+        {
+          "$ref": "family-actor.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

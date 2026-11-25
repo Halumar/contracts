@@ -1,0 +1,12 @@
+{
+  "type": "tag_result",
+  "tag_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "result": "tags_off",
+  "tag": {
+    "name": "x",
+    "action": {
+      "kind": "show",
+      "entity_id": "light.x"
+    }
+  }
+}

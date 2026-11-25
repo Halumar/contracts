@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/extend and PATCH /api/clients/{id}/extend (200)",
+  "type": "object",
+  "required": [
+    "client_id",
+    "expires_at"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "expires_at": {
+      "$ref": "../common/defs.json#/$defs/utc_expiry"
+    },
+    "dry_run": {
+      "const": true,
+      "description": "Only in the answer to a request with dry_run: nothing was stored."
+    },
+    "hub_remote_now": {
+      "type": "boolean",
+      "description": "Right after the extension the guest's effective Home Assistant access is Hub only and its remote access is on (it holds the read-only key because of remote access). Never true on tvos, android_tv, watchos or wearos."
+    },
+    "hub_remote_at": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The earliest later end (UTC) of a device adjustment or of the guest access after which the guest becomes Hub only with remote access; null when hub_remote_now is true or no end leads there."
+    }
+  },
+  "additionalProperties": false,
+  "description": "Answer of a guest extension. With dry_run in the request nothing is stored: the answer carries dry_run true and the expires_at the extension would set. hub_remote_now and hub_remote_at (optional, missing on older hubs) tell whether after the extension the guest is on Hub only with remote access, or from when (docs/enforcement.md §7)."
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "auth_required",
+  "description": "Sent right after accept to unauthenticated sessions (with timeout), and as rejection of any other message before authentication (without timeout).",
+  "type": "object",
+  "required": [
+    "type",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "auth_required"
+    },
+    "message": {
+      "type": "string"
+    },
+    "timeout": {
+      "type": "integer",
+      "const": 30
+    }
+  },
+  "additionalProperties": true
+}

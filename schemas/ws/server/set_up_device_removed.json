@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "set_up_device_removed",
+  "description": "Answer to set_up_device_remove – the device was disconnected and removed.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "set_up_device_removed"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

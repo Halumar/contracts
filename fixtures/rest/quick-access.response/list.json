@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "entity_id": "camera.demo_camera",
+      "name": "Kamera",
+      "level": null,
+      "default": "off",
+      "max": "off",
+      "critical": false,
+      "effective": "off",
+      "critical_ack": false,
+      "updated_at": null,
+      "updated_by": null
+    },
+    {
+      "entity_id": "light.living_room_rgbww_lights",
+      "name": "Stehlampe",
+      "level": null,
+      "default": "control",
+      "max": "control",
+      "critical": false,
+      "effective": "control",
+      "critical_ack": false,
+      "updated_at": null,
+      "updated_by": null
+    },
+    {
+      "entity_id": "lock.front_door",
+      "name": "Haustür",
+      "level": "control",
+      "default": "status",
+      "max": "control",
+      "critical": true,
+      "effective": "control",
+      "critical_ack": true,
+      "updated_at": "2026-11-19T08:15:00Z",
+      "updated_by": "Admin"
+    }
+  ]
+}

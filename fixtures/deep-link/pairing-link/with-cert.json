@@ -1,0 +1,9 @@
+{
+  "uri": "halumar://pair?url=http%3A%2F%2Fhome.local%3A8099&pin=1234-5678&tls_port=8100&fp=abababababababababababababababababababababababababababababababab",
+  "params": {
+    "url": "http://home.local:8099",
+    "pin": "1234-5678",
+    "tls_port": "8100",
+    "fp": "abababababababababababababababababababababababababababababababab"
+  }
+}

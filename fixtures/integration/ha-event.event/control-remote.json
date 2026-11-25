@@ -1,0 +1,12 @@
+{
+  "kind": "control",
+  "category": "activity",
+  "at": "2026-11-20T18:01:00+00:00",
+  "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+  "device_name": "iPhone",
+  "owner_label": "Admin",
+  "entity_id": "light.bed_light",
+  "action": "turn_on",
+  "route": "external",
+  "reason": null
+}

@@ -1,0 +1,9 @@
+{
+  "type": "ha_event",
+  "data": {
+    "kind": "guest_paired",
+    "category": "guests",
+    "at": "2026-11-20T18:00:00+00:00",
+    "pin": "1234-5678"
+  }
+}

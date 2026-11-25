@@ -1,0 +1,6 @@
+{
+  "detail": {
+    "code": "timeout",
+    "message": "The device did not answer within 5 s"
+  }
+}

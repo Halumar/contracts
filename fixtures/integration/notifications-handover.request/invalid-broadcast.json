@@ -1,0 +1,10 @@
+{
+  "notifications": [
+    {
+      "client_id": "all",
+      "notification_id": "9d1c0a6e-2222-4222-8222-000000000001",
+      "created_at": "2026-11-19T09:30:00+00:00",
+      "title": "Alle"
+    }
+  ]
+}

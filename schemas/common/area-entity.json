@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Area entity placement",
+  "type": "object",
+  "required": [
+    "id",
+    "area_id",
+    "entity_id",
+    "section_id"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "area_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "entity_id": {
+      "$ref": "defs.json#/$defs/entity_id"
+    },
+    "section_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "display_name": {
+      "description": "Name override for this placement; null = name from Home Assistant (attributes.friendly_name), then entity_id.",
+      "$ref": "defs.json#/$defs/area_display_name"
+    },
+    "columns": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "is_visible": {
+      "$ref": "defs.json#/$defs/boolish"
+    },
+    "control_mode": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/control_mode"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "tile": {
+      "description": "Tile settings. Always an object in get_area and the Admin REST answers ({} = default). Depends on the placement, not on the HA entity: the same entity can look different in two areas.",
+      "$ref": "tile-settings.json"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    },
+    "state": {
+      "description": "Live HA state at request time (WS get_area); null when unavailable; attributes sanitized like entity_state: an entity_picture with a token is replaced by hub_picture_id ($defs/hub_picture_id).",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "attributes": {
+              "type": "object"
+            },
+            "last_changed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": true
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

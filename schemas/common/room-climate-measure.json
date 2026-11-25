@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Room climate measure (data/room-climate.json)",
+  "type": "object",
+  "required": [
+    "device_domains",
+    "device_attribute",
+    "sensor_device_class"
+  ],
+  "properties": {
+    "device_domains": {
+      "type": "array",
+      "description": "Domains whose entities report the room value as an attribute (first tier).",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z_]+$"
+      }
+    },
+    "device_attribute": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Attribute holding the value (current_temperature, current_humidity)."
+    },
+    "sensor_device_class": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "device_class of the sensor entities (second tier, numeric state)."
+    }
+  },
+  "additionalProperties": false
+}

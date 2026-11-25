@@ -1,0 +1,14 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-34",
+  "entity_id": "light.living_room",
+  "reason": "paused_all",
+  "level": "profile",
+  "until": "2026-11-20T15:05:00+00:00",
+  "retry_after": 300,
+  "limit": {
+    "max_actions": 12,
+    "max_entities": 4,
+    "window_seconds": 60
+  }
+}

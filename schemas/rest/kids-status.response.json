@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/pairing/clients/{client_id}/kids-status",
+  "description": "Admin only: profile, release and running pauses (in memory, a hub restart ends them).",
+  "type": "object",
+  "required": [
+    "client_id",
+    "profile_id",
+    "override_until",
+    "cooldowns"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "profile_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/kids_profile_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "override_until": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "paused_all_until": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Pause of everything (overall rate limit) until then; null = none. “End pause” (DELETE …/kids-override?action=lift) ends it with the other pauses."
+    },
+    "cooldowns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "until"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "until": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

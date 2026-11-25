@@ -1,0 +1,42 @@
+{
+  "name": "sorted-ipv4-first",
+  "input": [
+    {
+      "cidr": "fd00:1::/64"
+    },
+    {
+      "cidr": "192.168.77.0/24",
+      "name": ""
+    },
+    {
+      "cidr": "10.9.0.0/16",
+      "name": "ZeroTier"
+    }
+  ],
+  "expect": {
+    "networks": [
+      {
+        "cidr": "10.9.0.0/16",
+        "name": "ZeroTier"
+      },
+      {
+        "cidr": "192.168.77.0/24",
+        "name": null
+      },
+      {
+        "cidr": "fd00:1::/64",
+        "name": null
+      }
+    ]
+  },
+  "hosts": [
+    {
+      "address": "192.168.77.200",
+      "home": true
+    },
+    {
+      "address": "192.168.78.1",
+      "home": false
+    }
+  ]
+}

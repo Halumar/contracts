@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_extended (targeted)",
+  "description": "Sent to the connected guest after its expiry was extended. Same type name as the ADMIN broadcast, different shape (top-level expires_at, no data).",
+  "type": "object",
+  "required": [
+    "type",
+    "expires_at"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_extended"
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/utc_expiry"
+    }
+  },
+  "additionalProperties": true
+}

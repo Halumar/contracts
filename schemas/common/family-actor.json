@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Family actor",
+  "description": "Who did a family action, with the route it took. Names are display names at the time of the action (the device may have been removed since). Never contains HA user ids, tokens or IP addresses.",
+  "type": "object",
+  "required": [
+    "kind",
+    "name"
+  ],
+  "properties": {
+    "kind": {
+      "$ref": "defs.json#/$defs/family_actor_kind"
+    },
+    "client_id": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Device name (family manager, child) or admin display name; “{brand}” for hub."
+    },
+    "owner_label": {
+      "$ref": "defs.json#/$defs/owner_label"
+    },
+    "via": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/family_route"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": true
+}

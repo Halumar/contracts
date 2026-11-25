@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command navigate_to_area",
+  "description": "Remote navigation, triggered by POST /api/integration/clients/{id}/navigate_to_area.",
+  "type": "object",
+  "required": [
+    "type",
+    "command",
+    "area_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "navigate_to_area"
+    },
+    "area_id": {
+      "type": "string",
+      "description": "Area UUID or '__home__' for the home screen."
+    }
+  },
+  "additionalProperties": true
+}

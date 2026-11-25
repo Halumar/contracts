@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "access_request_answer",
+  "description": "A recipient device answers. yes needs duration (one of request.durations): the hub opens the device until then (access_early, logged with the author); no may carry message. The first answer wins; a later one gets access_request_error {already_answered, request}. Only recipient devices of this request now (set_up_by, setup_devices with its kind, family manager for a babysitter) with access themselves; away through <ns>/family with effective remote access. Answer: access_request_update (closed); the requesting device gets access_request_state and client_config_updated, the other recipients access_request_update.",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "answer"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_request_answer"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/access_request_id"
+    },
+    "answer": {
+      "$ref": "../../common/defs.json#/$defs/family_answer"
+    },
+    "duration": {
+      "$ref": "../../common/defs.json#/$defs/access_request_duration"
+    },
+    "message": {
+      "$ref": "../../common/defs.json#/$defs/access_decline_message"
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "answer": {
+            "const": "yes"
+          }
+        },
+        "required": [
+          "answer"
+        ]
+      },
+      "then": {
+        "required": [
+          "duration"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_removed",
+  "description": "The device was deleted by an admin (live) or authenticates with a tombstoned secret. Device must wipe and answer client_reset_ack; without ack the server closes 4001 after 10 s.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id",
+    "reason"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_removed"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    },
+    "reason": {
+      "enum": [
+        "deleted"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,5 @@
+{
+  "entity_id": "lock.front_door",
+  "action": "lock",
+  "origin": "quick_access"
+}

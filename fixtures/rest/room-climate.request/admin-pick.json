@@ -1,0 +1,4 @@
+{
+  "temperature_entity_id": "sensor.kitchen_room_temperature",
+  "humidity_entity_id": null
+}

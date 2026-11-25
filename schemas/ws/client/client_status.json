@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_status",
+  "description": "Report device status; any subset of the fields. Paired clients only. tvOS sends connection_type 'ethernet' every 300 s. The app version is not part of client_status: it comes with auth/pair; the hub ignores an app_version here. Limits: the hub removes control characters, cuts device_name to 100 and connection_type to 32 characters, and silently skips values of the wrong type, numbers outside their range and a current_area_id that is neither an existing area nor '__home__'. Battery: battery_level and battery_state are sent independently of the location rule (also by wall panels with location off), on every change and as a heartbeat every 300 s. panel: every app with a hub connection, also outside the wall panel mode – screen active while the app is in front, off when it leaves the foreground (sent at once if the system still lets it), panel_mode says whether the wall panel/kiosk is shown; null = no status (the screen entity shows off, the controls are unavailable). Apps never keep running in the background just to report.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_status"
+    },
+    "device_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 100
+    },
+    "battery_level": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": -1,
+      "maximum": 100
+    },
+    "battery_state": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/battery_state"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "low_power": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Low power mode of the device (iOS/iPadOS, Android battery saver)."
+    },
+    "connection_type": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "wifi | cellular | ethernet | ... (free text today)",
+      "maxLength": 32
+    },
+    "current_area_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Area UUID or '__home__'.",
+      "maxLength": 64
+    },
+    "location_shared": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/location_shared"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "What the app shares now; sent after auth_ok and on every change (system permission, rule). The position itself only travels with location_report."
+    },
+    "panel": {
+      "anyOf": [
+        {
+          "$ref": "../../common/panel-status.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Device status for Home Assistant; any subset of the fields, the hub merges it into the last value."
+    }
+  },
+  "additionalProperties": true
+}

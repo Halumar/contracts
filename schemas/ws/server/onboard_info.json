@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_info",
+  "description": "What the confirming device is about to set up (answer to onboard_lookup). session_id, public_key and hub_id are the values to confirm with (also after a code lookup). grant: the kinds and profiles this device may give, its areas, family managers and guest limits (common/setup-grant.json). The confirming device picks a kind and a profile and asks only the questions of that kind (docs/setup.md).",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id",
+    "public_key",
+    "hub_id",
+    "client_name",
+    "platform",
+    "app_version",
+    "expires_at",
+    "grant"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_info"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "public_key": {
+      "$ref": "../../common/defs.json#/$defs/onboard_public_key"
+    },
+    "hub_id": {
+      "$ref": "../../common/defs.json#/$defs/hub_instance_id"
+    },
+    "client_name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "platform": {
+      "$ref": "../../common/defs.json#/$defs/platform"
+    },
+    "app_version": {
+      "$ref": "../../common/defs.json#/$defs/app_version"
+    },
+    "device_model": {
+      "$ref": "../../common/defs.json#/$defs/device_model"
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/timestamp"
+    },
+    "grant": {
+      "$ref": "../../common/setup-grant.json"
+    }
+  },
+  "additionalProperties": true
+}

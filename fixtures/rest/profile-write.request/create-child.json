@@ -1,0 +1,21 @@
+{
+  "name": "Kind · iPad",
+  "child_protection": true,
+  "icon": "mdi:human-child",
+  "color": "#FDD835",
+  "rules": {
+    "kids_quiet_hours": [
+      {
+        "days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ],
+        "start": "20:30",
+        "end": "06:30"
+      }
+    ]
+  }
+}

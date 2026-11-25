@@ -1,0 +1,9 @@
+{
+  "type": "family_rule_set",
+  "client_ids": [
+    "6c1a2b3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d"
+  ],
+  "rule": "kids_volume_max",
+  "value": 60,
+  "expires_at": "2026-11-22T17:00:00+00:00"
+}

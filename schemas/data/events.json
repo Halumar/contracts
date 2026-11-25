@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Event taxonomy (data/events.json)",
+  "description": "Every event <brand> reports: the log tab of the hub, notifications at events (rest/event-notifications.json) and the Home Assistant events <ns>_event (all) and <ns>_alarm (alarm kinds). source = who creates it: integration (fires it in Home Assistant itself and sends it to the hub, POST /api/integration/events) or hub (the hub sends ws/integration/ha_event and the integration fires it). Generated as a constant for every language (codegen ContractData).",
+  "type": "object",
+  "required": [
+    "version",
+    "kinds"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "kinds": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "category",
+          "source",
+          "alarm",
+          "label"
+        ],
+        "properties": {
+          "kind": {
+            "$ref": "../common/defs.json#/$defs/event_kind"
+          },
+          "category": {
+            "$ref": "../common/defs.json#/$defs/event_category"
+          },
+          "source": {
+            "enum": [
+              "integration",
+              "hub"
+            ]
+          },
+          "alarm": {
+            "type": "boolean"
+          },
+          "important": {
+            "const": true,
+            "description": "Important besides the alarms: the overview of the admin UI (\"Recent important\") and the log filter important=true (GET /api/log) show entries whose event_kind or kind is marked here, plus every entry of the log category alarm. Only on kinds with alarm false; missing = not important (e.g. a single denied, which is activity)."
+          },
+          "label": {
+            "$ref": "../common/defs.json#/$defs/localized_text"
+          },
+          "notify_min_interval_minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1440,
+            "description": "Notifications at events (rest/event-notifications.json) send this kind at most once per device (client_id) and rule in this time; further events within it are bundled into one message at its end (kids_paused_all at most every 15 minutes per child). The log entry and the Home Assistant event <ns>_event are never held back. Missing = no limit of its own (the rule's threshold and bundle_minutes apply)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

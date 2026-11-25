@@ -1,0 +1,143 @@
+{
+  "snapshots": [
+    {
+      "version": 1,
+      "client_id": "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e",
+      "ha_user_id": "7e63ef95c1d24a0f9b8e2d4c6a1f3b5d",
+      "issued_at": "2026-11-20T18:00:00+00:00",
+      "rules_hash": "e7f302be5224b19cecabb63b7c50f3fc287e9ecffe6455483076cc1e31097473",
+      "control_path": "direct",
+      "remote_access": true,
+      "child_protection": false,
+      "entities": {
+        "light.living_room_rgbww_lights": {
+          "local": "control",
+          "remote": "control",
+          "quick": "control"
+        },
+        "lock.front_door": {
+          "local": "control",
+          "remote": "view",
+          "quick": "status"
+        },
+        "cover.garage_door": {
+          "local": "control",
+          "remote": "view",
+          "quick": "status"
+        },
+        "scene.movie_night": {
+          "local": "control",
+          "remote": "control",
+          "quick": "control",
+          "run": true
+        }
+      },
+      "kids": null,
+      "access": null,
+      "home_networks": [
+        "100.64.0.0/10",
+        "fd7a:115c:a1e0::/48"
+      ],
+      "location": "background"
+    },
+    {
+      "version": 1,
+      "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+      "ha_user_id": "0123456789abcdef0123456789abcdef",
+      "issued_at": "2026-11-20T18:00:00+00:00",
+      "rules_hash": "aa098cd7cfdd40eaadf35e968c56e037d261c8f0e514aab574a2683f10a67411",
+      "control_path": "checked",
+      "remote_access": false,
+      "child_protection": false,
+      "entities": {
+        "light.bed_light": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        },
+        "media_player.living_room": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        }
+      },
+      "kids": null,
+      "access": null,
+      "home_networks": [
+        "100.64.0.0/10",
+        "fd7a:115c:a1e0::/48"
+      ],
+      "location": "background"
+    },
+    {
+      "version": 1,
+      "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+      "ha_user_id": "fedcba9876543210fedcba9876543210",
+      "issued_at": "2026-11-20T18:00:00+00:00",
+      "rules_hash": "c4c56188bdc8facf9691c4ab329b1965f4b9f7ec75797084635fff93483b99d9",
+      "control_path": "checked",
+      "remote_access": false,
+      "child_protection": true,
+      "entities": {
+        "light.kids_room": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        },
+        "media_player.kids_speaker": {
+          "local": "control",
+          "remote": "hidden",
+          "quick": "off"
+        }
+      },
+      "kids": {
+        "time_zone": "Europe/Zurich",
+        "override_until": null,
+        "entities": {
+          "light.kids_room": {
+            "blocked": false,
+            "quiet_hours": [
+              {
+                "days": [
+                  "mon",
+                  "tue",
+                  "wed",
+                  "thu",
+                  "fri"
+                ],
+                "start": "20:00",
+                "end": "06:30"
+              }
+            ],
+            "color_lock": true,
+            "volume_max": null,
+            "rate_limit": {
+              "max_actions": 6,
+              "window_seconds": 60,
+              "cooldown_seconds": 300
+            }
+          },
+          "media_player.kids_speaker": {
+            "blocked": false,
+            "quiet_hours": [],
+            "color_lock": false,
+            "volume_max": 40,
+            "rate_limit": null
+          }
+        }
+      },
+      "access": null,
+      "home_networks": [
+        "100.64.0.0/10",
+        "fd7a:115c:a1e0::/48"
+      ],
+      "location": "off"
+    }
+  ],
+  "control_paths": {
+    "3f2b8c1e-4d5a-4b6c-8d7e-9f0a1b2c3d4e": "direct",
+    "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d": "checked",
+    "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b": "checked",
+    "7d3e2f1a-0b9c-4d8e-a7f6-5e4d3c2b1a09": "checked"
+  }
+}

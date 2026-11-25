@@ -1,0 +1,10 @@
+{
+  "entity_id": "input_boolean.halumar_area_wohnzimmer_a1b2c3d4",
+  "state": "on",
+  "attributes": {
+    "friendly_name": "Halumar: Wohnzimmer",
+    "icon": "mdi:sofa",
+    "halumar_area_id": "a1b2c3d4-0000-4000-8000-000000000001",
+    "editable": true
+  }
+}

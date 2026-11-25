@@ -1,0 +1,260 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Child device as seen by a family manager",
+  "description": "One child device in the scope of a family manager: identity, effective kids rules with what may be changed, running releases, current status and today's counters. Only the manageable rules of data/family.json appear in rules. Several children may share one profile; every change is a device adjustment of exactly this device.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "name",
+    "platform",
+    "online",
+    "profile",
+    "rules",
+    "releases",
+    "status",
+    "today"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "owner_label": {
+      "$ref": "defs.json#/$defs/owner_label"
+    },
+    "platform": {
+      "$ref": "defs.json#/$defs/platform"
+    },
+    "online": {
+      "type": "boolean"
+    },
+    "last_seen": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.json#/$defs/profile_id"
+        },
+        "name": {
+          "$ref": "defs.json#/$defs/profile_name"
+        }
+      },
+      "additionalProperties": true
+    },
+    "time_zone": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "value",
+          "source",
+          "fixed",
+          "manageable"
+        ],
+        "properties": {
+          "value": {
+            "description": "Effective value (schema profile-rule-values.json#/properties/<rule>)."
+          },
+          "profile_value": {
+            "description": "Value of the child's profile (for “Back to profile”)."
+          },
+          "source": {
+            "$ref": "defs.json#/$defs/rule_source"
+          },
+          "fixed": {
+            "type": "boolean"
+          },
+          "manageable": {
+            "type": "boolean",
+            "description": "true = this family manager may change it on this child device now."
+          },
+          "not_manageable_reason": {
+            "anyOf": [
+              {
+                "$ref": "defs.json#/$defs/family_error_reason"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "$ref": "defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "then": {
+            "description": "Value after expires_at."
+          },
+          "set_by": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "set_at": {
+            "anyOf": [
+              {
+                "$ref": "defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": true
+      },
+      "description": "profile_rule_key -> state; only the manageable rules (data/family.json)."
+    },
+    "area_choices": {
+      "type": "array",
+      "description": "Areas the family manager may give this child (those it sees itself).",
+      "items": {
+        "type": "object",
+        "required": [
+          "area_id",
+          "name"
+        ],
+        "properties": {
+          "area_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "$ref": "family-release.json"
+      }
+    },
+    "status": {
+      "type": "object",
+      "required": [
+        "bedtime_now",
+        "bedtime_until",
+        "next_bedtime",
+        "paused_entities"
+      ],
+      "properties": {
+        "bedtime_now": {
+          "type": "boolean"
+        },
+        "bedtime_until": {
+          "anyOf": [
+            {
+              "$ref": "defs.json#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "next_bedtime": {
+          "anyOf": [
+            {
+              "$ref": "defs.json#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paused_entities": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paused_all_until": {
+          "anyOf": [
+            {
+              "$ref": "defs.json#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Everything of this child is paused until then (overall rate limit); missing or null = no such pause. A release of kind pause ends it."
+        },
+        "open_request": {
+          "anyOf": [
+            {
+              "$ref": "defs.json#/$defs/family_request_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "today": {
+      "type": "object",
+      "required": [
+        "actions",
+        "blocked",
+        "requests"
+      ],
+      "properties": {
+        "actions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requests": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

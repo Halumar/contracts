@@ -1,0 +1,21 @@
+{
+  "type": "guest_invite",
+  "invite_id": "0e9d8c7b-6a59-4483-9271-605f4e3d2c1b",
+  "pin": "48210937",
+  "deep_link": "halumar://pair?url=https%3A%2F%2Fhomeassistant.local%3A8100&pin=4821-0937&tls_port=8100&fp=abababababababababababababababababababababababababababababababab",
+  "url": "https://homeassistant.local:8100",
+  "expires_in": 300,
+  "expires_at": "2026-11-19T17:05:00+00:00",
+  "grant": {
+    "all_areas": true,
+    "area_names": [],
+    "expires_hours": 24,
+    "profile": {
+      "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+      "name": "Gast",
+      "kind": "guest"
+    },
+    "expires_at": null,
+    "remote_allowed": false
+  }
+}

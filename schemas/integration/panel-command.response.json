@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/clients/{id}/panel and POST /api/pairing/clients/{id}/panel (200)",
+  "description": "The app executed the command (panel_command_ok). panel = status after the command (null if the app sent none).",
+  "type": "object",
+  "required": [
+    "success",
+    "client_id",
+    "action",
+    "panel"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "action": {
+      "$ref": "../common/defs.json#/$defs/panel_action"
+    },
+    "panel": {
+      "anyOf": [
+        {
+          "$ref": "../common/panel-status.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

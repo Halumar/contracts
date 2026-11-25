@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/family",
+  "description": "Admin overview: family managers with their children, every child device with its managers, open requests and the settings.",
+  "type": "object",
+  "required": [
+    "managers",
+    "children",
+    "open_requests",
+    "settings"
+  ],
+  "properties": {
+    "managers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "scope",
+          "child_ids",
+          "remote"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "../common/defs.json#/$defs/owner_label"
+          },
+          "scope": {
+            "$ref": "../common/defs.json#/$defs/family_children_scope"
+          },
+          "child_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/uuid"
+            }
+          },
+          "notify_targets": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^notify\\.[a-z0-9_]{1,64}$"
+            }
+          },
+          "remote": {
+            "enum": [
+              "away",
+              "home_only"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "../common/defs.json#/$defs/owner_label"
+          },
+          "profile_name": {
+            "$ref": "../common/defs.json#/$defs/profile_name"
+          },
+          "fixed_manageable": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "description": "Manageable rules fixed in this child's profile (the admin UI offers “allow for family managers” = untick “Fixed” in the profile, with preview)."
+          },
+          "manager_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/uuid"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "open_requests": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/family-request.json"
+      }
+    },
+    "recent_requests": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/family-request.json"
+      },
+      "maxItems": 100,
+      "description": "Requests closed in the last 24 hours (answered, expired, withdrawn), newest first – the admin UI lists them until the log tab shows them."
+    },
+    "settings": {
+      "$ref": "family-settings.json"
+    }
+  },
+  "additionalProperties": true
+}

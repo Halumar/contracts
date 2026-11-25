@@ -1,0 +1,4 @@
+{
+  "type": "auth_required",
+  "message": "Authenticate first (send auth or pair message)"
+}

@@ -1,0 +1,9 @@
+{
+  "type": "client_status",
+  "panel": {
+    "screen": "off",
+    "panel_mode": false,
+    "brightness": null,
+    "actions": []
+  }
+}

@@ -1,0 +1,313 @@
+import Foundation
+
+// Runtime support for the generated contract models (copied verbatim by the generator).
+//
+// Decoding is tolerant where the protocol needs forward compatibility (unknown keys are ignored,
+// unknown enum values decode to `.unknown(String)`, unknown message types to `.unknown(JSONValue)`)
+// and strict about JSON types: a String where an Int is expected throws. Numbers never trap:
+// Foundation's JSONDecoder throws on integer overflow, JSON has no NaN/Infinity, and JSONEncoder
+// throws (default `.throw` strategy) when asked to encode a non-finite Double.
+// Everything JSON Schema expresses beyond types is checked by `validate()`.
+// Deployment floor iOS 17 / tvOS 17 / macOS 14: no Synchronization, no Span, no Regex literals.
+
+/// String-backed coding key; lets generated code use plain string literals as keys.
+public struct ContractCodingKey: CodingKey, Hashable, Sendable, ExpressibleByStringLiteral {
+    public let stringValue: String
+    public var intValue: Int? { nil }
+
+    public init(_ stringValue: String) { self.stringValue = stringValue }
+    public init?(stringValue: String) { self.stringValue = stringValue }
+    public init?(intValue: Int) { nil }
+    public init(stringLiteral value: String) { self.stringValue = value }
+}
+
+/// One violation of the contract found by `validate()`. `path` is a JSON Pointer.
+public struct ContractViolation: Error, Hashable, Sendable, CustomStringConvertible {
+    public let path: String
+    public let message: String
+
+    public init(path: String, message: String) {
+        self.path = path
+        self.message = message
+    }
+
+    public var description: String { "\(path.isEmpty ? "/" : path): \(message)" }
+}
+
+/// Every generated model, enum and union.
+public protocol ContractValue: Codable, Sendable, Hashable {
+    /// Violations of the JSON Schema beyond types (patterns, ranges, const, dependencies, …).
+    func validate(at path: String) -> [ContractViolation]
+}
+
+extension ContractValue {
+    public func validate() -> [ContractViolation] { validate(at: "") }
+}
+
+/// Generated string enums: known cases plus `.unknown(String)`.
+public protocol ContractEnum: ContractValue, RawRepresentable where RawValue == String {
+    var isKnown: Bool { get }
+}
+
+extension ContractEnum {
+    public func validate(at path: String) -> [ContractViolation] {
+        isKnown ? [] : [ContractViolation(path: path, message: "unknown value '\(rawValue)'")]
+    }
+}
+
+// MARK: - JSONValue
+
+/// Arbitrary JSON (free-form objects such as `app_overrides`, HA attributes, unknown messages).
+public enum JSONValue: ContractValue {
+    case null
+    case bool(Bool)
+    case int(Int)
+    case double(Double)
+    case string(String)
+    case array([JSONValue])
+    case object([String: JSONValue])
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if c.decodeNil() {
+            self = .null
+        } else if let v = try? c.decode(Bool.self) {
+            self = .bool(v)
+        } else if let v = try? c.decode(Int.self) {
+            self = .int(v)
+        } else if let v = try? c.decode(Double.self) {
+            self = .double(v)
+        } else if let v = try? c.decode(String.self) {
+            self = .string(v)
+        } else if let v = try? c.decode([JSONValue].self) {
+            self = .array(v)
+        } else {
+            self = .object(try c.decode([String: JSONValue].self))
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.singleValueContainer()
+        switch self {
+        case .null: try c.encodeNil()
+        case .bool(let v): try c.encode(v)
+        case .int(let v): try c.encode(v)
+        case .double(let v): try c.encode(v)
+        case .string(let v): try c.encode(v)
+        case .array(let v): try c.encode(v)
+        case .object(let v): try c.encode(v)
+        }
+    }
+
+    public func validate(at path: String) -> [ContractViolation] { [] }
+
+    public subscript(key: String) -> JSONValue? {
+        if case .object(let o) = self { return o[key] }
+        return nil
+    }
+
+    public var stringValue: String? {
+        if case .string(let v) = self { return v }
+        return nil
+    }
+}
+
+// MARK: - Boolish
+
+/// SQLite boolean as delivered today: JSON boolean or integer 0/1 (known deviation D4 of the contract).
+/// Re-encodes in the form it was decoded in.
+public struct Boolish: ContractValue, ExpressibleByBooleanLiteral {
+    public var value: Bool
+    /// `true` when the wire form was 0/1.
+    public var isNumeric: Bool
+
+    public init(_ value: Bool, isNumeric: Bool = false) {
+        self.value = value
+        self.isNumeric = isNumeric
+    }
+
+    public init(booleanLiteral value: Bool) { self.init(value) }
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.singleValueContainer()
+        if let b = try? c.decode(Bool.self) {
+            self.init(b)
+            return
+        }
+        let i = try c.decode(Int.self)
+        guard i == 0 || i == 1 else {
+            throw DecodingError.dataCorruptedError(in: c, debugDescription: "boolish must be true/false/0/1, got \(i)")
+        }
+        self.init(i == 1, isNumeric: true)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.singleValueContainer()
+        if isNumeric { try c.encode(value ? 1 : 0) } else { try c.encode(value) }
+    }
+
+    public func validate(at path: String) -> [ContractViolation] { [] }
+}
+
+// MARK: - Decoding helpers
+
+extension KeyedDecodingContainer where Key == ContractCodingKey {
+    /// Discriminator check (`type`, `command`): the key must hold exactly `value`.
+    public func expectConstant(_ value: String, forKey key: ContractCodingKey) throws {
+        let found = try decode(String.self, forKey: key)
+        guard found == value else {
+            throw DecodingError.dataCorruptedError(
+                forKey: key, in: self, debugDescription: "expected '\(value)', found '\(found)'")
+        }
+    }
+}
+
+/// Error thrown by unions when no member accepts a payload.
+public struct ContractDecodingError: Error, CustomStringConvertible, Sendable {
+    public let message: String
+    public init(_ message: String) { self.message = message }
+    public var description: String { message }
+}
+
+// MARK: - Validation helpers
+
+public enum ContractCheck {
+    public struct StringRule: Sendable {
+        public var pattern: String?
+        public var minLength: Int?
+        public var maxLength: Int?
+        public var format: String?
+        public var oneOf: [String]?
+
+        public init(pattern: String? = nil, minLength: Int? = nil, maxLength: Int? = nil,
+                    format: String? = nil, oneOf: [String]? = nil) {
+            self.pattern = pattern
+            self.minLength = minLength
+            self.maxLength = maxLength
+            self.format = format
+            self.oneOf = oneOf
+        }
+
+        func violations(_ value: String, _ path: String) -> [ContractViolation] {
+            var out: [ContractViolation] = []
+            if let oneOf, !oneOf.contains(value) {
+                out.append(.init(path: path, message: "'\(value)' is not one of \(oneOf)"))
+            }
+            if let pattern, !ContractCheck.matches(value, pattern) {
+                out.append(.init(path: path, message: "'\(value)' does not match \(pattern)"))
+            }
+            let length = value.unicodeScalars.count
+            if let minLength, length < minLength {
+                out.append(.init(path: path, message: "shorter than \(minLength)"))
+            }
+            if let maxLength, length > maxLength {
+                out.append(.init(path: path, message: "longer than \(maxLength)"))
+            }
+            if format == "date-time", !ContractCheck.matches(value, ContractCheck.dateTimePattern) {
+                out.append(.init(path: path, message: "not an RFC 3339 date-time"))
+            }
+            if format == "ipv4", !ContractCheck.matches(value, ContractCheck.ipv4Pattern) {
+                out.append(.init(path: path, message: "not an IPv4 address"))
+            }
+            return out
+        }
+    }
+
+    static let dateTimePattern = #"^\d{4}-\d{2}-\d{2}[Tt ]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})\z"#
+    static let ipv4Pattern = #"^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\z"#
+
+    /// ECMA-262 `search` semantics (patterns carry their own anchors), ICU engine.
+    static func matches(_ value: String, _ pattern: String) -> Bool {
+        value.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    public static func string(_ out: inout [ContractViolation], _ path: String, _ value: String?,
+                              _ rule: StringRule? = nil, alternatives: [StringRule]? = nil,
+                              const: String? = nil) {
+        guard let value else { return }
+        if let const, value != const {
+            out.append(.init(path: path, message: "must be '\(const)'"))
+        }
+        if let rule { out += rule.violations(value, path) }
+        if let alternatives, !alternatives.contains(where: { $0.violations(value, path).isEmpty }) {
+            out.append(.init(path: path, message: "'\(value)' matches none of the allowed forms"))
+        }
+    }
+
+    public static func number<T: Comparable & Sendable>(_ out: inout [ContractViolation], _ path: String, _ value: T?,
+                                                        minimum: T? = nil, maximum: T? = nil, const: T? = nil) {
+        guard let value else { return }
+        if let const, value != const { out.append(.init(path: path, message: "must be \(const)")) }
+        if let minimum, value < minimum { out.append(.init(path: path, message: "below minimum \(minimum)")) }
+        if let maximum, value > maximum { out.append(.init(path: path, message: "above maximum \(maximum)")) }
+    }
+
+    public static func finite(_ out: inout [ContractViolation], _ path: String, _ value: Double?) {
+        if let value, !value.isFinite { out.append(.init(path: path, message: "must be a finite number")) }
+    }
+
+    public static func bool(_ out: inout [ContractViolation], _ path: String, _ value: Bool?, const: Bool) {
+        if let value, value != const { out.append(.init(path: path, message: "must be \(const)")) }
+    }
+
+    public static func items<T>(_ out: inout [ContractViolation], _ path: String, _ value: [T]?,
+                                minItems: Int? = nil, maxItems: Int? = nil) {
+        guard let value else { return }
+        if let minItems, value.count < minItems { out.append(.init(path: path, message: "fewer than \(minItems) items")) }
+        if let maxItems, value.count > maxItems { out.append(.init(path: path, message: "more than \(maxItems) items")) }
+    }
+
+    public static func items<T: Hashable>(_ out: inout [ContractViolation], _ path: String, _ value: [T]?,
+                                          minItems: Int? = nil, maxItems: Int? = nil, unique: Bool) {
+        items(&out, path, value, minItems: minItems, maxItems: maxItems)
+        if unique, let value, Set(value).count != value.count { out.append(.init(path: path, message: "items must be unique")) }
+    }
+
+    public static func map(_ out: inout [ContractViolation], _ path: String, _ value: [String: JSONValue]?,
+                           maxProperties: Int? = nil, required: [String] = []) {
+        guard let value else { return }
+        if let maxProperties, value.count > maxProperties {
+            out.append(.init(path: path, message: "more than \(maxProperties) properties"))
+        }
+        for key in required where value[key] == nil {
+            out.append(.init(path: path, message: "'\(key)' is required"))
+        }
+    }
+
+    public static func nested<T: ContractValue>(_ out: inout [ContractViolation], _ path: String, _ value: T?) {
+        if let value { out += value.validate(at: path) }
+    }
+
+    public static func nested<T: ContractValue>(_ out: inout [ContractViolation], _ path: String, _ value: [T]?) {
+        guard let value else { return }
+        for (i, item) in value.enumerated() { out += item.validate(at: "\(path)/\(i)") }
+    }
+
+    /// Object-level rules. `present`: keys with a non-null value (Swift cannot tell null from absent).
+    public static func object(_ out: inout [ContractViolation], _ path: String, present: Set<String>,
+                              dependentRequired: [String: [String]] = [:], anyOfRequired: [[String]] = [],
+                              forbidden: [String] = [],
+                              conditionals: [(matched: Bool, thenRequired: [String], thenForbidden: [String],
+                                              elseRequired: [String], elseForbidden: [String])] = []) {
+        for (key, needed) in dependentRequired.sorted(by: { $0.key < $1.key }) where present.contains(key) {
+            for n in needed where !present.contains(n) {
+                out.append(.init(path: path, message: "'\(n)' is required when '\(key)' is present"))
+            }
+        }
+        if !anyOfRequired.isEmpty, !anyOfRequired.contains(where: { $0.allSatisfy(present.contains) }) {
+            out.append(.init(path: path, message: "one of \(anyOfRequired) is required"))
+        }
+        for n in forbidden where present.contains(n) {
+            out.append(.init(path: "\(path)/\(n)", message: "must not be present"))
+        }
+        for c in conditionals {
+            let (req, forb) = c.matched ? (c.thenRequired, c.thenForbidden) : (c.elseRequired, c.elseForbidden)
+            for n in req where !present.contains(n) {
+                out.append(.init(path: path, message: "'\(n)' is required here"))
+            }
+            for n in forb where present.contains(n) {
+                out.append(.init(path: "\(path)/\(n)", message: "must not be present here"))
+            }
+        }
+    }
+}

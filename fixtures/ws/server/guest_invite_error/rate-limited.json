@@ -1,0 +1,5 @@
+{
+  "type": "guest_invite_error",
+  "reason": "rate_limited",
+  "message": "…"
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_children",
+  "description": "Child devices in the scope of this family manager (answer to family_get_children).",
+  "type": "object",
+  "required": [
+    "type",
+    "children"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_children"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "children": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/family-child.json"
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,7 @@
+{
+  "allowed": true,
+  "service": "volume_set",
+  "adjusted": {
+    "volume_level": 0.3
+  }
+}

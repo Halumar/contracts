@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "No-escalation vector",
+  "description": "Values a setting-up device may hand out compared with its own effective values (docs/setup.md, No escalation). cases: an ordered rule along its order (tools/profiles_ref.py looser). key_cases: control_path by key level after the platform mapping, none < read_only < full (key_looser): new and mine are effective control_path and remote_access values. looser = not offered. tools/validate.py recomputes every case.",
+  "type": "object",
+  "required": [
+    "description"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "new",
+          "mine",
+          "expected_looser"
+        ],
+        "properties": {
+          "rule": {
+            "$ref": "../common/defs.json#/$defs/profile_rule_key",
+            "description": "An ordered rule other than control_path (control_path is compared by key level, key_cases)."
+          },
+          "new": {
+            "description": "Effective value the new device would get (on its platform)."
+          },
+          "mine": {
+            "description": "Effective value of the setting-up device."
+          },
+          "expected_looser": {
+            "type": "boolean",
+            "description": "true = not offered (more than the setting-up device has)."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "key_cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "new",
+          "mine",
+          "expected_looser"
+        ],
+        "properties": {
+          "new": {
+            "type": "object",
+            "required": [
+              "control_path",
+              "remote_access"
+            ],
+            "properties": {
+              "control_path": {
+                "$ref": "../common/defs.json#/$defs/control_path_rule"
+              },
+              "remote_access": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Effective values of the new device on its platform (a TV or watch: hub is already checked)."
+          },
+          "mine": {
+            "type": "object",
+            "required": [
+              "control_path",
+              "remote_access"
+            ],
+            "properties": {
+              "control_path": {
+                "$ref": "../common/defs.json#/$defs/control_path_rule"
+              },
+              "remote_access": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "description": "Effective values of the setting-up device."
+          },
+          "expected_looser": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "cases"
+      ]
+    },
+    {
+      "required": [
+        "key_cases"
+      ]
+    }
+  ]
+}

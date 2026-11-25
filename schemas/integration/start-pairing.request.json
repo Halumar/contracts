@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/start-pairing (body, optional)",
+  "description": "Parsed manually from the raw body (not in FastAPI's OpenAPI). Empty body = member pairing with the default profile of the device type. 403 when allow_pairing_via_integration is off; 404 unknown profile; 422 invalid guest fields or a guest with a parental-controls profile.",
+  "type": "object",
+  "properties": {
+    "is_guest": {
+      "type": "boolean",
+      "default": false
+    },
+    "guest_expires_hours": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2160,
+      "description": "Default: guest_default_hours of the house settings; maximum guest_access.max_hours."
+    },
+    "guest_expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 100,
+      "description": "ISO 8601 with offset, future, at most guest_access.max_hours ahead; precedence over hours."
+    },
+    "guest_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 50,
+      "description": "Guests: area scope as a device adjustment of the rule areas (mode selected with these tags; [\"*\"] = all areas). Ignored with 409 rule_fixed when the guest profile fixes areas. Missing = the profile decides."
+    },
+    "profile": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 40,
+      "description": "Profile NAME (case-insensitive); null or missing = default profile (guests: the guest default profile)."
+    },
+    "owner_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 50,
+      "description": "Owner label stored with the PIN and applied to the paired client."
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,85 @@
+{
+  "type": "setup_grant",
+  "platform": "ios",
+  "purpose": "invite",
+  "grant": {
+    "tags": [],
+    "all_areas": true,
+    "areas": [
+      {
+        "id": "d18b03ba-0f49-4fea-8d96-e25af54def81",
+        "name": "Wohnzimmer",
+        "icon": "mdi:sofa"
+      },
+      {
+        "id": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+        "name": "Küche",
+        "icon": "mdi:silverware-fork-knife"
+      },
+      {
+        "id": "5b1e7c2a-3d4f-4a6b-8c9d-0e1f2a3b4c5d",
+        "name": "Büro",
+        "icon": "mdi:desk"
+      },
+      {
+        "id": "7a2c9e4b-1d3f-4b5a-9c8d-2e4f6a8b0c1d",
+        "name": "Kinderzimmer",
+        "icon": "mdi:teddy-bear"
+      }
+    ],
+    "kinds": [
+      {
+        "kind": "guest",
+        "profiles": [
+          {
+            "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+            "name": "Gast",
+            "kind": "guest",
+            "description": null,
+            "icon": "mdi:account-clock",
+            "color": "#6941C6",
+            "child_protection": false,
+            "area_choice": true,
+            "remote_access": false,
+            "remote_choice": true,
+            "start_area_choice": false,
+            "access_hours_choice": true,
+            "access_hours": {
+              "enabled": false,
+              "windows": []
+            }
+          }
+        ]
+      }
+    ],
+    "managers_choice": false,
+    "managers": [
+      {
+        "client_id": "0f1e2d3c-4b5a-4968-8778-695a4b3c2d1e",
+        "name": "iPhone Papa",
+        "owner_label": "Papa",
+        "all_children": false,
+        "is_self": true
+      },
+      {
+        "client_id": "1e2d3c4b-5a69-4877-8695-a4b3c2d1e0f1",
+        "name": "iPhone Mama",
+        "owner_label": "Mama",
+        "all_children": true,
+        "is_self": false
+      }
+    ],
+    "guest_access": {
+      "default_hours": 24,
+      "max_hours": 2160,
+      "presets_hours": [
+        24,
+        72,
+        168,
+        336,
+        720
+      ]
+    },
+    "own_watch": false
+  }
+}

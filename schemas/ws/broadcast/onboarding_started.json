@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast onboarding_started",
+  "description": "A device started an onboarding session (Admin UI list of running pairings from a phone: TV, tablet). Never contains the session id or the public key.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboarding_started"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "id",
+        "client_name",
+        "platform",
+        "expires_at"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "../../common/defs.json#/$defs/uuid",
+          "description": "Reference of the session for the Admin UI (not the session id)."
+        },
+        "client_name": {
+          "type": "string"
+        },
+        "platform": {
+          "$ref": "../../common/defs.json#/$defs/platform"
+        },
+        "device_model": {
+          "$ref": "../../common/defs.json#/$defs/device_model"
+        },
+        "expires_at": {
+          "$ref": "../../common/defs.json#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

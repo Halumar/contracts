@@ -1,0 +1,9 @@
+{
+  "uri": "halumar://pair?url=https%3A%2F%2Fhub.example.local&pin=0042-9001&tls_port=8100&fp=abababababababababababababababababababababababababababababababab",
+  "params": {
+    "url": "https://hub.example.local",
+    "pin": "0042-9001",
+    "tls_port": "8100",
+    "fp": "abababababababababababababababababababababababababababababababab"
+  }
+}

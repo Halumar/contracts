@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/ha-url (body)",
+  "description": "The integration reports Home Assistant's external URL as HA itself answers it: get_url without internal URLs, i.e. HA's configured external_url, else the Nabu Casa remote UI address (https://<instance>.ui.nabu.casa), else null. Sent at setup and whenever the value changes (core configuration update, cloud connection change, checked every 60 s for remote UI on/off); nothing is sent while it is unchanged. Integration token only (accepted only from the hub's own host). The hub accepts only HA's own external_url (read by the hub from the Supervisor) or a Nabu Casa remote UI address; anything else is answered 422 url_not_allowed (ha-url.error.json), so the integration token cannot redirect the devices' HA tokens to another host. The accepted value becomes ha_url_detected; unless the admin set another external URL in the hub (GET/PUT /api/settings/ha-urls, the hub value wins), it is the URL devices with remote access get as client_config.ha_url. null clears the detection. The report also carries ha_instance_id; a change of only this value is reported as well.",
+  "type": "object",
+  "required": [
+    "external_url"
+  ],
+  "properties": {
+    "external_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 2048,
+      "pattern": "^https?://[^/?#@\\s]+(/[^?#\\s]*)?$",
+      "description": "scheme://host[:port][/path], no credentials, query or fragment; null = HA has no external address."
+    },
+    "ha_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{32}$",
+      "description": "Home Assistant's instance ID (helpers.instance_id.async_get, also the uuid of HA's Bonjour TXT record). Sent with every report; optional for older integrations. The hub stores it and hands it to the devices as client_config.ha_instance_id (second proof of the home network)."
+    }
+  },
+  "additionalProperties": false
+}

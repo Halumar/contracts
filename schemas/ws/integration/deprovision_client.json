@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "integration deprovision_client",
+  "description": "Hub -> integration push session only. The device is gone (deleted, revoked, guest expired, all clients cleared). The integration removes the device's HA user (HA removes its token and closes its sessions). No acknowledgement: if the message is lost, the reconcile on the next status poll removes every device user without an active client.",
+  "x-audience": "INTEGRATION",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "deprovision_client"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "client_id",
+        "reason"
+      ],
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "reason": {
+          "enum": [
+            "deleted",
+            "revoked",
+            "guest_expired",
+            "cleared"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

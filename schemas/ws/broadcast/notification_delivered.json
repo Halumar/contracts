@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast notification_delivered",
+  "description": "Notification acknowledged (WS ack or remote ack via integration).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_delivered"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "via": {
+          "enum": [
+            "ws",
+            "remote"
+          ]
+        }
+      },
+      "required": [
+        "notification_id",
+        "client_id",
+        "via"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

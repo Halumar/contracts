@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "kids_request",
+  "description": "“Can I have more time?” (German “Can I have more time?”): a child device (parental controls) asks. category from client_config.kids.requests.categories; unlock_device needs entity_id of an entity the device sees; note optional (at most 80 characters, plain text). One open request per device; limits and cooldown from the house settings. Over the hub WebSocket; away from home (only with remote access, client_config.kids.away ha) the same message through the HA WebSocket command <ns>/family. Answer: kids_request_state (open) or family_error (requests_disabled, request_limit, cooldown, invalid_request).",
+  "type": "object",
+  "required": [
+    "type",
+    "category"
+  ],
+  "properties": {
+    "type": {
+      "const": "kids_request"
+    },
+    "category": {
+      "$ref": "../../common/defs.json#/$defs/family_request_category"
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 80
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "category": {
+            "const": "unlock_device"
+          }
+        },
+        "required": [
+          "category"
+        ]
+      },
+      "then": {
+        "required": [
+          "entity_id"
+        ]
+      }
+    }
+  ]
+}

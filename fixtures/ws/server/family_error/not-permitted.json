@@ -1,0 +1,5 @@
+{
+  "type": "family_error",
+  "reason": "not_permitted",
+  "message": "Device has no family manager right"
+}

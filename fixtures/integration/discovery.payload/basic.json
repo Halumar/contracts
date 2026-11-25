@@ -1,0 +1,6 @@
+{
+  "host": "local-halumar",
+  "port": 8099,
+  "api_token": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "version": "2026.11.1"
+}

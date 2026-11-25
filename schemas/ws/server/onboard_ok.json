@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_ok",
+  "description": "The onboarding was confirmed; the connection is authenticated as the new device (like pair_ok). For a watch (platform watchos or wearos, opened by its phone with the watch's key) the hub does not authenticate the connection: it sends onboard_ok and closes with 1000, so the phone never reads the watch's client_config; the watch's HA access follows sealed to the same key in watch_access. The client secret is never sent in clear: sealed is an HPKE base-mode message (RFC 9180, DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, ChaCha20Poly1305; info = \"hub/onboard/v1\", aad = session_id as ASCII) to the session's public key. Plaintext: JSON {\"client_id\", \"secret\"}; the device checks that client_id equals the outer client_id. Known-answer vectors: fixtures/crypto/onboard-seal-vectors. Carries the protocol fields like pair_ok.",
+  "type": "object",
+  "required": [
+    "type",
+    "client_id",
+    "client_name",
+    "sealed",
+    "protocol_version",
+    "min_protocol_version",
+    "min_app_version"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_ok"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "sealed": {
+      "type": "object",
+      "required": [
+        "suite",
+        "enc",
+        "ciphertext"
+      ],
+      "properties": {
+        "suite": {
+          "const": "X25519-SHA256-ChaCha20Poly1305"
+        },
+        "enc": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$",
+          "description": "HPKE encapsulated key (32 bytes), base64url without padding."
+        },
+        "ciphertext": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "maxLength": 1024,
+          "description": "AEAD ciphertext incl. 16-byte tag, base64url without padding."
+        }
+      },
+      "additionalProperties": false,
+      "x-sensitive": true
+    },
+    "protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version"
+    },
+    "min_protocol_version": {
+      "$ref": "../../common/defs.json#/$defs/protocol_version"
+    },
+    "min_app_version": {
+      "$ref": "../../common/defs.json#/$defs/min_app_version"
+    }
+  },
+  "additionalProperties": true
+}

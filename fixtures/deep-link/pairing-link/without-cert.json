@@ -1,0 +1,7 @@
+{
+  "uri": "halumar://pair?url=http%3A%2F%2Fhomeassistant.local%3A8099&pin=3477-3800",
+  "params": {
+    "url": "http://homeassistant.local:8099",
+    "pin": "3477-3800"
+  }
+}

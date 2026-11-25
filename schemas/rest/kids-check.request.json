@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/profiles/{id}/check",
+  "description": "Admin only: dry run (\"test rule\") without counters of devices. area_ids missing = the areas the entity is placed in; at missing = now.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "service"
+  ],
+  "properties": {
+    "entity_id": {
+      "$ref": "../common/defs.json#/$defs/entity_id"
+    },
+    "service": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "data": {
+      "type": "object"
+    },
+    "area_ids": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string"
+      }
+    },
+    "at": {
+      "$ref": "../common/defs.json#/$defs/timestamp"
+    }
+  },
+  "additionalProperties": false
+}

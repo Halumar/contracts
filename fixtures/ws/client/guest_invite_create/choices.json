@@ -1,0 +1,7 @@
+{
+  "type": "guest_invite_create",
+  "profile_id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+  "owner_label": "Guest",
+  "expires_at": "2026-11-23T19:00:00Z",
+  "remote": false
+}

@@ -1,0 +1,19 @@
+{
+  "events": [
+    {
+      "id": "3e4f5061-7283-494a-b5c6-d7e8f9a0b1c2",
+      "type": "control",
+      "at": "2026-11-20T18:01:00+00:00",
+      "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+      "entity_id": "light.bed_light",
+      "action": "turn_on",
+      "route": "local",
+      "origin": "app",
+      "reason": null,
+      "data": {
+        "code": "1234"
+      }
+    }
+  ],
+  "dropped": 0
+}

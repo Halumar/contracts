@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.family",
+  "description": "Family manager: present exactly when rules.family_manager.value is true (never on guests or devices with parental controls). children is the current scope as a short list for the tab “Family”; details come with family_get_children. remote: away = family functions also work away from home through Home Assistant and the integration relay (needs effective remote access), home_only = only in the home network. Changes of scope, children, notify settings or remote send client_config_updated.",
+  "type": "object",
+  "required": [
+    "scope",
+    "children",
+    "open_requests",
+    "notify",
+    "remote"
+  ],
+  "properties": {
+    "scope": {
+      "$ref": "defs.json#/$defs/family_children_scope"
+    },
+    "children": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "defs.json#/$defs/owner_label"
+          },
+          "platform": {
+            "$ref": "defs.json#/$defs/platform"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "open_requests": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "notify": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "Automatic child notifications of this device (data/family.json notify_defaults; kids_release_requested always true)."
+    },
+    "notify_targets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^notify\\.[a-z0-9_]{1,64}$"
+      },
+      "maxItems": 5,
+      "description": "Home Assistant notify services the admin linked to this family manager (requests arrive even with the app closed; actionable for mobile_app targets). Display only."
+    },
+    "remote": {
+      "enum": [
+        "away",
+        "home_only"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

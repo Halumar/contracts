@@ -1,0 +1,28 @@
+contracts – interface contract of the hub, the Home Assistant integration and the client apps
+Copyright 2026 xonatec
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Code generated from this contract (tools/codegen) may be used in any
+application, including proprietary ones, under the Apache License 2.0.
+
+This product includes the test vector A.2.1 of RFC 9180 ("Hybrid Public Key
+Encryption", R. Barnes, K. Bhargavan, B. Lipp, C. Wood, February 2022) in
+schemas/crypto/onboard-seal-vectors.json, case rfc9180-a.2.1-seq0.
+Copyright (c) 2022 IETF Trust and the persons identified as the document
+authors. All rights reserved. Code Components extracted from IETF Documents are
+licensed under the Revised BSD License, as described in Section 4.e of the
+Trust Legal Provisions (https://trustee.ietf.org/license-info).
+
+data/tile-icons.json names Material Design Icons (Pictogrammers, Apache-2.0)
+and SF Symbols (Apple) by name only; it contains no icon artwork and no brand
+or logo icons (tools/check_tile_icons.py).
+
+The tools in tools/ are development tools; their Python dependencies
+(tools/requirements.txt) are installed separately and not distributed with the
+contract.
+
+"Halumar" and the Halumar logo are trademarks of xonatec. The license does not
+grant trademark rights; see TRADEMARKS.md. The logo in docs/assets/brand/ is
+such a trademark; its wordmark contains glyphs of the Fredoka typeface (SIL Open
+Font License 1.1), converted to outlines. No font files are included.

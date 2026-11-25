@@ -1,0 +1,43 @@
+{
+  "type": "enforcement_rules",
+  "data": {
+    "snapshots": [
+      {
+        "version": 1,
+        "client_id": "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d",
+        "ha_user_id": "0123456789abcdef0123456789abcdef",
+        "issued_at": "2026-11-20T18:00:00+00:00",
+        "rules_hash": "cc91071149c3ba2dd6704c66a10c90dfa72e9fbfea6b1cc800ad216e410b7f32",
+        "control_path": "checked",
+        "remote_access": false,
+        "child_protection": false,
+        "entities": {
+          "light.bed_light": {
+            "local": "control",
+            "remote": "hidden",
+            "quick": "off"
+          },
+          "media_player.living_room": {
+            "local": "control",
+            "remote": "hidden",
+            "quick": "off"
+          },
+          "lock.front_door": {
+            "local": "control",
+            "remote": "hidden",
+            "quick": "off"
+          }
+        },
+        "kids": null,
+        "access": null,
+        "home_networks": [],
+        "location": "background"
+      }
+    ],
+    "control_paths": {
+      "9a8b7c6d-5e4f-4a3b-9c2d-1e0f9a8b7c6d": "checked"
+    },
+    "removed": [],
+    "complete": false
+  }
+}

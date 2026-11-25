@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bonjour TXT record",
+  "description": "TXT keys of the hub's mDNS announcement. All values are strings. Clients must ignore unknown keys.",
+  "type": "object",
+  "required": [
+    "ws_path",
+    "api_path",
+    "iid",
+    "version",
+    "pv",
+    "pv_min"
+  ],
+  "properties": {
+    "ws_path": {
+      "const": "/api/ws"
+    },
+    "api_path": {
+      "const": "/api"
+    },
+    "app_url": {
+      "type": "string",
+      "description": "Only when an App URL is configured."
+    },
+    "tls": {
+      "const": "1",
+      "description": "Only when a TLS certificate exists (also when tls_enabled is false)."
+    },
+    "tls_port": {
+      "type": "string",
+      "pattern": "^[0-9]{1,5}$",
+      "description": "String, e.g. \"8100\"."
+    },
+    "fp": {
+      "$ref": "../common/defs.json#/$defs/fingerprint"
+    },
+    "version": {
+      "type": "string",
+      "description": "Hub version (e.g. 2026.12.0). Informational; compatibility is decided by pv."
+    },
+    "iid": {
+      "type": "string",
+      "description": "Stable hub instance id; two hubs in one LAN are distinguishable."
+    },
+    "pv": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,3}$",
+      "description": "protocol_version of the hub as a decimal string."
+    },
+    "pv_min": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,3}$",
+      "description": "min_protocol_version of the hub as a decimal string. An app below it shows 'update the app' before pairing."
+    }
+  },
+  "dependentRequired": {
+    "tls": [
+      "tls_port",
+      "fp"
+    ],
+    "fp": [
+      "tls_port"
+    ]
+  },
+  "additionalProperties": {
+    "type": "string"
+  }
+}

@@ -1,0 +1,3785 @@
+# AsyncAPI 3.0 description of the hub WebSocket /api/ws.
+# Payload schemas live in ../schemas/ws (JSON Schema 2020-12), golden examples in ../fixtures/ws.
+asyncapi: 3.0.0
+info:
+  title: Hub WebSocket API
+  version: 1.0.0
+  description: |
+    WebSocket protocol of the hub (Home Assistant app), for hub 2026.12.0 (`x-hub-version`). Deviations from a clean design are listed in docs/protocol.md (Known deviations).
+    The integration session also carries the per-device HA user requests provision_client, update_client_identity and deprovision_client (see docs/per-device-users.md) and the rule snapshots enforcement_rules (see docs/enforcement.md).
+
+    The document describes the **hub** as the application: `receive` = message from a client, `send` = message from the hub.
+
+    ## Framing
+    Every frame is a UTF-8 text frame with one JSON object carrying `type`. Binary frames and JSON values that are not objects drop the connection (known deviation D7). Incoming messages > 64 KB are answered with `error` and ignored. Clients MUST ignore unknown fields and unknown message types (tolerant decoding); the hub ignores unknown fields.
+
+    ## Connection and authentication
+    1. Before accept: if `Authorization: Bearer` is present it must be the integration token, otherwise close 4003 without accept (clients see HTTP 403). Connection limits: 100 authenticated sessions, 5 unauthenticated sessions per source IP and 200 unauthenticated in total, otherwise close 4029 before accept (HTTP 403).
+    2. After accept: Ingress (header `X-Ingress-Path` from the Supervisor ingress proxy (172.30.32.2, fixed by Home Assistant), `client_id` `ingress`), integration sessions (`integration`) and admin web-UI sessions with a valid session cookie over TLS and with an `Origin` equal to the host (`admin`) get `auth_ok` immediately. Everyone else gets `auth_required {timeout: 30}`. An admin web-UI session gets `session_expired` and close 4401 as soon as its session ends (checked at least every 60 s).
+    3. Apps authenticate in-band with `auth {secret, <client info>}` (5 attempts per connection) or pair with `pair {pin, client_name, <client info>}` (5 attempts per connection; per source IP at most 10 failed PIN attempts in 10 min across connections, reset by a new PIN or a successful pairing from that IP; a PIN is invalidated after repeated failures from several source addresses, so a single LAN host cannot invalidate it). Query-string tokens are not supported. Client info: `protocol_version`, `platform`, `app_version` (required), `app_build`, `device_model` (optional).
+    3a. Version check: `pair` is checked before the PIN, `auth` after the secret (a tombstoned secret still gets `client_removed` first). Missing or too low `protocol_version`, or `app_version` below `min_app_version[platform]`: the hub answers `upgrade_required` and closes 4426; the PIN is not consumed and the pairing stays valid. Malformed client info: `pair_error` / `auth_error` with `reason` `invalid_client_info`. `auth_ok` and `pair_ok` always carry `protocol_version`, `min_protocol_version` and `min_app_version`.
+    3b. Error reasons: `auth_error` and `pair_error` always carry a machine-readable `reason` (`common/defs.json#/$defs/auth_error_reason`, `#/$defs/pair_error_reason`); `message` is English text for logs only. `auth_error`: `invalid_secret` (unknown secret: pair again), `revoked` (blocked by an admin), `guest_expired`, `rate_limited`, `invalid_client_info`. `pair_error`: `invalid_request`, `invalid_client_info`, `pin_invalid`, `pin_expired`, `too_many_failures`, `rate_limited`, `already_authenticated`, `connection_expired`, `platform_not_allowed` (the PIN's profile is not allowed on the reported platform, docs/setup.md). Clients decide only on `reason` and treat unknown reasons conservatively (auth: keep the pairing and retry with backoff; pair: like `pin_invalid`). The socket stays open after both errors.
+    4. Before authentication only `pair`, `auth`, `onboard_start`, `client_reset_ack` (from a device that is being deleted) are processed; everything else is answered with `auth_required`. After 30 s (with a running onboarding session: when it expires): `auth_timeout`, close 4002.
+    5. Deleted device: `auth` with a tombstoned secret yields `client_removed`; the device wipes and sends `client_reset_ack`; the hub answers `client_reset_ack_ok` and closes 1000.
+    5a. Revoke, kick or delete closes the live connection at once; during the reset grace period of a deleted device only `client_reset_ack`, `ping` and `pong` are served, everything else is answered with `error` "Client removed".
+    5b. A paired device signs itself off before it resets or removes this home: `client_leave {client_id}` on its authenticated socket (members, child devices and guests). The hub deletes the device at once (no tombstone), the integration removes its HA user (`deprovision_client`), open guest invitations of the device end, admin sessions get `client_kicked {reason: left}` and the audit log `client_left`; the hub answers `client_leave_ok` and closes 1000. A wrong `client_id` is answered with `error` and changes nothing. Apps send it only while connected and wait at most a few seconds; offline they reset locally and the admin deletes the device. A device without a hub socket (the watch) signs off with `POST /api/client/leave` and its own secret (same effect, 200 `client_leave_ok`).
+    6. The integration session is read-only: everything except ping/pong is answered with `error`.
+    6a. Paired clients read only their own scope: `get_areas` is filtered by the client's tags (`common/defs.json#/$defs/client_tags`: members without tags see all active areas; guests fail closed, without tags they see none, `"*"` = all active areas), `get_area` answers "Area not found" for areas outside the client's list (except areas its own notifications link to); server file paths (`*_path`) are removed and entity states are sanitized (no camera tokens, no GPS of people/trackers). Admin sessions get the unfiltered data.
+    7. The hub sends the integration session `provision_client`, `update_client_identity` and `deprovision_client` (one HA user per device), `enforcement_rules` (rule snapshots: the complete set right after `auth_ok`, then per change; `control_paths` next to the snapshots, docs/enforcement.md), `ha_event` (events to fire in Home Assistant) and `client_location` (positions for the device trackers); the integration answers over REST.
+
+    ## Setting up a device from a paired device
+    See docs/setup.md. An unpaired device of any app platform (iPhone, iPad, Apple TV, Android phone, tablet and TV; a watch through its phone; not web: `platform_not_supported`) sends `onboard_start {public_key, client_name, <client info>}` (TLS port only, client info checked like `pair`) and gets `onboard_session {session_id, hub_id, code, expires_in: 300, expires_at}`; its connection then stays open until the session ends instead of the 30 s auth timeout. It shows a QR code (`deep-link/onboard-link.json`: hub_id, the first 32 hex characters of its pinned fingerprint, session_id, its X25519 public key) and under it the 6-digit `code`; it asks nothing about its role.
+
+    A paired device whose effective rule `setup_devices` is on (only profiles of kind person; never guests or devices with parental controls) either scans the QR code and checks the fingerprint against its own pin, or types the code (it then relies on its own pinned connection; the waiting device gets the secret only over its own pinned TLS connection, as with a PIN).
+
+    `onboard_lookup` (QR values or `code`) answers `onboard_info` with `grant` (`common/setup-grant.json`: the allowed kinds of `setup_devices.kinds` that fit the platform, the profiles per kind that are not stronger than the confirming device, its areas, family managers, guest limits) and tells the waiting device `onboard_claimed {by_name}`. Wrong codes count per confirming device and on the hub (`too_many_attempts`, x-limits `onboard_code_*`).
+
+    `onboard_confirm {kind, profile_id, client_name?, owner_label?, area_ids|all_areas?, own_area_id?, start_area?, managers?, expires_at?, remote?, access_windows?}` sets it up: member (guest access with `expires_at` for kinds guest, house_sitter and babysitter, at most 90 days), the chosen profile, the choices as device adjustments (areas, panel_start, remote_access), a child added to the chosen family managers (only with the right family_manager; otherwise only managers of all children), `set_up_by` = the confirming device, own HA user; a validation error (`kind_not_allowed`, `profile_not_allowed`, `areas_not_allowed`, `expiry_not_allowed`, `managers_not_allowed`, `access_hours_not_allowed`) keeps the session open.
+
+    The hub sends the waiting connection `onboard_ok` with the client secret sealed by HPKE (RFC 9180, X25519/HKDF-SHA256/ChaCha20Poly1305, info `hub/onboard/v1`, aad = session_id) to its public key; that connection is authenticated from then on (a watch: closed with 1000 instead, see Watches), and the confirming device gets `onboard_confirm_ok`. `onboard_decline` declines.
+
+    A session is single-use: it ends on confirm, decline, admin cancel, expiry (`onboard_error {session_expired}`, close 4002), a public key or hub id that does not match (`session_invalidated`), a new `onboard_start` on the same connection, or when the waiting connection closes.
+
+    `get_setup_grant {platform?, purpose?}` → `setup_grant` gives the same grant before scanning (type first) or for an invitation. “Set up by me”: `get_set_up_devices` → `set_up_devices`, `set_up_device_remove {client_id}` → `set_up_device_removed` (only devices whose `set_up_by` is this device). Errors: `onboard_error` with `reason` (`common/defs.json#/$defs/onboard_error_reason`). Log/event `device_set_up` (“Child's iPhone set up by Dad as Child 6–9”). Limits: see x-limits `onboard_*`.
+
+    ## Guest invitations by members
+    A paired member device whose rule `setup_devices` contains the kind `guest` sends `guest_invite_create {profile_id?, owner_label?, expires_at?, remote?}` (a guest profile of `setup_grant` with purpose invite, at most 90 days, remote only with remote_choice) and gets `guest_invite {invite_id, pin, deep_link, url, expires_in: 300, expires_at, grant}`: a one-time guest PIN for 5 minutes, separate from the admin's single pairing PIN (both work side by side).
+
+    The guest pairs with the normal `pair` (PIN typed or scanned from `deep_link`, the canonical pairing link) and gets exactly what `grant` shows; every later change of the guest stays with the admin. The new guest records `set_up_by {method: invite}`, activity `paired {method: invite, invited_by}` and on the member device `guest_invited`; audit `guest_invite_created/cancelled/paired`.
+
+    The inviting device gets `guest_invite_ended {result}` on every connection: `paired` (with client_id, client_name: show "Guest connected"), `expired`, `cancelled` (its own `guest_invite_cancel`), `revoked` (admin cancelled it, removed the right or the device), `replaced` (a new `guest_invite_create` replaces its own open invitation), `invalidated` (repeated wrong PINs from several source addresses). Its guests appear in “Set up by me” (`get_set_up_devices`).
+
+    Errors: `guest_invite_error` with `reason` (`common/defs.json#/$defs/guest_invite_error_reason`). Admin: `GET /api/pairing/guest-invites`, `DELETE …/{id}`, broadcasts `guest_invite_opened`/`guest_invite_closed` (never the PIN). Limits: see x-limits `guest_invite*`.
+
+    ## Hub path
+    A device is on the hub path when its profile has parental controls (`client_config.profile.child_protection`) or its effective rule `control_path` is `hub` (“Hub only”). Such a device reads and switches through the hub wherever the hub is reachable. On “Hub only” without remote access it has no Home Assistant key at all (`ha_token`, `ha_instance_id`, `ha_enforcement` and `ha_url` null); with remote access it holds a read-only key for use away from home (docs/enforcement.md §7). A watch or a TV is never on the hub path (a watch has no hub socket; both always use their own key).
+
+    `control {request_id, entity_id, service, data}` → `control_ok {adjusted?}`, `rule_blocked {reason, level, until, retry_after, limit?}` or `control_error {reason}`. The hub checks that the device is paired and active, its access (hours, switch, guest expiry), the visibility of the entity (placed in one of the device's readable areas, or the run target of such a tile), drops target keys from `data`, applies the kids rules when the device has parental controls (`common/kids-rules.json`; levels profile → area → entity, the more specific wins per rule; bedtime windows in Home Assistant's time zone) and calls Home Assistant as the device's own HA user through `<ns>.control`, which checks the rule snapshot again.
+
+    Live states: `state_subscribe` → `state_subscribed {entity_count}`, then one `entity_state {entity_id, state}` per visible entity with its current state (snapshot of every visible entity), then one for every change of a visible entity (sanitized like `get_area`: an `entity_picture` with a token becomes the marker `attributes.hub_picture_id`, `$defs/hub_picture_id`; the app asks `camera_image_get`/`media_image_get` when it appears or changes, and nothing without it).
+
+    Reading without a key: `history_get {request_id, entity_id, hours 1-168}` → `history {states [{state, last_changed}], truncated}` (recorder, significant changes, at most 1000 points) and `forecast_get {request_id, entity_id weather.*, forecast_type daily|hourly|twice_daily}` → `forecast {forecast []}` (`weather.get_forecasts`, at most 240), same visibility as `state_subscribe`, failures `control_error`; `state_subscribe` also relays `sun.sun` (day/night of the weather) when a weather entity is visible.
+
+    Still images: `camera_image_get {request_id, entity_id, width?}` → `camera_image {request_id, entity_id, content_type, data_b64}` and `media_image_get {request_id, entity_id}` → `media_image {…}` (the artwork). The hub reads them with its own access to Home Assistant (`/api/camera_proxy`, `/api/media_player_proxy`), only for entities in the device's scope, and keeps no copy. Order of the checks: malformed request or a request_id still open → `invalid_request`; not on the hub path → `not_hub_controlled`; access closed, unknown entity, other domain or out of scope → `not_visible` (the same answer, before Home Assistant is contacted or a kids rule is read); limits → `rate_limited`; with parental controls a blocked device type → `rule_blocked {reason blocked}`; then Home Assistant (no redirect followed; error, no image, more than 2 MiB or another type than JPEG, PNG, WebP, GIF → `ha_error`). Content types are normalized (lower case, no parameters, `image/jpg` and `image/pjpeg` → `image/jpeg`). The answer never carries a URL, a Home Assistant camera token or a signed image URL. `width` (64-3840) is a best-effort hint: the hub passes `width` and `height = ceil(width·9/16)` to the camera proxy, which scales only JPEG, only down and by fixed factors to at least that size; the hub does not scale itself. Limits per device (x-limits `hub_image_*`): one open request per entity and at most one per second per entity, at most 4 open requests, 20 images and 16 MiB per 10 s (maxima: a hub may enforce lower shares, for example of a hub-wide limit of open reads, and answer `rate_limited` earlier; clients honor `rate_limited` with `retry_after` at any time); an image at most 2 MiB, its message at most 2 800 000 bytes, so clients accept WebSocket messages of that size. A wall of 8 cameras refreshed every 5 s needs 16 images per 10 s, typically a few MiB; the budget keeps one device from flooding the hub or Home Assistant. Live video is not part of the hub path. The app asks again while the tile or the detail view is visible.
+
+    Limits per device (x-limits `hub_*`): a new `state_subscribe` at most every 10 s, `history_get` and `forecast_get` together at most 10 per 10 s; beyond that `control_error {rate_limited, retry_after}`.
+
+    Devices off the hub path (control_path checked or direct, without parental controls) get `control_error {not_hub_controlled}` for all of these and read and switch through Home Assistant with their own key.
+
+    REST twin of `control`: `POST /api/client/control` with the device secret. Activity `rule_blocked` (throttled), `profile_changed`, `kids_override`.
+
+    ## Kids mode
+    A device whose profile has parental controls (rules in `client_config.kids`) is on the hub path; the kids rules apply on every path (hub, and `<ns>.control` away from home when it holds a key, `kids.away = ha`). It defaults to “Hub only” and may be on “Checked”, never “Direct”. The app on the child's device needs Pro; without Pro it shows a notice and controls nothing, while the hub and the integration enforce the rules either way.
+
+    ## Family manager
+    A member device whose effective profile rule `family_manager` is true (`client_config.family`, never guests or devices with parental controls) manages the child devices of its scope (device property set by the admin: all, default, or selected child devices).
+
+    It reads them with `family_get_children` → `family_children` (only the manageable kids rules of `data/family.json`, with `fixed`/`manageable` per rule, releases, status, today's counters), changes a rule on one or more child devices with `family_rule_set` / `family_rule_reset` (always a device adjustment of each child device, permanent or temporary like the admin's; never a rule fixed in the child's profile, never beyond a boundary, areas only within its own; last writer wins, logged with the actor) and starts or ends releases with `family_release` / `family_release_end` (bedtime, pause, one entity; never locks or alarm panels) → `family_result {op, results[]}`.
+
+    Children ask with `kids_request {category}` → `kids_request_state`; the hub pushes `family_request` to every connection of every family manager of that child (away from home through the integration: `family_relay`), fires the event `kids_release_requested` (HA notify targets of the admin and the ones linked to the family managers, actionable for mobile_app targets) and expires the request after `request_timeout_minutes`.
+
+    `family_answer {request_id, answer, preset?, message?}`: the first answer wins (`family_error {already_answered, request}` for later ones), yes is carried out as a release with the same checks.
+
+    `family_get_activity` → `family_activity` is a read view of the log limited to the children in scope and `activity_days`. `family_notify_set` → `family_notify` switches the automatic child notifications of this device.
+
+    Away from home the app sends the same messages through Home Assistant (HA WebSocket command `<ns>/family`, subscription `<ns>/family/subscribe`); the integration maps the calling HA user to the device and relays them over `POST /api/integration/family`; the hub decides everything.
+
+    Errors: `family_error` with `reason` (`common/defs.json#/$defs/family_error_reason`). Limits: see x-limits `family_*`. Reference permission check: `tools/family_ref.py`, vectors `fixtures/profiles/family-check`.
+
+    ## Unencrypted Home Assistant at home
+    Apps send the HA token over `http://`/`ws://` only in a confirmed home network. Proof 1: the hub answers over TLS with the pinned certificate. Proof 2: `client_config.ha_instance_id` (HA's instance ID, reported by the integration with `POST /api/integration/ha-url`) equals the `uuid` of a `_home-assistant._tcp` Bonjour announcement in the current network (no location permission; the app caches the result per network).
+
+    Profile rule `connection_insecure_http` (default off; suggestions Adult/Parents on; Wall panel, TV, Kids' room panel fixed off; guests and parental controls capped off) offers the switch “Always allow unencrypted (less secure)” on the device, which starts off.
+
+    ## Location
+    See docs/location.md. The rule `location` (profiles of kind person and child) is the upper limit. Devices with a Home Assistant key report their position with the integration action `<ns>.report_location` (home and away, also read-only device users; never `device_tracker.see`).
+
+    Devices on the hub path report to the hub, only at home: `location_report {latitude, longitude, accuracy, altitude?, vertical_accuracy?, speed?, course?, battery_level?, background, ts, location_shared?}` → `location_report_ok {applied}` or `location_report_error {reason, retry_after?}` (`$defs/location_report_reason`; a device off the hub path gets `not_hub_controlled`; one report per 5 s; `applied` is false also when no integration took the fix). REST twin without a socket: `POST /api/client/location` with the device secret.
+
+    The hub keeps no position: it hands the fix to the integration (`client_location`). `client_status.location_shared` (`none`, `foreground`, `background`) says what the app shares; the hub merges it with the metadata of the action (`POST /api/integration/location-status`). `client_status` carries no position.
+
+    ## Tags
+    See docs/links.md. A device that read a tag link `https://<website>/t/<tag_id>` (NFC, QR) sends `tag_resolve {tag_id, via?}` → `tag_result {tag_id, result, tag?, retry_after?}` (`$defs/tag_scan_result`; `tag {name, action}` only with `ok`). The hub checks the rule `scan_tags` and the device's areas, logs `tag_scanned` (`<ns>_event` and `<ns>_tag_scanned` in Home Assistant) and executes nothing; the app switches afterwards like a widget (`control_origin` `quick_access`). At most 10 per minute per device.
+
+    ## Panel commands
+    Panel commands `announce {text, volume?, chime?}` (rule `panel_announce`) and `show_camera {entity_id}` are reserved actions of `panel_command` (docs/panel.md); the hub offers them only when the app lists them in `panel.actions`.
+
+    ## Early access
+    See docs/access.md#early-access. A device outside its access hours (closed by the schedule) whose effective rule `access_requests` is on sends `access_request {note?}` → `access_request_state {request, next_allowed_at}` or `access_request_error {reason}` (`$defs/access_request_error_reason`).
+
+    Recipients (`client_config.access.request.recipients`): the device that set it up (`set_up_by`), every person device whose `setup_devices.kinds` holds its kind and, for a babysitter, the family managers.
+
+    They get `access_request_update` (away through `family_relay`), read open requests with `access_requests_get` → `access_requests` and answer with `access_request_answer {request_id, answer, duration?, message?}` (durations `until_window_start`, `1h`, `3h`, `today`); the first answer wins.
+
+    Yes opens the device until then (`access_now.early`, snapshot `access.early_until`), logged with the author; events `access_requested`, `access_request_answered`, `access_request_expired`.
+
+    Requests go only over the hub WebSocket (a closed device holds no valid HA key); recipients may answer away through `<ns>/family`.
+
+    Admin: `GET /api/access-requests`, `POST /api/access-requests/{id}/answer`, `DELETE /api/pairing/clients/{id}/early-access`, broadcast `access_requests_changed`.
+
+    ## Watches
+    A watch (`watchos`, `wearos`) never has a hub socket. Its phone opens the onboarding session with the watch's X25519 key; the hub keeps that public key for the watch, sends `onboard_ok` (secret sealed to the key) and closes the connection with 1000 without authenticating it, so the phone never reads the watch's `client_config`.
+
+    The phone that set the watch up (`set_up_by`) asks `watch_access_get {client_id}` on its own socket and gets `watch_access {client_id, status, sealed?}`: `ready` with the watch's whole `client_config` (incl. its HA token) sealed by HPKE to the watch's key (info `hub/watch-access/v1`, aad = client_id), `pending` while the watch holds a key that is not usable yet (not issued, held back until the integration has the watch's rules, or being replaced; a push follows), `gone` when there is no such watch of this phone (the watch forgets its access).
+
+    The hub pushes `watch_access` to every connection of that phone whenever the watch's access changes (first or rotated HA token, profile, rules). The phone passes it on unchanged; it cannot open it. A rotation of a watch with remote access waits for its phone (not for the watch) to be connected. `client_config.ha_token` is never sent in clear for a watch.
+
+    ## A child's watch
+    See docs/setup.md and docs/protocol.md (“A child's watch”). A device with parental controls whose kids rule `kids_watch` is on binds its watch's onboarding session with `onboard_lookup` (`onboard_info.grant.child_watch.role = child`, no kinds; its own `onboard_confirm` is `not_permitted`); an adult's device with `setup_devices` kind child looks it up with the code and confirms it (`grant.child_watch.role = adult`, kind child with the phone's profile).
+
+    The watch then follows its phone's profile, adjustments and kids state; `watch_access` carries its child `client_config`.
+
+    Every watch follows its phone: it never has more than the phone has now (reason `limited_by_phone`); `watch_access` `gone` may name the `reason` a child's watch was removed.
+
+    ## Tile settings
+    Every entity of `get_area` carries `tile` (`common/tile-settings.json`, `{}` = default) with the hub outputs `icon_svg` and `secondary_state`. The hub delivers the settings unchanged to every client in the read scope (no per-device filtering; a `run` target does not have to be visible to the device: the admin decides).
+
+    `hidden_on` is filtered by the app. An app may show the standard card instead (guests always do); allowed values per domain: `data/tile-capabilities.json`.
+
+    ## Room climate
+    See docs/room-climate.md. Every area of `areas` and `area` carries `room_climate {temperature, humidity}` with `source` (`admin` = picked on the area page, `auto` = the rule of `data/room-climate.json`) and `entity_ids`. The app shows the admin's entity, else the median of the thermostats with a value, else the median of the sensors with a value; without the field it applies the rule itself. The admin's change arrives as `area_updated`.
+
+    ## Access details in client_config
+    `client_config.access.set_up_by` carries only `{name, method}` (no `client_id` of the setting-up device; the admin keeps it). `client_config.access.time_zone` is the hub's IANA zone for the access-hour edges.
+
+    ## Heartbeat
+    The hub sends `ping` every 30 s to authenticated sessions and drops a session that did not answer the previous ping (in practice after 40-60 s). Clients may send `ping` at any time.
+
+    ## Close codes
+    | Code | Meaning | Expected client reaction |
+    |---|---|---|
+    | 1000 | normal (after client_reset_ack_ok or client_leave_ok, ping timeout) | reconnect (after reset: setup) |
+    | 4001 | client removed: kick or clear-all by an admin (non-guest), fallback 10 s after unanswered client_removed | full reset |
+    | 4002 | auth timeout | reconnect |
+    | 4003 | guest expired, guest kicked or cleared by an admin; before accept: invalid integration token | reset to setup |
+    | 4004 | kicked by the integration (no reset) | reconnect with the stored secret |
+    | 4029 | too many connections (before accept) | reconnect with backoff |
+    | 4401 | admin web-UI session ended (session cookie sessions only) | back to the login page |
+    | 4426 | upgrade required (after `upgrade_required`): app too old for this hub | keep the pairing, show "update the app", no automatic reconnect loop |
+
+    ## Protocol version
+    One integer `protocol_version` for the whole hub protocol, starting at 1, published in `auth_ok`, `pair_ok`, `upgrade_required`, `/api/health` and Bonjour TXT (`pv`, `pv_min`). Additive changes do not bump it (tolerant decoding). Compatibility rule: the hub serves every client protocol version from `min_protocol_version` to its own `protocol_version`, and `min_protocol_version <= max(1, protocol_version - 2)`, i.e. a hub always supports at least the two previous protocol versions. A client newer than the hub speaks the hub's version if it still supports it, otherwise it shows "update the hub". `min_app_version` (per platform) is an additional floor for known-broken app builds.
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  tags:
+  - name: heartbeat
+  - name: client-to-hub
+  - name: hub-to-client
+  - name: command
+  - name: broadcast
+  - name: audience-all
+    description: Every authenticated session incl. apps.
+  - name: audience-admin
+    description: Ingress/dev sessions and the integration session.
+  - name: audience-integration
+    description: Only the integration push session.
+  - name: hub-to-integration
+    description: Requests from the hub to the integration push session.
+  x-hub-version: 2026.12.0
+  x-namespace: halumar
+  x-limits:
+    max_authenticated_connections: 100
+    max_unauthenticated_connections: 200
+    max_unauthenticated_connections_per_ip: 5
+    unauthenticated_timeout_seconds: 30
+    max_pair_attempts_per_connection: 5
+    max_auth_attempts_per_connection: 5
+    max_pair_attempts_per_ip: 10
+    pair_attempts_per_ip_window_seconds: 600
+    admin_session_recheck_seconds: 60
+    max_message_bytes: 65536
+    server_ping_interval_seconds: 30
+    server_ping_timeout_seconds: 10
+    reset_ack_grace_seconds: 10
+    config_fetch_grace_seconds: 5
+    config_switch_grace_seconds: 3
+    onboard_session_seconds: 300
+    onboard_starts_per_ip: 20
+    onboard_starts_per_ip_window_seconds: 600
+    onboard_open_sessions_per_ip: 3
+    onboard_open_sessions_total: 20
+    onboard_failures_per_confirming_device: 10
+    onboard_failures_window_seconds: 600
+    onboard_code_failures_per_device: 5
+    onboard_code_failures_per_device_window_seconds: 600
+    onboard_code_failures_total: 20
+    onboard_code_failures_total_window_seconds: 600
+    guest_invite_seconds: 300
+    guest_invites_per_device: 10
+    guest_invites_per_device_window_seconds: 3600
+    guest_invites_open_per_device: 1
+    guest_invites_open_total: 20
+    control_data_max_bytes: 4096
+    control_request_id_max_length: 64
+    kids_state_refresh_seconds: 30
+    hub_state_subscribe_min_interval_seconds: 10
+    hub_reads_per_device: 10
+    hub_reads_window_seconds: 10
+    hub_image_requests_per_entity_per_second: 1
+    hub_image_open_requests_per_entity: 1
+    hub_image_open_requests_per_device: 4
+    hub_image_requests_per_device: 20
+    hub_image_bytes_per_device: 16777216
+    hub_image_window_seconds: 10
+    hub_image_max_bytes: 2097152
+    hub_image_message_max_bytes: 2800000
+    family_writes_per_manager: 30
+    family_writes_window_seconds: 600
+    family_reads_per_manager_per_minute: 60
+    family_answers_per_manager_per_hour: 60
+    family_open_requests_per_child_device: 1
+    family_request_timeout_minutes_default: 10
+    family_child_requests_per_hour_default: 6
+    family_release_max_minutes: 720
+  x-close-codes:
+    '1000': normal (after client_reset_ack_ok or client_leave_ok, ping timeout)
+    '4001': client removed (admin kick/clear of a non-guest, or no client_reset_ack within 10 s)
+    '4002': auth timeout
+    '4003': guest expired/kicked/cleared; invalid integration token before accept
+    '4004': kicked by the integration (no reset)
+    '4029': too many connections (before accept)
+    '4401': admin web-UI session ended
+    '4426': upgrade required (after upgrade_required)
+  x-protocol:
+    protocol_version: 1
+    min_protocol_version: 1
+    supported_previous_versions: 2
+  x-planned:
+    pv: protocol_version in the pairing QR/deep link (pv).
+defaultContentType: application/json
+servers:
+  lan-plain:
+    host: '{host}:8099'
+    protocol: ws
+    description: LAN, unencrypted (integration, unpinned apps).
+    variables:
+      host:
+        default: homeassistant.local
+    security:
+    - $ref: '#/components/securitySchemes/integrationToken'
+    - $ref: '#/components/securitySchemes/clientSecretInBand'
+  lan-tls:
+    host: '{host}:8100'
+    protocol: wss
+    description: LAN, TLS with self-signed leaf; clients pin the SHA-256 fingerprint from Bonjour fp, QR fp or client_config.
+    variables:
+      host:
+        default: homeassistant.local
+    security:
+    - $ref: '#/components/securitySchemes/integrationToken'
+    - $ref: '#/components/securitySchemes/clientSecretInBand'
+  ingress:
+    host: '{haHost}'
+    pathname: /api/hassio_ingress/{ingressToken}
+    protocol: wss
+    description: Home Assistant Ingress (Admin UI).
+    variables:
+      haHost:
+        default: homeassistant.local:8123
+      ingressToken:
+        default: INGRESS_TOKEN
+    security:
+    - $ref: '#/components/securitySchemes/ingress'
+channels:
+  hub:
+    address: /api/ws
+    title: Hub socket
+    description: Single multiplexed channel; message kind is the 'type' field (and 'command' for type=command).
+    messages:
+      ping:
+        $ref: '#/components/messages/ping'
+      pong:
+        $ref: '#/components/messages/pong'
+      c2s.pair:
+        $ref: '#/components/messages/c2s.pair'
+      c2s.onboard_start:
+        $ref: '#/components/messages/c2s.onboard_start'
+      c2s.onboard_lookup:
+        $ref: '#/components/messages/c2s.onboard_lookup'
+      c2s.onboard_confirm:
+        $ref: '#/components/messages/c2s.onboard_confirm'
+      c2s.onboard_decline:
+        $ref: '#/components/messages/c2s.onboard_decline'
+      c2s.guest_invite_create:
+        $ref: '#/components/messages/c2s.guest_invite_create'
+      c2s.guest_invite_cancel:
+        $ref: '#/components/messages/c2s.guest_invite_cancel'
+      c2s.get_setup_grant:
+        $ref: '#/components/messages/c2s.get_setup_grant'
+      c2s.get_set_up_devices:
+        $ref: '#/components/messages/c2s.get_set_up_devices'
+      c2s.set_up_device_remove:
+        $ref: '#/components/messages/c2s.set_up_device_remove'
+      c2s.family_get_children:
+        $ref: '#/components/messages/c2s.family_get_children'
+      c2s.family_rule_set:
+        $ref: '#/components/messages/c2s.family_rule_set'
+      c2s.family_rule_reset:
+        $ref: '#/components/messages/c2s.family_rule_reset'
+      c2s.family_release:
+        $ref: '#/components/messages/c2s.family_release'
+      c2s.family_release_end:
+        $ref: '#/components/messages/c2s.family_release_end'
+      c2s.family_get_requests:
+        $ref: '#/components/messages/c2s.family_get_requests'
+      c2s.family_answer:
+        $ref: '#/components/messages/c2s.family_answer'
+      c2s.family_get_activity:
+        $ref: '#/components/messages/c2s.family_get_activity'
+      c2s.family_notify_set:
+        $ref: '#/components/messages/c2s.family_notify_set'
+      c2s.kids_request:
+        $ref: '#/components/messages/c2s.kids_request'
+      c2s.kids_request_cancel:
+        $ref: '#/components/messages/c2s.kids_request_cancel'
+      c2s.access_request:
+        $ref: '#/components/messages/c2s.access_request'
+      c2s.access_request_cancel:
+        $ref: '#/components/messages/c2s.access_request_cancel'
+      c2s.access_requests_get:
+        $ref: '#/components/messages/c2s.access_requests_get'
+      c2s.access_request_answer:
+        $ref: '#/components/messages/c2s.access_request_answer'
+      c2s.panel_command_ok:
+        $ref: '#/components/messages/c2s.panel_command_ok'
+      c2s.panel_command_error:
+        $ref: '#/components/messages/c2s.panel_command_error'
+      c2s.control:
+        $ref: '#/components/messages/c2s.control'
+      c2s.state_subscribe:
+        $ref: '#/components/messages/c2s.state_subscribe'
+      c2s.history_get:
+        $ref: '#/components/messages/c2s.history_get'
+      c2s.location_report:
+        $ref: '#/components/messages/c2s.location_report'
+      c2s.tag_resolve:
+        $ref: '#/components/messages/c2s.tag_resolve'
+      c2s.forecast_get:
+        $ref: '#/components/messages/c2s.forecast_get'
+      c2s.camera_image_get:
+        $ref: '#/components/messages/c2s.camera_image_get'
+      c2s.media_image_get:
+        $ref: '#/components/messages/c2s.media_image_get'
+      c2s.auth:
+        $ref: '#/components/messages/c2s.auth'
+      c2s.client_reset_ack:
+        $ref: '#/components/messages/c2s.client_reset_ack'
+      c2s.client_leave:
+        $ref: '#/components/messages/c2s.client_leave'
+      c2s.watch_access_get:
+        $ref: '#/components/messages/c2s.watch_access_get'
+      c2s.subscribe:
+        $ref: '#/components/messages/c2s.subscribe'
+      c2s.get_areas:
+        $ref: '#/components/messages/c2s.get_areas'
+      c2s.get_area:
+        $ref: '#/components/messages/c2s.get_area'
+      c2s.get_client_config:
+        $ref: '#/components/messages/c2s.get_client_config'
+      c2s.get_notifications:
+        $ref: '#/components/messages/c2s.get_notifications'
+      c2s.notification_ack:
+        $ref: '#/components/messages/c2s.notification_ack'
+      c2s.notification_dismiss:
+        $ref: '#/components/messages/c2s.notification_dismiss'
+      c2s.client_status:
+        $ref: '#/components/messages/c2s.client_status'
+      s2c.area:
+        $ref: '#/components/messages/s2c.area'
+      s2c.areas:
+        $ref: '#/components/messages/s2c.areas'
+      s2c.auth_error:
+        $ref: '#/components/messages/s2c.auth_error'
+      s2c.auth_ok:
+        $ref: '#/components/messages/s2c.auth_ok'
+      s2c.auth_required:
+        $ref: '#/components/messages/s2c.auth_required'
+      s2c.auth_timeout:
+        $ref: '#/components/messages/s2c.auth_timeout'
+      s2c.client_config:
+        $ref: '#/components/messages/s2c.client_config'
+      s2c.client_removed:
+        $ref: '#/components/messages/s2c.client_removed'
+      s2c.client_reset_ack_ok:
+        $ref: '#/components/messages/s2c.client_reset_ack_ok'
+      s2c.client_leave_ok:
+        $ref: '#/components/messages/s2c.client_leave_ok'
+      s2c.watch_access:
+        $ref: '#/components/messages/s2c.watch_access'
+      s2c.client_status_ok:
+        $ref: '#/components/messages/s2c.client_status_ok'
+      s2c.error:
+        $ref: '#/components/messages/s2c.error'
+      s2c.guest_extended:
+        $ref: '#/components/messages/s2c.guest_extended'
+      s2c.notification_ack_ok:
+        $ref: '#/components/messages/s2c.notification_ack_ok'
+      s2c.notification_dismiss_ok:
+        $ref: '#/components/messages/s2c.notification_dismiss_ok'
+      s2c.notifications:
+        $ref: '#/components/messages/s2c.notifications'
+      s2c.pair_error:
+        $ref: '#/components/messages/s2c.pair_error'
+      s2c.pair_ok:
+        $ref: '#/components/messages/s2c.pair_ok'
+      s2c.onboard_session:
+        $ref: '#/components/messages/s2c.onboard_session'
+      s2c.onboard_info:
+        $ref: '#/components/messages/s2c.onboard_info'
+      s2c.onboard_ok:
+        $ref: '#/components/messages/s2c.onboard_ok'
+      s2c.onboard_confirm_ok:
+        $ref: '#/components/messages/s2c.onboard_confirm_ok'
+      s2c.onboard_error:
+        $ref: '#/components/messages/s2c.onboard_error'
+      s2c.guest_invite:
+        $ref: '#/components/messages/s2c.guest_invite'
+      s2c.guest_invite_ended:
+        $ref: '#/components/messages/s2c.guest_invite_ended'
+      s2c.guest_invite_error:
+        $ref: '#/components/messages/s2c.guest_invite_error'
+      s2c.onboard_claimed:
+        $ref: '#/components/messages/s2c.onboard_claimed'
+      s2c.setup_grant:
+        $ref: '#/components/messages/s2c.setup_grant'
+      s2c.set_up_devices:
+        $ref: '#/components/messages/s2c.set_up_devices'
+      s2c.set_up_device_removed:
+        $ref: '#/components/messages/s2c.set_up_device_removed'
+      s2c.family_children:
+        $ref: '#/components/messages/s2c.family_children'
+      s2c.family_child_updated:
+        $ref: '#/components/messages/s2c.family_child_updated'
+      s2c.family_result:
+        $ref: '#/components/messages/s2c.family_result'
+      s2c.family_requests:
+        $ref: '#/components/messages/s2c.family_requests'
+      s2c.family_request:
+        $ref: '#/components/messages/s2c.family_request'
+      s2c.family_activity:
+        $ref: '#/components/messages/s2c.family_activity'
+      s2c.family_notify:
+        $ref: '#/components/messages/s2c.family_notify'
+      s2c.family_error:
+        $ref: '#/components/messages/s2c.family_error'
+      s2c.kids_request_state:
+        $ref: '#/components/messages/s2c.kids_request_state'
+      s2c.access_request_state:
+        $ref: '#/components/messages/s2c.access_request_state'
+      s2c.access_request_update:
+        $ref: '#/components/messages/s2c.access_request_update'
+      s2c.access_requests:
+        $ref: '#/components/messages/s2c.access_requests'
+      s2c.access_request_error:
+        $ref: '#/components/messages/s2c.access_request_error'
+      s2c.control_ok:
+        $ref: '#/components/messages/s2c.control_ok'
+      s2c.rule_blocked:
+        $ref: '#/components/messages/s2c.rule_blocked'
+      s2c.control_error:
+        $ref: '#/components/messages/s2c.control_error'
+      s2c.state_subscribed:
+        $ref: '#/components/messages/s2c.state_subscribed'
+      s2c.entity_state:
+        $ref: '#/components/messages/s2c.entity_state'
+      s2c.history:
+        $ref: '#/components/messages/s2c.history'
+      s2c.location_report_ok:
+        $ref: '#/components/messages/s2c.location_report_ok'
+      s2c.location_report_error:
+        $ref: '#/components/messages/s2c.location_report_error'
+      s2c.tag_result:
+        $ref: '#/components/messages/s2c.tag_result'
+      s2c.forecast:
+        $ref: '#/components/messages/s2c.forecast'
+      s2c.camera_image:
+        $ref: '#/components/messages/s2c.camera_image'
+      s2c.media_image:
+        $ref: '#/components/messages/s2c.media_image'
+      s2c.session_expired:
+        $ref: '#/components/messages/s2c.session_expired'
+      s2c.subscribed:
+        $ref: '#/components/messages/s2c.subscribed'
+      s2c.upgrade_required:
+        $ref: '#/components/messages/s2c.upgrade_required'
+      cmd.clear_notifications:
+        $ref: '#/components/messages/cmd.clear_notifications'
+      cmd.dismiss_notification:
+        $ref: '#/components/messages/cmd.dismiss_notification'
+      cmd.display_notification:
+        $ref: '#/components/messages/cmd.display_notification'
+      cmd.navigate_to_area:
+        $ref: '#/components/messages/cmd.navigate_to_area'
+      cmd.refresh:
+        $ref: '#/components/messages/cmd.refresh'
+      cmd.show_entity:
+        $ref: '#/components/messages/cmd.show_entity'
+      cmd.panel_command:
+        $ref: '#/components/messages/cmd.panel_command'
+      bc.area_created:
+        $ref: '#/components/messages/bc.area_created'
+      bc.area_deleted:
+        $ref: '#/components/messages/bc.area_deleted'
+      bc.area_updated:
+        $ref: '#/components/messages/bc.area_updated'
+      bc.areas_deleted:
+        $ref: '#/components/messages/bc.areas_deleted'
+      bc.areas_changed:
+        $ref: '#/components/messages/bc.areas_changed'
+      bc.client_config_updated:
+        $ref: '#/components/messages/bc.client_config_updated'
+      bc.client_connected:
+        $ref: '#/components/messages/bc.client_connected'
+      bc.client_disconnected:
+        $ref: '#/components/messages/bc.client_disconnected'
+      bc.client_kicked:
+        $ref: '#/components/messages/bc.client_kicked'
+      bc.client_paired:
+        $ref: '#/components/messages/bc.client_paired'
+      bc.client_status_updated:
+        $ref: '#/components/messages/bc.client_status_updated'
+      bc.clients_cleared:
+        $ref: '#/components/messages/bc.clients_cleared'
+      bc.device_activity:
+        $ref: '#/components/messages/bc.device_activity'
+      bc.entity_added:
+        $ref: '#/components/messages/bc.entity_added'
+      bc.entity_removed:
+        $ref: '#/components/messages/bc.entity_removed'
+      bc.entity_updated:
+        $ref: '#/components/messages/bc.entity_updated'
+      bc.guest_extended:
+        $ref: '#/components/messages/bc.guest_extended'
+      bc.guests_expired:
+        $ref: '#/components/messages/bc.guests_expired'
+      bc.layout_updated:
+        $ref: '#/components/messages/bc.layout_updated'
+      bc.profiles_changed:
+        $ref: '#/components/messages/bc.profiles_changed'
+      bc.family_changed:
+        $ref: '#/components/messages/bc.family_changed'
+      bc.access_requests_changed:
+        $ref: '#/components/messages/bc.access_requests_changed'
+      bc.log_entry:
+        $ref: '#/components/messages/bc.log_entry'
+      bc.log_read:
+        $ref: '#/components/messages/bc.log_read'
+      bc.notification_created:
+        $ref: '#/components/messages/bc.notification_created'
+      bc.notification_created.integration:
+        $ref: '#/components/messages/bc.notification_created.integration'
+      bc.notification_deleted:
+        $ref: '#/components/messages/bc.notification_deleted'
+      bc.notification_delivered:
+        $ref: '#/components/messages/bc.notification_delivered'
+      bc.notification_dismissed:
+        $ref: '#/components/messages/bc.notification_dismissed'
+      bc.notifications_cleared:
+        $ref: '#/components/messages/bc.notifications_cleared'
+      bc.onboarding_started:
+        $ref: '#/components/messages/bc.onboarding_started'
+      bc.onboarding_claimed:
+        $ref: '#/components/messages/bc.onboarding_claimed'
+      bc.onboarding_ended:
+        $ref: '#/components/messages/bc.onboarding_ended'
+      bc.guest_invite_opened:
+        $ref: '#/components/messages/bc.guest_invite_opened'
+      bc.guest_invite_closed:
+        $ref: '#/components/messages/bc.guest_invite_closed'
+      bc.pairing_cancelled:
+        $ref: '#/components/messages/bc.pairing_cancelled'
+      bc.pairing_started:
+        $ref: '#/components/messages/bc.pairing_started'
+      bc.section_created:
+        $ref: '#/components/messages/bc.section_created'
+      bc.section_deleted:
+        $ref: '#/components/messages/bc.section_deleted'
+      bc.section_updated:
+        $ref: '#/components/messages/bc.section_updated'
+      bc.widget_created:
+        $ref: '#/components/messages/bc.widget_created'
+      bc.widget_deleted:
+        $ref: '#/components/messages/bc.widget_deleted'
+      bc.widget_updated:
+        $ref: '#/components/messages/bc.widget_updated'
+      int.provision_client:
+        $ref: '#/components/messages/int.provision_client'
+      int.update_client_identity:
+        $ref: '#/components/messages/int.update_client_identity'
+      int.deprovision_client:
+        $ref: '#/components/messages/int.deprovision_client'
+      int.family_relay:
+        $ref: '#/components/messages/int.family_relay'
+      int.enforcement_rules:
+        $ref: '#/components/messages/int.enforcement_rules'
+      int.ha_event:
+        $ref: '#/components/messages/int.ha_event'
+      int.client_location:
+        $ref: '#/components/messages/int.client_location'
+    bindings:
+      ws:
+        method: GET
+        headers:
+          type: object
+          properties:
+            Authorization:
+              type: string
+              pattern: ^Bearer [0-9a-f]{64}$
+              description: Only for the integration push session (integration token).
+            X-Hub-Integration-Version:
+              type: string
+              description: Integration version (telemetry). Namespace key integration_version_header.
+            X-Ingress-Path:
+              type: string
+              description: Set by the Supervisor Ingress proxy only.
+        query:
+          type: object
+          properties: {}
+          additionalProperties: false
+          description: No query parameters; ?token= is ignored.
+        bindingVersion: 0.1.0
+operations:
+  receive_pair:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends pair
+    summary: Pair a new device with the active PIN (unauthenticated sessions only, 5 attempts per connection). Success authenticates
+      the connection.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.pair'
+    x-requires: unauthenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.pair_ok'
+      - $ref: '#/channels/hub/messages/s2c.pair_error'
+      - $ref: '#/channels/hub/messages/s2c.upgrade_required'
+  receive_auth:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends auth
+    summary: Authenticate with the client secret (5 attempts per connection). Query-string tokens are not supported.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.auth'
+    x-requires: unauthenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.auth_ok'
+      - $ref: '#/channels/hub/messages/s2c.auth_error'
+      - $ref: '#/channels/hub/messages/s2c.client_removed'
+      - $ref: '#/channels/hub/messages/s2c.upgrade_required'
+  receive_client_reset_ack:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends client_reset_ack
+    summary: Device confirms it wiped its credentials after client_removed. Accepted authenticated, or unauthenticated for
+      exactly the pending id signalled during auth. Purges the tombstone; server answers client_reset_ack_ok and closes 1000.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.client_reset_ack'
+    x-requires: paired-client or pending-removal socket
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.client_reset_ack_ok'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_client_leave:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends client_leave
+    summary: The device signs itself off (reset, remove home). The hub deletes it at once, removes its HA user, answers
+      client_leave_ok and closes 1000.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.client_leave'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.client_leave_ok'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_watch_access_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Phone sends watch_access_get
+    summary: The phone that set up a watch asks for the watch's HA access, sealed to the watch's key.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.watch_access_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.watch_access'
+  send_watch_access:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Hub pushes watch_access
+    summary: The access of a watch changed (new or rotated HA token, profile, rules); the hub pushes it, sealed to the
+      watch's key, to every connection of the device that set the watch up.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.watch_access'
+  receive_subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends subscribe
+    summary: No-op; answered with 'subscribed'. Clients need not send it.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.subscribe'
+    x-requires: authenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.subscribed'
+  receive_get_areas:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends get_areas
+    summary: Request the visible active areas (filtered by client tags; a guest without tags gets an empty list).
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_areas'
+    x-requires: authenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.areas'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_get_area:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends get_area
+    summary: Request one area with sections, entities (live state) and widgets. Paired clients only get areas of their own scope (their area list by tags, plus areas their notifications link to); other ids are answered with error 'Area not found'. Server paths are stripped and entity states sanitized for paired clients.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_area'
+    x-requires: authenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.area'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_get_client_config:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends get_client_config
+    summary: Request the device configuration (HA token, URLs, managed settings).
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_client_config'
+    x-requires: authenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.client_config'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_get_notifications:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends get_notifications
+    summary: Request all active notifications of this paired client (connect-time catch-up). Paired clients only.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_notifications'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.notifications'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_notification_ack:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends notification_ack
+    summary: Confirm delivery of a notification. Paired clients only.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.notification_ack'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.notification_ack_ok'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_notification_dismiss:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends notification_dismiss
+    summary: Dismiss a notification server-side. Paired clients only.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.notification_dismiss'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.notification_dismiss_ok'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_client_status:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends client_status
+    summary: Report device status; any subset of the fields. Invalid values are skipped silently. Paired clients only. tvOS
+      sends connection_type 'ethernet' every 300 s.
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.client_status'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.client_status_ok'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_onboard_start:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Unpaired device starts onboarding
+    summary: 'Ephemeral public key + client info; TLS port only; every app platform. Replaces a running session of this connection.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.onboard_start'
+    x-requires: unauthenticated
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.onboard_session'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+      - $ref: '#/channels/hub/messages/s2c.upgrade_required'
+  receive_onboard_lookup:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Paired device reads an onboarding session
+    summary: 'Values of the scanned QR code or the typed code; a public key or hub id that does not match invalidates the session; wrong codes are limited per device and on the hub.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.onboard_lookup'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.onboard_info'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_onboard_confirm:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Paired device confirms an onboarding session
+    summary: 'Permission check (effective rule setup_devices with the kind), profile never stronger than the confirming device, area choice (subset of its own areas), guest expiry, family managers; creates the device and delivers its sealed credentials to the waiting connection.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.onboard_confirm'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.onboard_confirm_ok'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_onboard_decline:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Paired device declines an onboarding session
+    summary: 'Ends the session; the waiting device gets onboard_error declined. Only an unknown session is answered (onboard_error).'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.onboard_decline'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_guest_invite_create:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Member device invites a guest
+    summary: 'Permission check (setup_devices with kind guest), guest profile, expiry and remote within the grant, limits; replaces the own open invitation.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.guest_invite_create'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.guest_invite'
+      - $ref: '#/channels/hub/messages/s2c.guest_invite_error'
+  receive_guest_invite_cancel:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Member device withdraws its invitation
+    summary: 'Only its own open invitation.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.guest_invite_cancel'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.guest_invite_ended'
+      - $ref: '#/channels/hub/messages/s2c.guest_invite_error'
+  receive_get_setup_grant:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Member device reads what it may set up
+    summary: 'Kinds, profiles (never stronger than the device), areas, family managers and guest limits for a platform or an invitation.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_setup_grant'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.setup_grant'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_get_set_up_devices:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Member device lists what it set up
+    summary: 'Active devices and guests whose set_up_by is this device.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.get_set_up_devices'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.set_up_devices'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_set_up_device_remove:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Member device removes a device it set up
+    summary: 'Disconnects and removes the device with its HA user, only devices set up by this device.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.set_up_device_remove'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.set_up_device_removed'
+      - $ref: '#/channels/hub/messages/s2c.onboard_error'
+  receive_family_get_children:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager lists its child devices
+    summary: 'Effective rule family_manager; scope from the device property.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_get_children'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_children'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_rule_set:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager changes a kids rule
+    summary: 'Device adjustment per child device; only manageable rules not fixed in the child''s profile; last writer wins.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_rule_set'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_result'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_rule_reset:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager resets a kids rule
+    summary: 'Removes the device adjustment per child device.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_rule_reset'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_result'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_release:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager starts a release
+    summary: 'Bedtime, pause or one entity for a preset duration; needs the rule behind it not fixed; never locks or alarm panels.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_release'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_result'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_release_end:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager ends releases
+    summary: 'Always allowed (only stricter).'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_release_end'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_result'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_get_requests:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager lists requests
+    summary: 'Open requests plus the last 24 hours.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_get_requests'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_requests'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_answer:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager answers a request
+    summary: 'First answer wins; yes = release with the same checks.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_answer'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_request'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_get_activity:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager reads the children''s activity
+    summary: 'Read view of the log, children in scope only, activity_days back.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_get_activity'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_activity'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_family_notify_set:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Family manager switches child notifications
+    summary: 'Only kinds with can_disable.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.family_notify_set'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.family_notify'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_panel_command_result:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: App answers a panel_command
+    summary: 'panel_command_ok (with the new panel status, stored like client_status.panel) or panel_command_error with a code; within 5 s, otherwise the hub reports timeout to the caller. Unknown or late ids are ignored. No reply.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.panel_command_ok'
+    - $ref: '#/channels/hub/messages/c2s.panel_command_error'
+    x-requires: paired-client
+  receive_kids_request:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Child device asks
+    summary: 'One open request per child device; limits and cooldown from the house settings.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.kids_request'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.kids_request_state'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_kids_request_cancel:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Child device withdraws its request
+    summary: 'Only its own open request.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.kids_request_cancel'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.kids_request_state'
+      - $ref: '#/channels/hub/messages/s2c.family_error'
+  receive_access_request:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device asks for early access
+    summary: 'Outside its access hours, closed by the schedule, effective rule access_requests; one open request per device, requests_per_hour, cooldown after a No (data/access-requests.json). Only over the hub WebSocket.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.access_request'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.access_request_state'
+      - $ref: '#/channels/hub/messages/s2c.access_request_error'
+  receive_access_request_cancel:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device withdraws its early access request
+    summary: 'Only its own request.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.access_request_cancel'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.access_request_state'
+      - $ref: '#/channels/hub/messages/s2c.access_request_error'
+  receive_access_requests_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Recipient reads open early access requests
+    summary: 'The open requests this device may answer.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.access_requests_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.access_requests'
+      - $ref: '#/channels/hub/messages/s2c.access_request_error'
+  receive_access_request_answer:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Recipient answers an early access request
+    summary: 'First answer wins; yes with a duration opens the device (access_early).'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.access_request_answer'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.access_request_update'
+      - $ref: '#/channels/hub/messages/s2c.access_request_error'
+  receive_control:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path controls an entity through the hub
+    summary: 'Access, visibility, kids rules with parental controls, call as the device''s HA user.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.control'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.control_ok'
+      - $ref: '#/channels/hub/messages/s2c.rule_blocked'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  receive_state_subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path subscribes to live states
+    summary: 'Only devices on the hub path; entity_state follows for visible entities.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.state_subscribe'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.state_subscribed'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  receive_history_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path reads the history of an entity
+    summary: 'Only devices on the hub path and visible entities; recorder read by the hub.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.history_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.history'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  receive_location_report:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device reports its position
+    summary: 'See docs/location.md. Devices on the hub path only (others: not_hub_controlled, they use
+      <ns>.report_location); the hub checks the rule location and the rate limit (one report per 5 s) and hands
+      the fix to the integration. REST twin POST /api/client/location.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.location_report'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.location_report_ok'
+      - $ref: '#/channels/hub/messages/s2c.location_report_error'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_tag_resolve:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device resolves a scanned tag
+    summary: 'See docs/links.md. The hub checks the rule scan_tags and the areas of the device, logs tag_scanned
+      and answers tag_result; it executes nothing (the app switches like a widget).'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.tag_resolve'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.tag_result'
+      - $ref: '#/channels/hub/messages/s2c.error'
+  receive_forecast_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path reads a weather forecast
+    summary: 'Only devices on the hub path and visible weather entities; weather.get_forecasts by the hub.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.forecast_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.forecast'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  receive_camera_image_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path reads a camera still image
+    summary: 'Only devices on the hub path and cameras in their scope; the hub reads /api/camera_proxy with its
+      own access (at most 2 MiB, one per second per entity and device). Kids: blocked device types → rule_blocked.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.camera_image_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.camera_image'
+      - $ref: '#/channels/hub/messages/s2c.rule_blocked'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  receive_media_image_get:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Device on the hub path reads the artwork of a media player
+    summary: 'Only devices on the hub path and media players in their scope; the hub reads
+      /api/media_player_proxy with its own access (at most 2 MiB, one per second per entity and device). Kids:
+      blocked device types → rule_blocked.'
+    messages:
+    - $ref: '#/channels/hub/messages/c2s.media_image_get'
+    x-requires: paired-client
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/s2c.media_image'
+      - $ref: '#/channels/hub/messages/s2c.rule_blocked'
+      - $ref: '#/channels/hub/messages/s2c.control_error'
+  send_entity_state:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Live state for a subscribed device on the hub path
+    summary: 'After state_subscribe: first the current state of every visible entity (snapshot), then every change of an entity visible to the device.'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.entity_state'
+  receive_ping:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client sends ping
+    summary: Any session; answered with pong.
+    messages:
+    - $ref: '#/channels/hub/messages/ping'
+    reply:
+      channel:
+        $ref: '#/channels/hub'
+      messages:
+      - $ref: '#/channels/hub/messages/pong'
+    x-requires: any
+  receive_pong:
+    action: receive
+    channel:
+      $ref: '#/channels/hub'
+    title: Client answers the server ping
+    summary: Marks the connection alive. Without pong the hub drops the connection (~40-60 s). The Admin UI does not answer
+      today.
+    messages:
+    - $ref: '#/channels/hub/messages/pong'
+    x-requires: authenticated
+  send_handshake:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Handshake result on connect
+    summary: 'Right after accept: auth_ok for Ingress and integration sessions (no client message needed), otherwise auth_required
+      with timeout 30.'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.auth_ok'
+    - $ref: '#/channels/hub/messages/s2c.auth_required'
+  send_auth_required_reject:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Reject messages before authentication
+    summary: Any message other than pair/auth/client_reset_ack/ping on an unauthenticated session is answered with auth_required
+      (without timeout), not error.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.auth_required'
+  send_session_expired:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Admin web-UI session ended
+    summary: Sessions authenticated by the admin session cookie (client_id 'admin', TLS, same Origin) get session_expired
+      when the session expires, is evicted or logged out; followed by close 4401. The UI returns to its login page.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.session_expired'
+    x-audience: ADMIN
+  send_auth_timeout:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Unauthenticated timeout
+    summary: 30 s after connect without successful auth/pair; followed by close 4002.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.auth_timeout'
+  send_ping:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Server heartbeat
+    summary: Every 30 s to authenticated sessions.
+    messages:
+    - $ref: '#/channels/hub/messages/ping'
+  send_error:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Protocol errors
+    summary: Unknown type, invalid JSON, message > 64 KB, read-only integration session.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.error'
+  send_client_removed:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Device deleted by an admin
+    summary: Sent to live connections of a deleted client; client answers client_reset_ack, otherwise close 4001 after 10
+      s.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.client_removed'
+  send_guest_extended:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Guest expiry extended (targeted)
+    summary: Sent to the connected guest.
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.guest_extended'
+  send_client_config_updated:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Config changed (targeted)
+    summary: After token rotation only the affected client gets client_config_updated; the old token is revoked after its
+      get_client_config + 3 s (max 5 s without fetch).
+    messages:
+    - $ref: '#/channels/hub/messages/bc.client_config_updated'
+    x-audience: TARGETED
+  send_areas_changed:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Area list changed (paired apps)
+    summary: After creating, duplicating or deleting an area, every paired app session whose area list can change gets areas_changed (no payload) and answers with get_areas. Admin sessions get area_created / area_deleted / areas_deleted instead.
+    messages:
+    - $ref: '#/channels/hub/messages/bc.areas_changed'
+    x-audience: TARGETED
+  send_entity_updated:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Entity placement changed (area scope)
+    summary: After PUT /api/areas/{area_id}/entities/{entity_id} (name, size, visibility, control mode, tile settings). Goes to admin sessions, the integration and every paired app that may read the area; data.changed names the changed fields (e.g. ["tile"]). Apps answer with get_area.
+    messages:
+    - $ref: '#/channels/hub/messages/bc.entity_updated'
+    x-audience: TARGETED
+  send_command:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Remote commands
+    summary: Sent to one paired client (integration services or admin actions).
+    messages:
+    - $ref: '#/channels/hub/messages/cmd.clear_notifications'
+    - $ref: '#/channels/hub/messages/cmd.dismiss_notification'
+    - $ref: '#/channels/hub/messages/cmd.display_notification'
+    - $ref: '#/channels/hub/messages/cmd.navigate_to_area'
+    - $ref: '#/channels/hub/messages/cmd.refresh'
+    - $ref: '#/channels/hub/messages/cmd.show_entity'
+    - $ref: '#/channels/hub/messages/cmd.panel_command'
+    x-audience: TARGETED
+  send_onboarding_result:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Onboarding progress and result to the waiting device
+    summary: 'onboard_claimed when a confirming device looked the session up; onboard_ok after a confirmation (the connection is authenticated as the new device), or onboard_error when the session ended otherwise (declined, cancelled, session_expired, session_invalidated).'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.onboard_claimed'
+    - $ref: '#/channels/hub/messages/s2c.onboard_ok'
+    - $ref: '#/channels/hub/messages/s2c.onboard_error'
+    x-audience: TARGETED
+  send_guest_invite_result:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Invitation result to the inviting device
+    summary: 'guest_invite_ended to every connection of the inviting device: paired (a guest paired with the PIN), expired, revoked (admin), replaced, invalidated.'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.guest_invite_ended'
+    x-audience: TARGETED
+  send_family_push:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Family pushes (targeted)
+    summary: 'family_request and family_child_updated to every connection of every family manager of the child; kids_request_state to the child device when its request is answered or expires.'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.family_request'
+    - $ref: '#/channels/hub/messages/s2c.family_child_updated'
+    - $ref: '#/channels/hub/messages/s2c.kids_request_state'
+    x-audience: TARGETED
+  send_access_request_push:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Early access pushes (targeted)
+    summary: 'access_request_update to every connection of every recipient device (away through family_relay); access_request_state to the requesting device on every change of its request.'
+    messages:
+    - $ref: '#/channels/hub/messages/s2c.access_request_update'
+    - $ref: '#/channels/hub/messages/s2c.access_request_state'
+    x-audience: TARGETED
+  send_broadcast_all:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Broadcast to every authenticated session
+    summary: Data changes. Apps react with get_areas/get_area or get_client_config.
+    messages:
+    - $ref: '#/channels/hub/messages/bc.area_updated'
+    - $ref: '#/channels/hub/messages/bc.client_config_updated'
+    - $ref: '#/channels/hub/messages/bc.entity_added'
+    - $ref: '#/channels/hub/messages/bc.entity_removed'
+    - $ref: '#/channels/hub/messages/bc.layout_updated'
+    - $ref: '#/channels/hub/messages/bc.section_created'
+    - $ref: '#/channels/hub/messages/bc.section_deleted'
+    - $ref: '#/channels/hub/messages/bc.section_updated'
+    - $ref: '#/channels/hub/messages/bc.widget_created'
+    - $ref: '#/channels/hub/messages/bc.widget_deleted'
+    - $ref: '#/channels/hub/messages/bc.widget_updated'
+    x-audience: ALL
+  send_broadcast_admin:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Broadcast to admin sessions
+    summary: Management events for Ingress/dev sessions (Admin UI). Paired apps get areas_changed instead of area_created / area_deleted / areas_deleted.
+    messages:
+    - $ref: '#/channels/hub/messages/bc.area_created'
+    - $ref: '#/channels/hub/messages/bc.area_deleted'
+    - $ref: '#/channels/hub/messages/bc.areas_deleted'
+    - $ref: '#/channels/hub/messages/bc.client_connected'
+    - $ref: '#/channels/hub/messages/bc.client_disconnected'
+    - $ref: '#/channels/hub/messages/bc.client_kicked'
+    - $ref: '#/channels/hub/messages/bc.client_paired'
+    - $ref: '#/channels/hub/messages/bc.client_status_updated'
+    - $ref: '#/channels/hub/messages/bc.clients_cleared'
+    - $ref: '#/channels/hub/messages/bc.device_activity'
+    - $ref: '#/channels/hub/messages/bc.guest_extended'
+    - $ref: '#/channels/hub/messages/bc.guests_expired'
+    - $ref: '#/channels/hub/messages/bc.notification_created'
+    - $ref: '#/channels/hub/messages/bc.notification_deleted'
+    - $ref: '#/channels/hub/messages/bc.notification_delivered'
+    - $ref: '#/channels/hub/messages/bc.notification_dismissed'
+    - $ref: '#/channels/hub/messages/bc.notifications_cleared'
+    - $ref: '#/channels/hub/messages/bc.onboarding_ended'
+    - $ref: '#/channels/hub/messages/bc.onboarding_started'
+    - $ref: '#/channels/hub/messages/bc.onboarding_claimed'
+    - $ref: '#/channels/hub/messages/bc.guest_invite_closed'
+    - $ref: '#/channels/hub/messages/bc.guest_invite_opened'
+    - $ref: '#/channels/hub/messages/bc.pairing_cancelled'
+    - $ref: '#/channels/hub/messages/bc.pairing_started'
+    - $ref: '#/channels/hub/messages/bc.profiles_changed'
+    - $ref: '#/channels/hub/messages/bc.family_changed'
+    - $ref: '#/channels/hub/messages/bc.access_requests_changed'
+    - $ref: '#/channels/hub/messages/bc.log_entry'
+    - $ref: '#/channels/hub/messages/bc.log_read'
+    x-audience: ADMIN
+  send_broadcast_integration:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Broadcast to the integration push session
+    summary: The integration session receives ALL and ADMIN broadcasts unchanged, except notification_created which is reduced
+      to ids and log_entry / log_read, which it never gets. It treats every message except auth_ok, pong, subscribed and error as refresh trigger.
+    messages:
+    - $ref: '#/channels/hub/messages/bc.area_created'
+    - $ref: '#/channels/hub/messages/bc.area_deleted'
+    - $ref: '#/channels/hub/messages/bc.area_updated'
+    - $ref: '#/channels/hub/messages/bc.areas_deleted'
+    - $ref: '#/channels/hub/messages/bc.client_config_updated'
+    - $ref: '#/channels/hub/messages/bc.client_connected'
+    - $ref: '#/channels/hub/messages/bc.client_disconnected'
+    - $ref: '#/channels/hub/messages/bc.client_kicked'
+    - $ref: '#/channels/hub/messages/bc.client_paired'
+    - $ref: '#/channels/hub/messages/bc.client_status_updated'
+    - $ref: '#/channels/hub/messages/bc.clients_cleared'
+    - $ref: '#/channels/hub/messages/bc.device_activity'
+    - $ref: '#/channels/hub/messages/bc.entity_added'
+    - $ref: '#/channels/hub/messages/bc.entity_removed'
+    - $ref: '#/channels/hub/messages/bc.entity_updated'
+    - $ref: '#/channels/hub/messages/bc.guest_extended'
+    - $ref: '#/channels/hub/messages/bc.guests_expired'
+    - $ref: '#/channels/hub/messages/bc.layout_updated'
+    - $ref: '#/channels/hub/messages/bc.profiles_changed'
+    - $ref: '#/channels/hub/messages/bc.family_changed'
+    - $ref: '#/channels/hub/messages/bc.access_requests_changed'
+    - $ref: '#/channels/hub/messages/bc.notification_deleted'
+    - $ref: '#/channels/hub/messages/bc.notification_delivered'
+    - $ref: '#/channels/hub/messages/bc.notification_dismissed'
+    - $ref: '#/channels/hub/messages/bc.notifications_cleared'
+    - $ref: '#/channels/hub/messages/bc.onboarding_ended'
+    - $ref: '#/channels/hub/messages/bc.onboarding_started'
+    - $ref: '#/channels/hub/messages/bc.onboarding_claimed'
+    - $ref: '#/channels/hub/messages/bc.guest_invite_closed'
+    - $ref: '#/channels/hub/messages/bc.guest_invite_opened'
+    - $ref: '#/channels/hub/messages/bc.pairing_cancelled'
+    - $ref: '#/channels/hub/messages/bc.pairing_started'
+    - $ref: '#/channels/hub/messages/bc.section_created'
+    - $ref: '#/channels/hub/messages/bc.section_deleted'
+    - $ref: '#/channels/hub/messages/bc.section_updated'
+    - $ref: '#/channels/hub/messages/bc.widget_created'
+    - $ref: '#/channels/hub/messages/bc.widget_deleted'
+    - $ref: '#/channels/hub/messages/bc.widget_updated'
+    - $ref: '#/channels/hub/messages/bc.notification_created.integration'
+    x-audience: INTEGRATION
+  send_integration_provisioning:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Per-device HA user requests to the integration
+    summary: 'The hub asks the integration push session to create, update or remove the HA user of one device.
+      Fire-and-forget: the session stays read-only, the integration answers with POST /api/integration/client-token
+      (provision) or not at all (update/deprovision). Lost messages are recovered by the status poll (provisioning[] and
+      clients[]).'
+    messages:
+    - $ref: '#/channels/hub/messages/int.provision_client'
+    - $ref: '#/channels/hub/messages/int.update_client_identity'
+    - $ref: '#/channels/hub/messages/int.deprovision_client'
+    x-audience: INTEGRATION
+  send_integration_family_relay:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Family pushes for family managers away from home
+    summary: 'The hub asks the integration push session to forward a family push to the HA WebSocket subscriptions of these family manager devices. Fire-and-forget.'
+    messages:
+    - $ref: '#/channels/hub/messages/int.family_relay'
+    x-audience: INTEGRATION
+  send_integration_enforcement_rules:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Rule snapshots to the integration
+    summary: 'The hub pushes the rule snapshot of every device whose effective rules, areas, placements,
+      quick access or kids rules changed (and the complete set after the integration session authenticated).
+      Fire-and-forget; the status poll (enforcement.rules_hashes) and GET /api/integration/enforcement-rules are the
+      backstop. See docs/enforcement.md.'
+    messages:
+    - $ref: '#/channels/hub/messages/int.enforcement_rules'
+    x-audience: INTEGRATION
+  send_integration_ha_event:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Hub events to fire in Home Assistant
+    summary: 'Events of the taxonomy with source hub (pairing, guests, profiles, adjustments, kids release
+      request); the integration fires them as halumar_event (alarm kinds also as halumar_alarm). Fire-and-forget.'
+    messages:
+    - $ref: '#/channels/hub/messages/int.ha_event'
+    x-audience: INTEGRATION
+  send_integration_client_location:
+    action: send
+    channel:
+      $ref: '#/channels/hub'
+    title: Position of a device for its device_tracker
+    summary: 'Every location_report the hub accepted; the integration updates the device_tracker without
+      polling. Fire-and-forget; the hub keeps no position.'
+    messages:
+    - $ref: '#/channels/hub/messages/int.client_location'
+    x-audience: INTEGRATION
+components:
+  messages:
+    ping:
+      name: ping
+      title: ping
+      summary: Heartbeat ping (both directions).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/heartbeat/ping.json
+      tags:
+      - name: heartbeat
+      x-fixtures:
+      - ../fixtures/ws/heartbeat/ping/basic.json
+    pong:
+      name: pong
+      title: pong
+      summary: Heartbeat pong (both directions).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/heartbeat/pong.json
+      tags:
+      - name: heartbeat
+      x-fixtures:
+      - ../fixtures/ws/heartbeat/pong/basic.json
+    c2s.pair:
+      name: pair
+      title: pair
+      summary: Pair a new device with the active PIN (unauthenticated sessions only, 5 attempts per connection). Success authenticates
+        the connection.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/pair.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/pair/basic.json
+      - ../fixtures/ws/client/pair/web.json
+    c2s.onboard_start:
+      name: onboard_start
+      title: onboard_start
+      summary: 'Unpaired device asks for a one-time onboarding session (public key, client info).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/onboard_start.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/onboard_start/basic.json
+      - ../fixtures/ws/client/onboard_start/iphone.json
+    c2s.onboard_lookup:
+      name: onboard_lookup
+      title: onboard_lookup
+      summary: 'Paired device reads the session of a scanned QR code.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/onboard_lookup.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/onboard_lookup/basic.json
+      - ../fixtures/ws/client/onboard_lookup/code.json
+    c2s.onboard_confirm:
+      name: onboard_confirm
+      title: onboard_confirm
+      summary: 'Paired, permitted device confirms the onboarding.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/onboard_confirm.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/onboard_confirm/basic.json
+      - ../fixtures/ws/client/onboard_confirm/renamed.json
+      - ../fixtures/ws/client/onboard_confirm/area-choice.json
+      - ../fixtures/ws/client/onboard_confirm/all-areas.json
+      - ../fixtures/ws/client/onboard_confirm/child.json
+      - ../fixtures/ws/client/onboard_confirm/wall-panel.json
+      - ../fixtures/ws/client/onboard_confirm/guest.json
+      - ../fixtures/ws/client/onboard_confirm/person.json
+    c2s.onboard_decline:
+      name: onboard_decline
+      title: onboard_decline
+      summary: 'Paired device declines the onboarding.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/onboard_decline.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/onboard_decline/basic.json
+    c2s.auth:
+      name: auth
+      title: auth
+      summary: Authenticate with the client secret (5 attempts per connection). Query-string tokens are not supported.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/auth.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/auth/basic.json
+      - ../fixtures/ws/client/auth/tvos-minimal.json
+    c2s.client_reset_ack:
+      name: client_reset_ack
+      title: client_reset_ack
+      summary: Device confirms it wiped its credentials after client_removed. Accepted authenticated, or unauthenticated for
+        exactly the pending id signalled during auth. Purges the tombstone; server answers client_reset_ack_ok and closes
+        1000.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/client_reset_ack.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/client_reset_ack/basic.json
+    c2s.client_leave:
+      name: client_leave
+      title: client_leave
+      summary: The device signs itself off before it resets or removes this home. The hub deletes it at once (no tombstone),
+        removes its HA user, answers client_leave_ok and closes 1000; a wrong client_id is answered with error.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/client_leave.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/client_leave/basic.json
+    c2s.watch_access_get:
+      name: watch_access_get
+      title: watch_access_get
+      summary: The phone that set up a watch asks for the watch's current HA access (sealed to the watch's key).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/watch_access_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/watch_access_get/basic.json
+    c2s.subscribe:
+      name: subscribe
+      title: subscribe
+      summary: No-op; answered with 'subscribed'. Clients need not send it.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/subscribe.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/subscribe/basic.json
+      x-deprecated: true
+    c2s.get_areas:
+      name: get_areas
+      title: get_areas
+      summary: Request the visible active areas (filtered by client tags; a guest without tags gets an empty list).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_areas.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_areas/basic.json
+    c2s.get_area:
+      name: get_area
+      title: get_area
+      summary: Request one area with sections, entities (live state) and widgets. Paired clients only get areas of their own scope (their area list by tags, plus areas their notifications link to); other ids are answered with error 'Area not found'. Server paths are stripped and entity states sanitized for paired clients.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_area.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_area/basic.json
+    c2s.get_client_config:
+      name: get_client_config
+      title: get_client_config
+      summary: Request the device configuration (HA token, URLs, managed settings).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_client_config.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_client_config/basic.json
+    c2s.get_notifications:
+      name: get_notifications
+      title: get_notifications
+      summary: Request all active notifications of this paired client (connect-time catch-up). Paired clients only.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_notifications.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_notifications/basic.json
+    c2s.notification_ack:
+      name: notification_ack
+      title: notification_ack
+      summary: Confirm delivery of a notification. Paired clients only.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/notification_ack.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/notification_ack/basic.json
+    c2s.notification_dismiss:
+      name: notification_dismiss
+      title: notification_dismiss
+      summary: Dismiss a notification server-side. Paired clients only.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/notification_dismiss.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/notification_dismiss/basic.json
+    c2s.client_status:
+      name: client_status
+      title: client_status
+      summary: Report device status; any subset of the fields. Invalid values are skipped silently. Paired clients only. tvOS
+        sends connection_type 'ethernet' every 300 s.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/client_status.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/client_status/ios.json
+      - ../fixtures/ws/client/client_status/tvos.json
+      - ../fixtures/ws/client/client_status/ipad-panel.json
+      - ../fixtures/ws/client/client_status/tvos-panel.json
+    s2c.area:
+      name: area
+      title: area
+      summary: Answer to get_area.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/area.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/area/basic.json
+      - ../fixtures/ws/server/area/tile.json
+    s2c.areas:
+      name: areas
+      title: areas
+      summary: Answer to get_areas.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/areas.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/areas/basic.json
+    s2c.auth_error:
+      name: auth_error
+      title: auth_error
+      summary: 'Authentication failed; reason: invalid_secret | revoked | guest_expired | rate_limited | invalid_client_info.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/auth_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/auth_error/wrong-secret.json
+      - ../fixtures/ws/server/auth_error/revoked.json
+      - ../fixtures/ws/server/auth_error/guest-expired.json
+      - ../fixtures/ws/server/auth_error/rate-limited.json
+      - ../fixtures/ws/server/auth_error/malformed-client-info.json
+    s2c.auth_ok:
+      name: auth_ok
+      title: auth_ok
+      summary: 'Authentication succeeded. Sent immediately for ingress/integration sessions, after ''auth'' for paired clients.
+        A repeated ''auth'' on an authenticated session yields {type: auth_ok, message: ''Already authenticated''} without
+        client_id.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/auth_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/auth_ok/already-authenticated.json
+      - ../fixtures/ws/server/auth_ok/guest.json
+      - ../fixtures/ws/server/auth_ok/ingress.json
+      - ../fixtures/ws/server/auth_ok/integration.json
+      - ../fixtures/ws/server/auth_ok/paired-client.json
+    s2c.auth_required:
+      name: auth_required
+      title: auth_required
+      summary: Sent right after accept to unauthenticated sessions (with timeout), and as rejection of any other message before
+        authentication (without timeout).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/auth_required.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/auth_required/on-connect.json
+      - ../fixtures/ws/server/auth_required/reject-before-auth.json
+    s2c.auth_timeout:
+      name: auth_timeout
+      title: auth_timeout
+      summary: No successful auth/pair within 30 s; followed by close 4002.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/auth_timeout.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/auth_timeout/basic.json
+    s2c.client_config:
+      name: client_config
+      title: client_config
+      summary: Answer to get_client_config.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/client_config.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/client_config/paired.json
+    s2c.client_removed:
+      name: client_removed
+      title: client_removed
+      summary: The device was deleted by an admin (live) or authenticates with a tombstoned secret. Device must wipe and answer
+        client_reset_ack; without ack the server closes 4001 after 10 s.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/client_removed.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/client_removed/basic.json
+    s2c.client_reset_ack_ok:
+      name: client_reset_ack_ok
+      title: client_reset_ack_ok
+      summary: Tombstone purged; server closes with 1000 right after.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/client_reset_ack_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/client_reset_ack_ok/basic.json
+    s2c.client_leave_ok:
+      name: client_leave_ok
+      title: client_leave_ok
+      summary: Device removed after its client_leave; server closes with 1000 right after.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/client_leave_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/client_leave_ok/basic.json
+    s2c.watch_access:
+      name: watch_access
+      title: watch_access
+      summary: HA access of a watch sealed to its key (ready), a key not usable yet (pending) or no such watch of this phone
+        (gone). Answer to watch_access_get and push to the phone that set the watch up.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/watch_access.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/watch_access/ready.json
+      - ../fixtures/ws/server/watch_access/pending.json
+      - ../fixtures/ws/server/watch_access/gone.json
+    s2c.client_status_ok:
+      name: client_status_ok
+      title: client_status_ok
+      summary: Status stored (also sent when no field was valid).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/client_status_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/client_status_ok/basic.json
+    s2c.error:
+      name: error
+      title: error
+      summary: 'Generic error answer: unknown type, invalid JSON, message > 64 KB, read-only integration session, missing
+        fields, not found, role mismatch.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/error/integration-read-only.json
+      - ../fixtures/ws/server/error/too-large.json
+      - ../fixtures/ws/server/error/unknown-type.json
+    s2c.guest_extended:
+      name: guest_extended
+      title: guest_extended (targeted)
+      summary: Sent to the connected guest after its expiry was extended. Same type name as the ADMIN broadcast, different
+        shape (top-level expires_at, no data).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/guest_extended.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/guest_extended/basic.json
+    s2c.notification_ack_ok:
+      name: notification_ack_ok
+      title: notification_ack_ok
+      summary: Delivery acknowledged.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/notification_ack_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/notification_ack_ok/basic.json
+    s2c.notification_dismiss_ok:
+      name: notification_dismiss_ok
+      title: notification_dismiss_ok
+      summary: Dismissal stored.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/notification_dismiss_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/notification_dismiss_ok/basic.json
+    s2c.notifications:
+      name: notifications
+      title: notifications
+      summary: 'Answer to get_notifications: active notifications in push shape (with status).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/notifications.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/notifications/basic.json
+      - ../fixtures/ws/server/notifications/empty.json
+    s2c.onboard_session:
+      name: onboard_session
+      title: onboard_session
+      summary: 'Answer to onboard_start (session id, hub id, 6-digit code, expiry).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_session.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_session/basic.json
+    s2c.onboard_claimed:
+      name: onboard_claimed
+      title: onboard_claimed
+      summary: 'A confirming device looked up this session (waiting device shows who sets it up).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_claimed.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_claimed/basic.json
+    s2c.onboard_info:
+      name: onboard_info
+      title: onboard_info
+      summary: 'What the confirming device is about to set up (device, kinds and profiles it may give, areas, family managers).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_info.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_info/iphone.json
+      - ../fixtures/ws/server/onboard_info/ipad.json
+      - ../fixtures/ws/server/onboard_info/apple-tv-tagged.json
+      - ../fixtures/ws/server/onboard_info/watch.json
+    s2c.onboard_ok:
+      name: onboard_ok
+      title: onboard_ok
+      summary: 'Onboarding confirmed; the client secret sealed with HPKE to the session key. Authenticates the connection.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_ok/basic.json
+    s2c.onboard_confirm_ok:
+      name: onboard_confirm_ok
+      title: onboard_confirm_ok
+      summary: 'The confirmed device was created.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_confirm_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_confirm_ok/basic.json
+      - ../fixtures/ws/server/onboard_confirm_ok/area-choice.json
+      - ../fixtures/ws/server/onboard_confirm_ok/child.json
+      - ../fixtures/ws/server/onboard_confirm_ok/guest.json
+    s2c.onboard_error:
+      name: onboard_error
+      title: onboard_error
+      summary: 'Onboarding failed; reason: invalid_request | invalid_client_info | tls_required | rate_limited | already_authenticated | connection_expired | session_not_found | session_expired | session_invalidated | hub_mismatch | not_permitted | declined | cancelled.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/onboard_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/onboard_error/expired.json
+      - ../fixtures/ws/server/onboard_error/not-permitted.json
+      - ../fixtures/ws/server/onboard_error/tls-required.json
+      - ../fixtures/ws/server/onboard_error/invalidated.json
+      - ../fixtures/ws/server/onboard_error/declined.json
+      - ../fixtures/ws/server/onboard_error/rate-limited.json
+      - ../fixtures/ws/server/onboard_error/areas-not-allowed.json
+      - ../fixtures/ws/server/onboard_error/platform-not-supported.json
+      - ../fixtures/ws/server/onboard_error/too-many-attempts.json
+      - ../fixtures/ws/server/onboard_error/kind-not-allowed.json
+      - ../fixtures/ws/server/onboard_error/profile-not-allowed.json
+      - ../fixtures/ws/server/onboard_error/expiry-not-allowed.json
+      - ../fixtures/ws/server/onboard_error/managers-not-allowed.json
+      - ../fixtures/ws/server/onboard_error/device-not-found.json
+    s2c.pair_error:
+      name: pair_error
+      title: pair_error
+      summary: 'Pairing failed; reason: invalid_request | invalid_client_info | pin_invalid | pin_expired | too_many_failures | rate_limited | already_authenticated | connection_expired.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/pair_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/pair_error/wrong-pin.json
+      - ../fixtures/ws/server/pair_error/pin-expired.json
+      - ../fixtures/ws/server/pair_error/too-many-failures.json
+      - ../fixtures/ws/server/pair_error/rate-limited.json
+      - ../fixtures/ws/server/pair_error/bad-request.json
+      - ../fixtures/ws/server/pair_error/platform-not-allowed.json
+    s2c.pair_ok:
+      name: pair_ok
+      title: pair_ok
+      summary: Pairing succeeded; the connection is authenticated. The secret is shown exactly once.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/pair_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/pair_ok/basic.json
+      - ../fixtures/ws/server/pair_ok/guest.json
+    s2c.session_expired:
+      name: session_expired
+      title: session_expired
+      summary: Admin web-UI session ended (expired, evicted, logged out); followed by close 4401.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/session_expired.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/session_expired/basic.json
+    s2c.subscribed:
+      name: subscribed
+      title: subscribed
+      summary: Answer to the no-op subscribe.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/subscribed.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/subscribed/basic.json
+      x-deprecated: true
+    s2c.upgrade_required:
+      name: upgrade_required
+      title: upgrade_required
+      summary: App too old for this hub, answer to auth or pair; followed by close 4426. The app keeps its pairing
+        and shows a localized update hint.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/upgrade_required.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/upgrade_required/protocol.json
+      - ../fixtures/ws/server/upgrade_required/app-version.json
+      - ../fixtures/ws/server/upgrade_required/no-client-info.json
+    cmd.clear_notifications:
+      name: clear_notifications
+      title: command clear_notifications
+      summary: Admin/integration cleared all notifications of the client.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/clear_notifications.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/clear_notifications/basic.json
+    cmd.dismiss_notification:
+      name: dismiss_notification
+      title: command dismiss_notification
+      summary: Admin deleted a notification.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/dismiss_notification.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/dismiss_notification/basic.json
+    cmd.display_notification:
+      name: display_notification
+      title: command display_notification
+      summary: Real-time notification push (POST /api/notifications, POST /api/integration/notify). Fields as notification
+        item without status. A notification for a watch is pushed to the phone that set it up (client_id is the phone's);
+        the phone's system shows it on the watch.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/display_notification.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/display_notification/basic.json
+    cmd.navigate_to_area:
+      name: navigate_to_area
+      title: command navigate_to_area
+      summary: Remote navigation, triggered by POST /api/integration/clients/{id}/navigate_to_area.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/navigate_to_area.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/navigate_to_area/area.json
+      - ../fixtures/ws/command/navigate_to_area/home.json
+    cmd.refresh:
+      name: refresh
+      title: command refresh
+      summary: Reload everything, triggered by POST /api/integration/clients/{id}/refresh.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/refresh.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/refresh/basic.json
+    cmd.show_entity:
+      name: show_entity
+      title: command show_entity
+      summary: Open the detail view of an entity, triggered by POST /api/integration/clients/{id}/show_entity.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/show_entity.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/show_entity/basic.json
+    cmd.panel_command:
+      name: panel_command
+      title: command panel_command
+      summary: 'Control a wall panel or Apple TV (wake, screensaver, home, reload, set_brightness, set_brightness_mode; reserved: screen_off, announce with text/volume/chime, show_camera with entity_id), triggered by POST /api/integration/clients/{id}/panel or POST /api/pairing/clients/{id}/panel; the app answers panel_command_ok or panel_command_error with the same id.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/command/panel_command.json
+      tags:
+      - name: command
+      x-fixtures:
+      - ../fixtures/ws/command/panel_command/set-brightness.json
+      - ../fixtures/ws/command/panel_command/wake.json
+      - ../fixtures/ws/command/panel_command/brightness-mode.json
+    bc.area_created:
+      name: area_created
+      title: broadcast area_created
+      summary: Area created or copied. Not sent to apps; they get areas_changed.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/area_created.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/area_created/basic.json
+      x-audience: ADMIN
+    bc.area_deleted:
+      name: area_deleted
+      title: broadcast area_deleted
+      summary: Area deleted. Not sent to apps; they get areas_changed.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/area_deleted.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/area_deleted/basic.json
+      x-audience: ADMIN
+    bc.area_updated:
+      name: area_updated
+      title: broadcast area_updated
+      summary: Area changed (also activation via integration or HA input_boolean; then with is_active).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/area_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/area_updated/activation.json
+      - ../fixtures/ws/broadcast/area_updated/basic.json
+      x-audience: ALL
+    bc.areas_changed:
+      name: areas_changed
+      title: broadcast areas_changed
+      summary: Area created, duplicated or deleted; reload the area list with get_areas (paired apps only).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/areas_changed.json
+      tags:
+      - name: broadcast
+      x-fixtures:
+      - ../fixtures/ws/broadcast/areas_changed/basic.json
+      x-audience: TARGETED
+    bc.areas_deleted:
+      name: areas_deleted
+      title: broadcast areas_deleted
+      summary: All areas deleted.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/areas_deleted.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/areas_deleted/basic.json
+      x-audience: ADMIN
+    bc.client_config_updated:
+      name: client_config_updated
+      title: broadcast client_config_updated
+      summary: Settings that affect client_config changed; clients re-send get_client_config. Also sent targeted to a single
+        client after token rotation.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_config_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_config_updated/basic.json
+      x-audience: ALL
+    bc.client_connected:
+      name: client_connected
+      title: broadcast client_connected
+      summary: Paired client authenticated.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_connected.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_connected/basic.json
+      x-audience: ADMIN
+    bc.client_disconnected:
+      name: client_disconnected
+      title: broadcast client_disconnected
+      summary: Last connection of a paired client closed, ping timeout, or tombstone purged.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_disconnected.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_disconnected/basic.json
+      x-audience: ADMIN
+    bc.client_kicked:
+      name: client_kicked
+      title: broadcast client_kicked
+      summary: A client was removed at once - kicked by an admin (POST /api/clients/{id}/kick) or the inviting member
+        (reason kicked), or it signed itself off with client_leave (reason left).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_kicked.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_kicked/basic.json
+      - ../fixtures/ws/broadcast/client_kicked/left.json
+      x-audience: ADMIN
+    bc.client_paired:
+      name: client_paired
+      title: broadcast client_paired
+      summary: New device paired (WS or REST).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_paired.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_paired/basic.json
+      x-audience: ADMIN
+    bc.client_status_updated:
+      name: client_status_updated
+      title: broadcast client_status_updated
+      summary: Device status changed (no position; ADMIN and integration only).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/client_status_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/client_status_updated/basic.json
+      x-audience: ADMIN
+    bc.clients_cleared:
+      name: clients_cleared
+      title: broadcast clients_cleared
+      summary: All clients deleted.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/clients_cleared.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/clients_cleared/basic.json
+      x-audience: ADMIN
+    bc.device_activity:
+      name: device_activity
+      title: broadcast device_activity
+      summary: New entry in a device's activity feed; same object as GET /api/pairing/clients/{client_id}/activity.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/device_activity.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/device_activity/connected.json
+      x-audience: ADMIN
+    bc.entity_added:
+      name: entity_added
+      title: broadcast entity_added
+      summary: Entity placement change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/entity_added.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/entity_added/basic.json
+      x-audience: ALL
+    bc.entity_removed:
+      name: entity_removed
+      title: broadcast entity_removed
+      summary: Entity placement change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/entity_removed.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/entity_removed/basic.json
+      x-audience: ALL
+    bc.entity_updated:
+      name: entity_updated
+      title: broadcast entity_updated
+      summary: Entity placement change (area scope, data.changed as hint).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/entity_updated.json
+      tags:
+      - name: broadcast
+      x-fixtures:
+      - ../fixtures/ws/broadcast/entity_updated/basic.json
+      - ../fixtures/ws/broadcast/entity_updated/tile.json
+      x-audience: TARGETED
+    bc.guest_extended:
+      name: guest_extended
+      title: broadcast guest_extended
+      summary: Guest expiry extended.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/guest_extended.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/guest_extended/basic.json
+      x-audience: ADMIN
+    bc.guests_expired:
+      name: guests_expired
+      title: broadcast guests_expired
+      summary: Expired guests removed (loop every 60 s).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/guests_expired.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/guests_expired/basic.json
+      x-audience: ADMIN
+    bc.layout_updated:
+      name: layout_updated
+      title: broadcast layout_updated
+      summary: Bulk layout or section order changed.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/layout_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/layout_updated/basic.json
+      x-audience: ALL
+    bc.profiles_changed:
+      name: profiles_changed
+      title: broadcast profiles_changed
+      summary: 'Profiles or the profile state of devices changed (profile_ids, client_ids); admin UIs reload profiles,
+        devices and open device pages. The devices themselves get client_config_updated.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/profiles_changed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/profiles_changed/basic.json
+      - ../fixtures/ws/broadcast/profiles_changed/devices-only.json
+      x-audience: ADMIN
+    bc.family_changed:
+      name: family_changed
+      title: broadcast family_changed
+      summary: 'A request, release, scope or family setting changed (client_ids, request_id); admin UIs reload the family
+        overview. Ids only.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/family_changed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/family_changed/request.json
+      x-audience: ADMIN
+    bc.access_requests_changed:
+      name: access_requests_changed
+      title: broadcast access_requests_changed
+      summary: 'An early access request or an early access changed (client_ids, request_id); admin UIs reload GET /api/access-requests. Ids only.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/access_requests_changed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/access_requests_changed/request.json
+      x-audience: ADMIN
+    bc.log_entry:
+      name: log_entry
+      title: broadcast log_entry
+      summary: 'A new entry of the log tab (common/log-entry.json); admin UIs add it to the timeline. Never sent to
+        the integration push session.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/log_entry.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/log_entry/basic.json
+      x-audience: ADMIN
+    bc.log_read:
+      name: log_read
+      title: broadcast log_read
+      summary: 'Alarms marked as read (ids or all); admin UIs update the unread count. Never sent to the integration
+        push session.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/log_read.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/log_read/ids.json
+      - ../fixtures/ws/broadcast/log_read/all.json
+      x-audience: ADMIN
+    bc.notification_created:
+      name: notification_created
+      title: broadcast notification_created
+      summary: Notification created (full content, admin sessions).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notification_created.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notification_created/basic.json
+      x-audience: ADMIN
+    bc.notification_created.integration:
+      name: notification_created
+      title: broadcast notification_created (integration view)
+      summary: 'Redacted projection sent to the integration push session (_integration_view): ids only, no content.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notification_created.integration.json
+      tags:
+      - name: broadcast
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notification_created.integration/basic.json
+      x-audience: INTEGRATION
+    bc.notification_deleted:
+      name: notification_deleted
+      title: broadcast notification_deleted
+      summary: Admin deleted a notification.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notification_deleted.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notification_deleted/basic.json
+      x-audience: ADMIN
+    bc.notification_delivered:
+      name: notification_delivered
+      title: broadcast notification_delivered
+      summary: Notification acknowledged (WS ack or remote ack via integration).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notification_delivered.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notification_delivered/basic.json
+      - ../fixtures/ws/broadcast/notification_delivered/remote.json
+      x-audience: ADMIN
+    bc.notification_dismissed:
+      name: notification_dismissed
+      title: broadcast notification_dismissed
+      summary: Client dismissed a notification.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notification_dismissed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notification_dismissed/basic.json
+      x-audience: ADMIN
+    bc.notifications_cleared:
+      name: notifications_cleared
+      title: broadcast notifications_cleared
+      summary: Admin cleared all notifications of a client.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/notifications_cleared.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/notifications_cleared/basic.json
+      x-audience: ADMIN
+    bc.pairing_cancelled:
+      name: pairing_cancelled
+      title: broadcast pairing_cancelled
+      summary: PIN window cancelled.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/pairing_cancelled.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/pairing_cancelled/basic.json
+      x-audience: ADMIN
+    bc.onboarding_started:
+      name: onboarding_started
+      title: broadcast onboarding_started
+      summary: 'A device started an onboarding session (never the session id or key).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/onboarding_started.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/onboarding_started/basic.json
+      x-audience: ADMIN
+    bc.onboarding_claimed:
+      name: onboarding_claimed
+      title: broadcast onboarding_claimed
+      summary: 'A member device looked up a running onboarding session (who sets it up).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/onboarding_claimed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/onboarding_claimed/basic.json
+      x-audience: ADMIN
+    bc.onboarding_ended:
+      name: onboarding_ended
+      title: broadcast onboarding_ended
+      summary: 'An onboarding session ended (result).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/onboarding_ended.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/onboarding_ended/confirmed.json
+      - ../fixtures/ws/broadcast/onboarding_ended/expired.json
+      x-audience: ADMIN
+    c2s.guest_invite_create:
+      name: guest_invite_create
+      title: guest_invite_create
+      summary: 'Member device asks for a guest invitation.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/guest_invite_create.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/guest_invite_create/basic.json
+      - ../fixtures/ws/client/guest_invite_create/choices.json
+    c2s.guest_invite_cancel:
+      name: guest_invite_cancel
+      title: guest_invite_cancel
+      summary: 'Member device withdraws its own open invitation.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/guest_invite_cancel.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/guest_invite_cancel/basic.json
+    c2s.get_setup_grant:
+      name: get_setup_grant
+      title: get_setup_grant
+      summary: 'Member device asks what it may set up (type first, invitation).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_setup_grant.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_setup_grant/basic.json
+      - ../fixtures/ws/client/get_setup_grant/invite.json
+    c2s.get_set_up_devices:
+      name: get_set_up_devices
+      title: get_set_up_devices
+      summary: 'Member device lists the devices and guests it set up.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/get_set_up_devices.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/get_set_up_devices/basic.json
+    c2s.set_up_device_remove:
+      name: set_up_device_remove
+      title: set_up_device_remove
+      summary: 'Member device removes a device it set up.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/set_up_device_remove.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/set_up_device_remove/basic.json
+    s2c.guest_invite:
+      name: guest_invite
+      title: guest_invite
+      summary: 'New guest invitation (PIN, pairing link, expiry, what the guest gets).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/guest_invite.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/guest_invite/basic.json
+      - ../fixtures/ws/server/guest_invite/all-areas.json
+      - ../fixtures/ws/server/guest_invite/chosen.json
+    s2c.guest_invite_ended:
+      name: guest_invite_ended
+      title: guest_invite_ended
+      summary: 'An invitation of this device ended; result: paired | expired | cancelled | revoked | replaced | invalidated.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/guest_invite_ended.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/guest_invite_ended/paired.json
+      - ../fixtures/ws/server/guest_invite_ended/expired.json
+      - ../fixtures/ws/server/guest_invite_ended/cancelled.json
+    s2c.guest_invite_error:
+      name: guest_invite_error
+      title: guest_invite_error
+      summary: 'Invitation request failed; reason: invalid_request | not_permitted | rate_limited | no_guest_areas | profile_not_allowed | expiry_not_allowed | invite_not_found.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/guest_invite_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/guest_invite_error/not-permitted.json
+      - ../fixtures/ws/server/guest_invite_error/rate-limited.json
+      - ../fixtures/ws/server/guest_invite_error/no-guest-areas.json
+      - ../fixtures/ws/server/guest_invite_error/invite-not-found.json
+      - ../fixtures/ws/server/guest_invite_error/profile-not-allowed.json
+    s2c.setup_grant:
+      name: setup_grant
+      title: setup_grant
+      summary: 'What the device may set up (kinds, profiles, areas, family managers, guest limits).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/setup_grant.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/setup_grant/parent-iphone.json
+      - ../fixtures/ws/server/setup_grant/invite.json
+    s2c.set_up_devices:
+      name: set_up_devices
+      title: set_up_devices
+      summary: 'Devices and guests set up by this device.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/set_up_devices.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/set_up_devices/basic.json
+      - ../fixtures/ws/server/set_up_devices/empty.json
+    s2c.set_up_device_removed:
+      name: set_up_device_removed
+      title: set_up_device_removed
+      summary: 'The device was removed.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/set_up_device_removed.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/set_up_device_removed/basic.json
+    c2s.control:
+      name: control
+      title: control
+      summary: 'Device on the hub path controls one entity through the hub.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/control.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/control/basic.json
+      - ../fixtures/ws/client/control/volume.json
+      - ../fixtures/ws/client/control/minimal.json
+    c2s.state_subscribe:
+      name: state_subscribe
+      title: state_subscribe
+      summary: 'Device on the hub path asks for live states.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/state_subscribe.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/state_subscribe/basic.json
+    c2s.history_get:
+      name: history_get
+      title: history_get
+      summary: 'Device on the hub path asks for the history of a visible entity (1-168 hours).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/history_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/history_get/basic.json
+    c2s.location_report:
+      name: location_report
+      title: location_report
+      summary: 'Position of a device on the hub path (latitude, longitude, accuracy, optional altitude,
+        speed, course, battery_level, location_shared; background, ts).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/location_report.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/location_report/foreground.json
+      - ../fixtures/ws/client/location_report/background.json
+    c2s.tag_resolve:
+      name: tag_resolve
+      title: tag_resolve
+      summary: 'The app read https://<website>/t/<tag_id> (NFC, QR, link) and asks what the tag does.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/tag_resolve.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/tag_resolve/nfc.json
+    c2s.forecast_get:
+      name: forecast_get
+      title: forecast_get
+      summary: 'Device on the hub path asks for the forecast of a visible weather entity.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/forecast_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/forecast_get/basic.json
+    c2s.camera_image_get:
+      name: camera_image_get
+      title: camera_image_get
+      summary: 'Device on the hub path asks for the current still image of a visible camera.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/camera_image_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/camera_image_get/basic.json
+      - ../fixtures/ws/client/camera_image_get/with-width.json
+    c2s.media_image_get:
+      name: media_image_get
+      title: media_image_get
+      summary: 'Device on the hub path asks for the artwork of a visible media player.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/media_image_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/media_image_get/basic.json
+    s2c.control_ok:
+      name: control_ok
+      title: control_ok
+      summary: 'Action sent to Home Assistant; adjusted = values changed by the hub (volume cap).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/control_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/control_ok/basic.json
+      - ../fixtures/ws/server/control_ok/adjusted.json
+    s2c.rule_blocked:
+      name: rule_blocked
+      title: rule_blocked
+      summary: 'A rule rejected the action; reason: blocked | quiet_hours | rate_limited | cooldown | color_locked | volume_limit, until = next allowed time.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/rule_blocked.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/rule_blocked/quiet-hours.json
+      - ../fixtures/ws/server/rule_blocked/rate-limited.json
+      - ../fixtures/ws/server/rule_blocked/cooldown.json
+      - ../fixtures/ws/server/rule_blocked/blocked.json
+      - ../fixtures/ws/server/rule_blocked/color-locked.json
+      - ../fixtures/ws/server/rule_blocked/volume-limit.json
+      - ../fixtures/ws/server/rule_blocked/camera-blocked.json
+    s2c.control_error:
+      name: control_error
+      title: control_error
+      summary: 'A request of the hub path failed without a rule; reason: not_hub_controlled | not_visible | invalid_request | not_ready | ha_error | ha_unavailable | rate_limited (retry_after).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/control_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/control_error/not-visible.json
+      - ../fixtures/ws/server/control_error/not-hub-controlled.json
+      - ../fixtures/ws/server/control_error/ha-unavailable.json
+      - ../fixtures/ws/server/control_error/read-not-weather.json
+      - ../fixtures/ws/server/control_error/rate-limited.json
+    s2c.state_subscribed:
+      name: state_subscribed
+      title: state_subscribed
+      summary: 'Live states on.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/state_subscribed.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/state_subscribed/basic.json
+    s2c.entity_state:
+      name: entity_state
+      title: entity_state
+      summary: 'State change of a visible entity (sanitized), null = removed.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/entity_state.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/entity_state/basic.json
+      - ../fixtures/ws/server/entity_state/removed.json
+    s2c.history:
+      name: history
+      title: history
+      summary: 'States of the entity, oldest first, at most 1000 (truncated = thinned out).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/history.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/history/basic.json
+      - ../fixtures/ws/server/history/binary.json
+    s2c.location_report_ok:
+      name: location_report_ok
+      title: location_report_ok
+      summary: 'Report accepted; applied false = older than the last fix, or no integration took it (not connected).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/location_report_ok.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/location_report_ok/applied.json
+      - ../fixtures/ws/server/location_report_ok/older.json
+      - ../fixtures/ws/server/location_report_ok/not-delivered.json
+    s2c.location_report_error:
+      name: location_report_error
+      title: location_report_error
+      summary: 'Report refused; reason: invalid_request | not_hub_controlled | location_stale | location_not_allowed
+        | location_background_not_allowed | rate_limited (retry_after).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/location_report_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/location_report_error/not-allowed.json
+      - ../fixtures/ws/server/location_report_error/rate-limited.json
+      - ../fixtures/ws/server/location_report_error/not-hub-controlled.json
+    s2c.tag_result:
+      name: tag_result
+      title: tag_result
+      summary: 'Ok (with tag name and action) | unknown_tag | tags_off | not_visible | rate_limited (retry_after).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/tag_result.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/tag_result/ok-toggle.json
+      - ../fixtures/ws/server/tag_result/unknown.json
+    s2c.forecast:
+      name: forecast
+      title: forecast
+      summary: 'Entries of weather.get_forecasts, at most 240.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/forecast.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/forecast/basic.json
+      - ../fixtures/ws/server/forecast/empty.json
+    s2c.camera_image:
+      name: camera_image
+      title: camera_image
+      summary: 'Still image of the camera, base64 (at most 2 MiB; JPEG, PNG, WebP or GIF).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/camera_image.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/camera_image/jpeg.json
+    s2c.media_image:
+      name: media_image
+      title: media_image
+      summary: 'Artwork of the media player, base64 (at most 2 MiB; JPEG, PNG, WebP or GIF).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/media_image.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/media_image/png.json
+    bc.guest_invite_opened:
+      name: guest_invite_opened
+      title: broadcast guest_invite_opened
+      summary: 'A member device opened a guest invitation.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/guest_invite_opened.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/guest_invite_opened/basic.json
+      x-audience: ADMIN
+    bc.guest_invite_closed:
+      name: guest_invite_closed
+      title: broadcast guest_invite_closed
+      summary: 'A guest invitation ended.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/guest_invite_closed.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/guest_invite_closed/paired.json
+      - ../fixtures/ws/broadcast/guest_invite_closed/revoked.json
+      x-audience: ADMIN
+    bc.pairing_started:
+      name: pairing_started
+      title: broadcast pairing_started
+      summary: PIN window opened (never contains the PIN).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/pairing_started.json
+      tags:
+      - name: broadcast
+      - name: audience-admin
+      x-fixtures:
+      - ../fixtures/ws/broadcast/pairing_started/basic.json
+      x-audience: ADMIN
+    bc.section_created:
+      name: section_created
+      title: broadcast section_created
+      summary: Section change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/section_created.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/section_created/basic.json
+      x-audience: ALL
+    bc.section_deleted:
+      name: section_deleted
+      title: broadcast section_deleted
+      summary: Section change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/section_deleted.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/section_deleted/basic.json
+      x-audience: ALL
+    bc.section_updated:
+      name: section_updated
+      title: broadcast section_updated
+      summary: Section change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/section_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/section_updated/basic.json
+      x-audience: ALL
+    bc.widget_created:
+      name: widget_created
+      title: broadcast widget_created
+      summary: Widget change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/widget_created.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/widget_created/basic.json
+      x-audience: ALL
+    bc.widget_deleted:
+      name: widget_deleted
+      title: broadcast widget_deleted
+      summary: Widget change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/widget_deleted.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/widget_deleted/basic.json
+      x-audience: ALL
+    bc.widget_updated:
+      name: widget_updated
+      title: broadcast widget_updated
+      summary: Widget change.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/broadcast/widget_updated.json
+      tags:
+      - name: broadcast
+      - name: audience-all
+      x-fixtures:
+      - ../fixtures/ws/broadcast/widget_updated/basic.json
+      x-audience: ALL
+    int.provision_client:
+      name: provision_client
+      title: integration provision_client
+      summary: Create/ensure the device's own HA user and long-lived token, deliver it via POST /api/integration/client-token.
+        Idempotent (token_action ensure re-delivers the same refresh token; rotate mints a new one).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/provision_client.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/provision_client/pair.json
+      - ../fixtures/ws/integration/provision_client/guest.json
+      - ../fixtures/ws/integration/provision_client/rotate.json
+      x-audience: INTEGRATION
+    int.update_client_identity:
+      name: update_client_identity
+      title: integration update_client_identity
+      summary: Device renamed, owner label, remote access or guest expiry changed. Full identity, idempotent. local_only
+        change or uncovered guest expiry -> token rotation.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/update_client_identity.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/update_client_identity/remote-on.json
+      - ../fixtures/ws/integration/update_client_identity/guest-extended.json
+      x-audience: INTEGRATION
+    int.deprovision_client:
+      name: deprovision_client
+      title: integration deprovision_client
+      summary: Device deleted, revoked, guest expired or all clients cleared. The integration removes the device's HA user.
+        No acknowledgement; the status-poll reconcile is the backstop.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/deprovision_client.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/deprovision_client/deleted.json
+      - ../fixtures/ws/integration/deprovision_client/guest-expired.json
+      x-audience: INTEGRATION
+    c2s.family_get_children:
+      name: family_get_children
+      title: family_get_children
+      summary: 'Family manager lists its child devices.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_get_children.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_get_children/basic.json
+    c2s.family_rule_set:
+      name: family_rule_set
+      title: family_rule_set
+      summary: 'Family manager sets a kids rule on child devices (device adjustment, permanent or temporary).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_rule_set.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_rule_set/bedtime-permanent.json
+      - ../fixtures/ws/client/family_rule_set/volume-weekend.json
+      - ../fixtures/ws/client/family_rule_set/areas-today.json
+    c2s.family_rule_reset:
+      name: family_rule_reset
+      title: family_rule_reset
+      summary: 'Family manager resets a kids rule to the profile value.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_rule_reset.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_rule_reset/basic.json
+    c2s.family_release:
+      name: family_release
+      title: family_release
+      summary: 'Family manager starts a release (bedtime, pause, one entity) for a while.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_release.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_release/one-hour-longer.json
+      - ../fixtures/ws/client/family_release/entity.json
+    c2s.family_release_end:
+      name: family_release_end
+      title: family_release_end
+      summary: 'Family manager ends releases early.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_release_end.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_release_end/basic.json
+    c2s.family_get_requests:
+      name: family_get_requests
+      title: family_get_requests
+      summary: 'Family manager lists the children''s requests.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_get_requests.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_get_requests/basic.json
+    c2s.family_answer:
+      name: family_answer
+      title: family_answer
+      summary: 'Family manager answers a request (yes with duration, no with optional message).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_answer.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_answer/yes.json
+      - ../fixtures/ws/client/family_answer/no.json
+    c2s.family_get_activity:
+      name: family_get_activity
+      title: family_get_activity
+      summary: 'Family manager reads the children''s activity.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_get_activity.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_get_activity/today.json
+      - ../fixtures/ws/client/family_get_activity/one-child.json
+    c2s.family_notify_set:
+      name: family_notify_set
+      title: family_notify_set
+      summary: 'Family manager switches automatic child notifications.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/family_notify_set.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/family_notify_set/basic.json
+    c2s.panel_command_ok:
+      name: panel_command_ok
+      title: panel_command_ok
+      summary: 'The panel_command with this id was executed; panel = status afterwards.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/panel_command_ok.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/panel_command_ok/basic.json
+    c2s.panel_command_error:
+      name: panel_command_error
+      title: panel_command_error
+      summary: 'The panel_command with this id was not executed (unsupported, not_in_panel_mode, not_pro, invalid, failed).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/panel_command_error.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/panel_command_error/not-pro.json
+    c2s.kids_request:
+      name: kids_request
+      title: kids_request
+      summary: 'Child device asks (“Can I have more time?”).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/kids_request.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/kids_request/stay-up.json
+      - ../fixtures/ws/client/kids_request/unlock.json
+    c2s.kids_request_cancel:
+      name: kids_request_cancel
+      title: kids_request_cancel
+      summary: 'Child device withdraws its open request.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/kids_request_cancel.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/kids_request_cancel/basic.json
+    s2c.family_children:
+      name: family_children
+      title: family_children
+      summary: 'Child devices in scope with rules, releases, status.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_children.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_children/basic.json
+    s2c.family_child_updated:
+      name: family_child_updated
+      title: family_child_updated
+      summary: 'A child device in scope changed (pushed to all its family managers).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_child_updated.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_child_updated/release.json
+      - ../fixtures/ws/server/family_child_updated/removed.json
+    s2c.family_result:
+      name: family_result
+      title: family_result
+      summary: 'Result per child device of a rule change or release.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_result.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_result/ok.json
+      - ../fixtures/ws/server/family_result/partial.json
+    s2c.family_requests:
+      name: family_requests
+      title: family_requests
+      summary: 'Requests of the children in scope.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_requests.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_requests/basic.json
+    s2c.family_request:
+      name: family_request
+      title: family_request
+      summary: 'A request was created, answered, expired or withdrawn (pushed).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_request.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_request/new.json
+      - ../fixtures/ws/server/family_request/answered.json
+    s2c.family_activity:
+      name: family_activity
+      title: family_activity
+      summary: 'Activity of the children (read view of the log).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_activity.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_activity/today.json
+    s2c.family_notify:
+      name: family_notify
+      title: family_notify
+      summary: 'Automatic child notifications of this device.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_notify.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_notify/basic.json
+    s2c.family_error:
+      name: family_error
+      title: family_error
+      summary: 'Family or child request failed; reason: family_error_reason.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/family_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/family_error/not-permitted.json
+      - ../fixtures/ws/server/family_error/already-answered.json
+      - ../fixtures/ws/server/family_error/cooldown.json
+    s2c.kids_request_state:
+      name: kids_request_state
+      title: kids_request_state
+      summary: 'State of the child''s own request (answer and push).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/kids_request_state.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/kids_request_state/open.json
+      - ../fixtures/ws/server/kids_request_state/approved.json
+    c2s.access_request:
+      name: access_request
+      title: access_request
+      summary: 'A device outside its access hours asks for early access.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/access_request.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/access_request/basic.json
+      - ../fixtures/ws/client/access_request/with-note.json
+    c2s.access_request_cancel:
+      name: access_request_cancel
+      title: access_request_cancel
+      summary: 'The device withdraws its open request.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/access_request_cancel.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/access_request_cancel/basic.json
+    c2s.access_requests_get:
+      name: access_requests_get
+      title: access_requests_get
+      summary: 'A recipient reads the open requests it may answer.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/access_requests_get.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/access_requests_get/basic.json
+    c2s.access_request_answer:
+      name: access_request_answer
+      title: access_request_answer
+      summary: 'A recipient answers (yes with duration, or no).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/client/access_request_answer.json
+      tags:
+      - name: client-to-hub
+      x-fixtures:
+      - ../fixtures/ws/client/access_request_answer/yes-1h.json
+      - ../fixtures/ws/client/access_request_answer/no-later.json
+    s2c.access_request_state:
+      name: access_request_state
+      title: access_request_state
+      summary: 'State of the device''s own request (answer and push).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/access_request_state.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/access_request_state/open.json
+      - ../fixtures/ws/server/access_request_state/approved.json
+      - ../fixtures/ws/server/access_request_state/declined.json
+    s2c.access_request_update:
+      name: access_request_update
+      title: access_request_update
+      summary: 'A request changed (to every recipient device).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/access_request_update.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/access_request_update/new.json
+      - ../fixtures/ws/server/access_request_update/answered.json
+      - ../fixtures/ws/server/access_request_update/expired.json
+    s2c.access_requests:
+      name: access_requests
+      title: access_requests
+      summary: 'Open requests this device may answer.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/access_requests.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/access_requests/basic.json
+      - ../fixtures/ws/server/access_requests/empty.json
+    s2c.access_request_error:
+      name: access_request_error
+      title: access_request_error
+      summary: 'An early access message failed (reason).'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/server/access_request_error.json
+      tags:
+      - name: hub-to-client
+      x-fixtures:
+      - ../fixtures/ws/server/access_request_error/cooldown.json
+      - ../fixtures/ws/server/access_request_error/already-answered.json
+      - ../fixtures/ws/server/access_request_error/home-only.json
+    int.family_relay:
+      name: family_relay
+      title: integration family_relay
+      summary: 'Forward a family push to the HA WebSocket subscriptions of family managers away from home.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/family_relay.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/family_relay/request.json
+      x-audience: INTEGRATION
+    int.enforcement_rules:
+      name: enforcement_rules
+      title: integration enforcement_rules
+      summary: Rule snapshots per device for the integration action halumar.control. complete = true replaces
+        the whole set. control_paths carries the control path of every device in
+        the message outside the versioned snapshot body, so a snapshot the integration rejects never loosens
+        a device. No acknowledgement (the integration reports rules_applied events over REST).
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/enforcement_rules.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/enforcement_rules/adult-direct.json
+      - ../fixtures/ws/integration/enforcement_rules/complete.json
+      - ../fixtures/ws/integration/enforcement_rules/snapshot-not-built.json
+      x-audience: INTEGRATION
+    int.ha_event:
+      name: ha_event
+      title: integration ha_event
+      summary: An event of the taxonomy (data/events.json) with source hub; the integration fires it unchanged as halumar_event.
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/ha_event.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/ha_event/guest-paired.json
+      x-audience: INTEGRATION
+    int.client_location:
+      name: client_location
+      title: integration client_location
+      summary: 'Accepted position of a device on the hub path for its device_tracker.'
+      contentType: application/json
+      payload:
+        $ref: ../schemas/ws/integration/client_location.json
+      tags:
+      - name: hub-to-integration
+      - name: audience-integration
+      x-fixtures:
+      - ../fixtures/ws/integration/client_location/fix.json
+      x-audience: INTEGRATION
+  securitySchemes:
+    integrationToken:
+      type: http
+      scheme: bearer
+      description: Integration token in the handshake header (read-only push session).
+    ingress:
+      type: httpApiKey
+      name: X-Ingress-Path
+      in: header
+      description: Trusted only from the Supervisor ingress proxy (172.30.32.2, fixed by Home Assistant); admin session.
+    clientSecretInBand:
+      type: userPassword
+      description: 'Not a transport credential: apps authenticate in-band with the ''auth'' message (64-hex client secret)
+        or pair with ''pair''. Modelled here for completeness.'

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast widget_created",
+  "description": "Widget change.",
+  "x-audience": "ALL",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "widget_created"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "area_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "widget_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        }
+      },
+      "required": [
+        "area_id",
+        "widget_id"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

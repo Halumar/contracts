@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "notification_dismiss_ok",
+  "description": "Dismissal stored.",
+  "type": "object",
+  "required": [
+    "type",
+    "notification_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_dismiss_ok"
+    },
+    "notification_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

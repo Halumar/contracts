@@ -1,0 +1,9 @@
+{
+  "type": "auth",
+  "secret": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "protocol_version": 1,
+  "platform": "ios",
+  "app_version": "2026.12.0",
+  "app_build": "6",
+  "device_model": "iPhone18,1"
+}

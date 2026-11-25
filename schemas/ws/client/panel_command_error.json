@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "panel_command_error",
+  "description": "App -> hub: the panel_command with this id was not executed. code: unsupported, not_in_panel_mode, not_pro, invalid, failed. No answer from the hub; the caller gets HTTP 422 with this code.",
+  "type": "object",
+  "required": [
+    "type",
+    "id",
+    "code"
+  ],
+  "properties": {
+    "type": {
+      "const": "panel_command_error"
+    },
+    "id": {
+      "$ref": "../../common/defs.json#/$defs/panel_command_id"
+    },
+    "code": {
+      "$ref": "../../common/defs.json#/$defs/panel_command_error_code"
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200,
+      "description": "Optional technical detail for the log (no personal data)."
+    }
+  },
+  "additionalProperties": true
+}

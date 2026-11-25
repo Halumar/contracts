@@ -1,0 +1,5 @@
+{
+  "type": "onboard_error",
+  "reason": "pin_invalid",
+  "message": "x"
+}

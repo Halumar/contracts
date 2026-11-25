@@ -1,0 +1,13 @@
+{
+  "type": "location_report",
+  "latitude": 47.3769,
+  "longitude": 8.5417,
+  "accuracy": -1,
+  "altitude": 408.0,
+  "vertical_accuracy": 4.0,
+  "speed": 0.0,
+  "course": 90.0,
+  "battery_level": 80,
+  "background": false,
+  "ts": "2026-11-21T18:00:00Z"
+}

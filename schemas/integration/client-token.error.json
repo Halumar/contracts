@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/client-token (4xx/5xx)",
+  "description": "Error body. Integration reaction by status: 404 client_not_found and 409 client_inactive -> remove the device user (the device is gone or pending deletion); 422 -> bug or request_required (delivery not bound to an open request), log and keep the user; the next provisioning request heals it; 401/403 -> integration token rotated, Supervisor re-discovery heals; 503 db_unavailable and network errors -> keep user and token, retry on the next request/poll (the hub keeps the device in provisioning[]).",
+  "type": "object",
+  "required": [
+    "detail"
+  ],
+  "properties": {
+    "detail": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "client_not_found",
+            "client_inactive",
+            "db_unavailable",
+            "request_required"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "notification_dismiss",
+  "description": "Dismiss a notification server-side. Paired clients only.",
+  "type": "object",
+  "required": [
+    "type",
+    "notification_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_dismiss"
+    },
+    "notification_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    }
+  },
+  "additionalProperties": true
+}

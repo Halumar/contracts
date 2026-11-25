@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast client_kicked",
+  "description": "A client was removed at once: kicked by an admin (POST /api/clients/{id}/kick), ended by the member who invited the guest, or it signed itself off (client_leave).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "client_kicked"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "is_guest": {
+          "type": "boolean"
+        },
+        "reason": {
+          "enum": [
+            "kicked",
+            "left"
+          ],
+          "description": "kicked = removed by an admin or the inviting member; left = the device signed itself off (client_leave). Missing = kicked."
+        }
+      },
+      "required": [
+        "client_id",
+        "is_guest"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

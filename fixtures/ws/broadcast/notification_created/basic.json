@@ -1,0 +1,30 @@
+{
+  "type": "notification_created",
+  "data": {
+    "notification": {
+      "id": "9d1c0a6e-1111-4111-8111-000000000002",
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "title": "Es klingelt",
+      "message": "Haustür",
+      "notification_type": "sticky",
+      "icon": "mdi:doorbell",
+      "icon_svg": null,
+      "status": "pending",
+      "created_at": "2026-11-18T08:15:00.123456+00:00",
+      "delivered_at": null,
+      "dismissed_at": null,
+      "popup": true,
+      "popup_mode": "both",
+      "scheduled_at": null,
+      "priority": 90,
+      "color": "orange",
+      "action_type": "entity",
+      "action_target": "camera.front_door",
+      "show_time": true,
+      "delivered_via": null
+    },
+    "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+    "client_name": "Wohnzimmer-Panel",
+    "ws_sent": true
+  }
+}

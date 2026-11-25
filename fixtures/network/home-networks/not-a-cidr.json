@@ -1,0 +1,11 @@
+{
+  "name": "not-a-cidr",
+  "input": [
+    {
+      "cidr": "100.64.0.1"
+    }
+  ],
+  "expect": {
+    "error": "home_network_invalid"
+  }
+}

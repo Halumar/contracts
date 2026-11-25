@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Curated tile icons (data/tile-icons.json)",
+  "description": "Curated set of MDI icons with an SF Symbol pair. The Admin UI offers it first (with DE/EN keywords), the Apple apps show the SF Symbol for mdi:<name> when the device runs at least sf_min_os (else icon_svg from the hub). Every mdi name exists in the hub MDI table, every sf name exists and is not restricted (checked with tools/check_tile_icons.py on macOS). Generated as a constant for every language (codegen ContractData).",
+  "type": "object",
+  "required": [
+    "version",
+    "categories",
+    "icons"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "categories": {
+      "description": "Groups of the icon picker in display order.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "label": {
+            "type": "object",
+            "required": [
+              "de",
+              "en"
+            ],
+            "properties": {
+              "de": {
+                "type": "string",
+                "minLength": 1
+              },
+              "en": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "icons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "mdi",
+          "sf",
+          "sf_min_os",
+          "category",
+          "keywords"
+        ],
+        "properties": {
+          "mdi": {
+            "description": "MDI name without prefix (tile.icon = mdi:<name>).",
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "sf": {
+            "description": "SF Symbol name shown by the Apple apps.",
+            "type": "string",
+            "pattern": "^[a-z0-9]+(\\.[a-z0-9]+)*$"
+          },
+          "sf_min_os": {
+            "description": "First iOS/tvOS version with this symbol (the later of both).",
+            "type": "string",
+            "pattern": "^[0-9]+\\.[0-9]+$"
+          },
+          "category": {
+            "description": "categories[].id",
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "keywords": {
+            "type": "object",
+            "required": [
+              "de",
+              "en"
+            ],
+            "properties": {
+              "de": {
+                "description": "German search words; the first is the display name.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                }
+              },
+              "en": {
+                "description": "English search words; the first is the display name.",
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

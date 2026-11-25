@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "command clear_notifications",
+  "description": "Admin/integration cleared all notifications of the client.",
+  "type": "object",
+  "required": [
+    "type",
+    "command"
+  ],
+  "properties": {
+    "type": {
+      "const": "command"
+    },
+    "command": {
+      "const": "clear_notifications"
+    }
+  },
+  "additionalProperties": true
+}

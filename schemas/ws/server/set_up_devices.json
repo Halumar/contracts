@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "set_up_devices",
+  "description": "Answer to get_set_up_devices – devices and guests this device set up, newest first. Changes other than removing stay with the admin.",
+  "type": "object",
+  "required": [
+    "type",
+    "devices"
+  ],
+  "properties": {
+    "type": {
+      "const": "set_up_devices"
+    },
+    "devices": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "platform",
+          "access",
+          "expires_at",
+          "profile",
+          "method",
+          "set_up_at",
+          "is_connected"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "owner_label": {
+            "$ref": "../../common/defs.json#/$defs/owner_label"
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "$ref": "../../common/defs.json#/$defs/platform"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "access": {
+            "$ref": "../../common/defs.json#/$defs/device_access"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "$ref": "../../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Guest and house sitter: end of the access."
+          },
+          "profile": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "kind"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "../../common/defs.json#/$defs/profile_id"
+              },
+              "name": {
+                "$ref": "../../common/defs.json#/$defs/profile_name"
+              },
+              "kind": {
+                "$ref": "../../common/defs.json#/$defs/profile_kind"
+              }
+            },
+            "additionalProperties": true
+          },
+          "method": {
+            "$ref": "../../common/defs.json#/$defs/set_up_method"
+          },
+          "set_up_at": {
+            "$ref": "../../common/defs.json#/$defs/timestamp"
+          },
+          "is_connected": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

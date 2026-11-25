@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HA WebSocket command <ns>/family (away route of the family manager, and of child devices)",
+  "description": "Sent over the device's Home Assistant WebSocket while away from home: by the app of a family manager device (family_* messages) and by a child device with remote access (kids_request, kids_request_cancel). The integration takes the paired device from the calling HA user (connection.user; never from the message), refuses every other user (HA error code unauthorized), rate-limits per HA user and relays message to POST /api/integration/family. The HA result (type result, success true) carries ha-ws-family.result.json; a hub that cannot be reached answers success true with messages [family_error {reason: hub_unreachable}]. The hub decides by the device: family_* only for family managers, kids_request* only for child devices with effective remote access. Early access: recipients read and answer (access_requests_get, access_request_answer); a requesting device gets home_only.",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "message"
+  ],
+  "properties": {
+    "id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "HA WebSocket message id (set by the client)."
+    },
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*/family$",
+      "description": "<ns>/family – the value of namespace.json ha_ws_family_command.",
+      "x-namespace-key": "ha_ws_family_command"
+    },
+    "message": {
+      "description": "One client message of the hub WebSocket, unchanged: ws/client/family_*.json, or ws/client/kids_request*.json of a child device; access_requests_get and access_request_answer of a recipient device; access_request / access_request_cancel are answered with access_request_error {home_only}.",
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(family_[a-z_]{1,40}|kids_request|kids_request_cancel|access_request|access_request_cancel|access_requests_get|access_request_answer)$"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

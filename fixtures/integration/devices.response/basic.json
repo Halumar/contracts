@@ -1,0 +1,25 @@
+{
+  "devices": [
+    {
+      "type": "hub",
+      "identifier": "halumar_hub",
+      "name": "Halumar",
+      "manufacturer": "Xonatec",
+      "model": "Halumar Area Manager",
+      "sw_version": "2026.11.1",
+      "area_count": 7
+    },
+    {
+      "type": "client",
+      "identifier": "halumar_client_3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "name": "Halumar: Wohnzimmer-Panel",
+      "manufacturer": "Halumar Client",
+      "model": "iPad (10th generation)",
+      "sw_version": "2026.7.7",
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "client_name": "Wohnzimmer-Panel",
+      "is_active": true,
+      "is_connected": true
+    }
+  ]
+}

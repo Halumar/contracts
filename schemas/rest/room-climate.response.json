@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET/PUT /api/areas/{area_id}/room-climate (answer)",
+  "description": "Admin only. Per measure the admin's choice, what the apps get (area room_climate), the value the apps show right now and every entity of the area that reports the measure, with why it does not count automatically. 404 when the area does not exist.",
+  "type": "object",
+  "required": [
+    "temperature",
+    "humidity"
+  ],
+  "properties": {
+    "temperature": {
+      "$ref": "../common/room-climate-setting.json"
+    },
+    "humidity": {
+      "$ref": "../common/room-climate-setting.json"
+    }
+  },
+  "additionalProperties": false
+}

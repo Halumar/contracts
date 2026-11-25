@@ -1,0 +1,5 @@
+{
+  "client_id": "1b2c3d4e-5f60-4718-9a2b-3c4d5e6f7a8b",
+  "entity_id": "light.kids_room",
+  "action": "turn_on"
+}

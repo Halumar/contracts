@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "onboard_confirm",
+  "description": "The confirming device sets up the waiting device as kind with profile_id (from onboard_info.grant). Same checks as onboard_lookup plus: setup_devices allows kind, the kind fits the platform, the profile is offered for it (never stronger than the confirming device), the area choice, own_area_id and start_area lie in grant.areas, a guest or house sitter has expires_at (at most guest_access.max_hours ahead) and remote only with remote_choice, managers only with managers_choice, access_windows only with access_hours_choice. The hub creates the device (access guest for guest and house sitter, else member; profile; owner_label; own HA user), stores the choices as device adjustments (areas, panel_start, remote_access, access_hours), adds the child to the chosen family managers, records set_up_by, seals the secret to the session's key and sends onboard_ok to the waiting device; the confirming device gets onboard_confirm_ok. Single use: the session ends with the first successful confirm, decline, expiry or mismatch; a validation error (kind_not_allowed, profile_not_allowed, areas_not_allowed, expiry_not_allowed, managers_not_allowed, access_hours_not_allowed) keeps it open and counts as a failed attempt.",
+  "type": "object",
+  "required": [
+    "type",
+    "session_id",
+    "public_key",
+    "hub_id",
+    "kind",
+    "profile_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "onboard_confirm"
+    },
+    "session_id": {
+      "$ref": "../../common/defs.json#/$defs/onboard_session_id"
+    },
+    "public_key": {
+      "$ref": "../../common/defs.json#/$defs/onboard_public_key"
+    },
+    "hub_id": {
+      "$ref": "../../common/defs.json#/$defs/hub_instance_id"
+    },
+    "kind": {
+      "$ref": "../../common/defs.json#/$defs/profile_kind",
+      "description": "Kind the device is set up as; one of onboard_info.grant.kinds."
+    },
+    "profile_id": {
+      "$ref": "../../common/defs.json#/$defs/profile_id",
+      "description": "Profile from grant.kinds[kind].profiles."
+    },
+    "client_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Name of the new device (default: the name it sent), e.g. “Child's iPhone”, “Wall panel Kitchen”."
+    },
+    "owner_label": {
+      "$ref": "../../common/defs.json#/$defs/owner_label",
+      "description": "Whose device it is (person, child, guest, house sitter: the name, e.g. “Child”); empty or missing = household (wall panel, TV)."
+    },
+    "all_areas": {
+      "type": "boolean",
+      "description": "Area choice: every active area, also future ones. Only with grant.all_areas. Wins over area_ids. Ignored when the profile fixes areas."
+    },
+    "area_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/defs.json#/$defs/uuid"
+      },
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "description": "Area choice: ids from grant.areas. Exactly the confirming device's list = its tags (it also sees areas added later under them); otherwise one area pin per area. Missing with all_areas missing = the confirming device's own areas. Ignored when the profile fixes areas."
+    },
+    "own_area_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid",
+      "description": "Own area of the new device (the room it is in, e.g. the TV's room), from grant.areas."
+    },
+    "start_area": {
+      "$ref": "../../common/defs.json#/$defs/uuid",
+      "description": "Wall panel on a tablet: start area (device adjustment of panel_start, mode area), from grant.areas; only with start_area_choice."
+    },
+    "managers": {
+      "type": "array",
+      "items": {
+        "$ref": "../../common/defs.json#/$defs/uuid"
+      },
+      "maxItems": 100,
+      "uniqueItems": true,
+      "description": "Kind child with parental controls, only with grant.managers_choice: family manager devices (grant.managers) that manage the new child in addition to those with all_children. Empty = only those with all_children."
+    },
+    "expires_at": {
+      "$ref": "../../common/defs.json#/$defs/timestamp",
+      "description": "Guest and house sitter: end of the access (required, in the future, at most guest_access.max_hours = 90 days ahead). Not allowed for other kinds."
+    },
+    "remote": {
+      "type": "boolean",
+      "description": "Guest and house sitter, only with remote_choice: remote access of the guest (device adjustment of remote_access until the access ends). Missing = profile value."
+    },
+    "access_windows": {
+      "$ref": "../../common/defs.json#/$defs/access_windows",
+      "description": "Optional, only with grant access_hours_choice (else access_hours_not_allowed): access hours of the new device, stored as a device adjustment of access_hours. Missing = profile value."
+    }
+  },
+  "additionalProperties": true,
+  "x-client-rules": [
+    "Show only the kinds and profiles of onboard_info.grant; with one kind skip the choice.",
+    "Preselect the confirming device's areas; offer “All areas” only with grant.all_areas; never send an empty choice.",
+    "Guests and house sitters: expiry presets of grant.guest_access, at most 90 days; remote only with remote_choice.",
+    "Children: managers only with grant.managers_choice (preselect is_self); otherwise show who manages automatically."
+  ]
+}

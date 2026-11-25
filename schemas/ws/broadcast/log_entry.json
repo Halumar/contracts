@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast log_entry",
+  "description": "A new entry of the log tab; open admin UIs add it to the timeline and update the unread alarm count. Admin sessions only; never sent to the integration push session (names, and no refresh needed) or to paired apps.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "log_entry"
+    },
+    "data": {
+      "$ref": "../../common/log-entry.json"
+    }
+  },
+  "additionalProperties": true
+}

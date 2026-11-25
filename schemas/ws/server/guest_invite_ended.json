@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "guest_invite_ended",
+  "description": "An invitation of this device ended (sent to every connection of the inviting device, also as the answer to guest_invite_cancel). result paired carries the new guest's client_id and client_name (show \"Guest connected\").",
+  "type": "object",
+  "required": [
+    "type",
+    "invite_id",
+    "result"
+  ],
+  "properties": {
+    "type": {
+      "const": "guest_invite_ended"
+    },
+    "invite_id": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_id"
+    },
+    "result": {
+      "$ref": "../../common/defs.json#/$defs/guest_invite_result"
+    },
+    "client_id": {
+      "$ref": "../../common/defs.json#/$defs/uuid"
+    },
+    "client_name": {
+      "type": "string",
+      "maxLength": 100
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "result": {
+            "const": "paired"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "then": {
+        "required": [
+          "client_id",
+          "client_name"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

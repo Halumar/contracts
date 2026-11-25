@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/areas/{area_id}/room-climate",
+  "description": "Admin only. The room climate sensors of an area (area page, Raumklima): null = automatic (the rule of data/room-climate.json), else one entity placed in the area that reports the measure (a thermostat of the measure's device_domains or a sensor of its device_class; an excluded one may be picked on purpose). Both keys replace the stored choice. Refused with 422 and detail {code: room_climate_invalid, measure, entity_id, message} for any other entity; nothing is stored then. Answers like GET (room-climate.response.json); connected apps get the area again (room_climate).",
+  "type": "object",
+  "required": [
+    "temperature_entity_id",
+    "humidity_entity_id"
+  ],
+  "properties": {
+    "temperature_entity_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "humidity_entity_id": {
+      "anyOf": [
+        {
+          "$ref": "../common/defs.json#/$defs/entity_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

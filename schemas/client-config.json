@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config",
+  "description": "Payload of WS 'client_config' (answer to get_client_config). Contains the per-device HA token in clear text - transport only over the pinned TLS port or LAN. Profile model: access (member/guest), profile and the effective profile rules (rules) replace templates, app overrides, locked keys, settings flags and the per-device rights; the app applies rules only and never resolves anything itself. Hard checks of the hub independent of the resolver: a device without remote_access gets ha_url null; ha_token, ha_instance_id and ha_enforcement only when the device holds a key (rule control_path checked or direct, or hub with effective remote_access: a read-only key; kids.away ha with parental controls), else null; ha_enforcement.control_path is checked for hub.",
+  "type": "object",
+  "required": [
+    "ha_token",
+    "ha_url",
+    "ha_internal_url",
+    "config_sensor",
+    "home_title",
+    "home_bg_light",
+    "home_bg_dark",
+    "control_mode",
+    "access",
+    "profile",
+    "rules",
+    "quick_access",
+    "settings_pin_hash",
+    "settings_pin_salt"
+  ],
+  "properties": {
+    "ha_token": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Per-device HA long-lived access token; null = fail closed (no token, admin session; a device that holds a key but whose token is not usable right now gets token_error). Only when the device holds a key: rule control_path checked or direct, or hub (“Hub only”) with effective remote_access, then the key of its read-only HA user (ha_enforcement.control_path checked; with parental controls kids.away ha). On hub without remote access always null: the device reads and switches through the hub. Null while access.hours.open is false. Always null on the wire for a watch (watchos, wearos): its access reaches it only sealed to its key (watch_access).",
+      "x-sensitive": true
+    },
+    "token_error": {
+      "type": "string",
+      "description": "Present exactly when the device holds a Home Assistant key, its access is open and ha_token is null; then ha_enforcement is null too. pending = the token has not arrived from the integration yet, or the hub holds it back until the integration has the device's rule snapshot; decryption_failed = the stored token cannot be decrypted (the hub asks the integration for a new one). While access is open a device holds a key exactly when ha_enforcement or token_error is set. With token_error the app deletes any Home Assistant token it stored, uses none, keeps its stored Home Assistant address, shows that the connection to Home Assistant is being set up and waits for client_config_updated; it is on the hub path only by its rules (a device on Hub only with remote access keeps working through the hub at home). Apps treat an unknown value like pending."
+    },
+    "ha_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "External HA URL, only when rules.remote_access.value is true (also on the hub path): the URL the admin set in the hub, else what HA reports (external_url, else the Nabu Casa address; POST /api/integration/ha-url). null = no remote access for this device or no external address known: the app removes a stored external URL and reaches HA only in the home network. Guests may have remote access when their profile allows it. Changing the rule, an adjustment, its expiry or the URLs sends client_config_updated."
+    },
+    "ha_internal_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ha_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{32}$",
+      "description": "Home Assistant's instance ID (helpers.instance_id, the uuid of its Bonjour TXT record _home-assistant._tcp), reported by the integration (POST /api/integration/ha-url). The app accepts it only from the pinned hub (or the pairing channel) and keeps it as the second proof of the home network: when the hub does not answer, an HA announced over Bonjour with this uuid confirms the home network, so the HA token may go over http:// / ws://. null/missing = not known yet (only the hub proves the home network). Same value for every device of the hub; sent to devices on the hub path (rule control_path hub, or parental controls) only together with their HA key (ha_token). Off the hub path it may come while token_error is set."
+    },
+    "home_networks": {
+      "$ref": "common/defs.json#/$defs/home_networks",
+      "description": "The household's additional home networks (CIDR), same list for every device (also guests and child devices). The app treats hosts inside them like local hosts: a pairing QR code or link naming such a host is accepted, a self-signed certificate of such a host may be pinned on first use while the home network is verified, and the address counts as an internal route. Absent = none (a hub always sends it)."
+    },
+    "ha_enforcement": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "control_path",
+            "rules_hash"
+          ],
+          "properties": {
+            "control_path": {
+              "$ref": "common/defs.json#/$defs/control_path",
+              "description": "Control path of the rule snapshot the integration last received for this device (the HA group of the device user follows that snapshot; before the first delivery since the hub started: the effective rule control_path). checked: switch ONLY through the integration action <ns>.control (Namespace haControlAction; direct actions are rejected by Home Assistant); direct: switch directly as before. Reading is unchanged in both cases. When the rule changes, the hub pushes the snapshot first and then sends client_config_updated. A device on the rule control_path hub has it only together with its HA key, always checked."
+            },
+            "rules_hash": {
+              "anyOf": [
+                {
+                  "$ref": "common/defs.json#/$defs/rules_hash"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Hash of the rule snapshot the hub sent to the integration for this device; <ns>.control answers with the one it used (drift indicator)."
+            }
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Control path in Home Assistant. Present exactly with an HA token; null without one: no key (rule control_path hub without remote access: the hub controls), or a key that is not usable yet (token_error set). While access is open a device holds a key exactly when ha_enforcement or token_error is set. Integration not responding (docs/enforcement.md, “Integration down”): with checked the app keeps showing everything and explains switching is not possible right now; it never falls back to direct actions."
+    },
+    "tls_fingerprint": {
+      "anyOf": [
+        {
+          "$ref": "common/defs.json#/$defs/fingerprint"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Absent in the admin/ingress variant."
+    },
+    "tls_port": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "8100 when a certificate exists. Must stay an integer: the apps decode it strictly (known deviation D3, docs/protocol.md)."
+    },
+    "config_sensor": {
+      "const": "sensor.halumar_config",
+      "x-namespace-key": "config_sensor"
+    },
+    "notification_sensor": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^sensor\\.halumar_client_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}_notifications$",
+      "x-namespace-key": "client_notification_sensor_template"
+    },
+    "home_title": {
+      "$ref": "common/defs.json#/$defs/nullable_string"
+    },
+    "home_bg_light": {
+      "$ref": "common/defs.json#/$defs/image_src"
+    },
+    "home_bg_dark": {
+      "$ref": "common/defs.json#/$defs/image_src"
+    },
+    "control_mode": {
+      "anyOf": [
+        {
+          "$ref": "common/defs.json#/$defs/control_mode"
+        }
+      ],
+      "description": "Hub default control mode, clamped by rules.control_mode_max (the hub clamps the per-area and per-entity modes it delivers as well). Apps assume 'advanced' when missing (known deviation D2, docs/protocol.md)."
+    },
+    "access": {
+      "$ref": "common/client-access.json"
+    },
+    "profile": {
+      "anyOf": [
+        {
+          "$ref": "common/client-profile.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Profile of the device; null only in the admin/ingress variant (message set, rules empty)."
+    },
+    "rules": {
+      "$ref": "common/resolved-rules.json",
+      "description": "Effective profile rules; {} only in the admin/ingress variant."
+    },
+    "kids": {
+      "$ref": "common/client-kids.json",
+      "description": "Only with parental controls (profile.child_protection). away tells whether and how the device controls away from home."
+    },
+    "family": {
+      "$ref": "common/client-family.json"
+    },
+    "babysitter": {
+      "anyOf": [
+        {
+          "$ref": "common/client-babysitter.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Only on babysitter devices with the rule babysitter_requests (else missing or null)."
+    },
+    "quick_access": {
+      "type": "object",
+      "description": "Quick access of this device, derived from rules.quick_access (off → enabled false, no entities; status/control → max) and resolved per entity (admin level or domain default, domain max, device max, read scope). Guests, and devices on Hub only without remote access (boundary hub_only): enabled false. The app keeps the newest copy in the App Group snapshot for its widgets and controls; before every action the extension rereads the check sensor (sensor), so a revocation acts on the next tap without the app. Changes are announced with client_config_updated.",
+      "required": [
+        "enabled",
+        "max",
+        "sensor",
+        "entities",
+        "critical"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "false = no widgets, controls or intents on this device (guests always false)."
+        },
+        "max": {
+          "$ref": "./common/defs.json#/$defs/quick_access_device_max"
+        },
+        "sensor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sensor\\.halumar_client_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}_quick_access$",
+          "x-namespace-key": "client_quick_access_sensor_template",
+          "description": "Check sensor with the same content (schemas/sensors/client-quick-access-sensor.json), readable with the device's HA token; null for guests."
+        },
+        "entities": {
+          "type": "object",
+          "maxProperties": 500,
+          "additionalProperties": {
+            "enum": [
+              "status",
+              "control"
+            ]
+          },
+          "description": "entity_id -> effective level; entities with off are absent."
+        },
+        "critical": {
+          "type": "array",
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          },
+          "description": "Entities among entities that are critical (lock, alarm, critical cover device classes, valve, siren, automation): widgets never switch them in the unsafe direction, controls require an unlocked device."
+        }
+      },
+      "additionalProperties": false
+    },
+    "settings_pin_hash": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "PBKDF2-HMAC-SHA256, 100000 iterations, dkLen 32, hex (fixtures/crypto/settings-pin-vectors). Sent only when rules.app_settings.value is pin (the effective remote PIN: device PIN, or the profile PIN when the device has none or the profile PIN is fixed); otherwise null."
+    },
+    "settings_pin_salt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{32}$",
+      "description": "16 random bytes, hex. Sent only when rules.app_settings.value is pin; otherwise null."
+    },
+    "settings_pin_source": {
+      "anyOf": [
+        {
+          "$ref": "common/defs.json#/$defs/remote_pin_source"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Origin of settings_pin_hash/salt: profile or device PIN; null when no PIN is sent."
+    },
+    "config_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "Hash of the canonical JSON of profile.rev, access and rules; changes whenever an effective value changes (drift display)."
+    },
+    "message": {
+      "type": "string",
+      "description": "Only in the admin/ingress variant."
+    }
+  },
+  "additionalProperties": true
+}

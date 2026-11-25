@@ -1,0 +1,6 @@
+{
+  "type": "control_error",
+  "request_id": "c1",
+  "reason": "rate_limited",
+  "retry_after": 1
+}

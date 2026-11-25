@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "state_subscribe",
+  "description": "A device on the hub path (parental controls or the effective rule control_path hub) asks for live states while the hub is reachable (with a key it reads Home Assistant itself away from home). Answer state_subscribed, then one entity_state with the current state of every visible entity (tap targets included), then entity_state for every change of an entity visible to the device (until the connection closes; send again after client_config_updated). When a weather entity is visible, sun.sun is relayed too (day and night of the weather; read only, never controllable). Other devices get control_error {not_hub_controlled}.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "state_subscribe"
+    }
+  },
+  "additionalProperties": true
+}

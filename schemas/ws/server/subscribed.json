@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "subscribed",
+  "description": "Answer to the no-op subscribe.",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "subscribed"
+    },
+    "data": {
+      "type": "string",
+      "description": "area_id or 'all'"
+    }
+  },
+  "additionalProperties": true,
+  "deprecated": true
+}

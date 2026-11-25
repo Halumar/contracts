@@ -1,0 +1,24 @@
+{
+  "route": "external",
+  "rules_hash": "7a4345e793befce52ff267a7986fe3b84083f48534c829e4ffd329d32fd7a718",
+  "results": [
+    {
+      "entity_id": "light.living_room_rgbww_lights",
+      "ok": true,
+      "executed": true,
+      "reason": null
+    },
+    {
+      "entity_id": "lock.front_door",
+      "ok": false,
+      "executed": false,
+      "reason": "blocked_remote"
+    },
+    {
+      "entity_id": "cover.garage_door",
+      "ok": false,
+      "executed": false,
+      "reason": "blocked_remote"
+    }
+  ]
+}

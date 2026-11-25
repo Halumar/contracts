@@ -1,0 +1,7 @@
+{
+  "uri": "https://www.example.com/open/camera/camera.front_door",
+  "params": {
+    "view": "camera",
+    "entity_id": "camera.front_door"
+  }
+}

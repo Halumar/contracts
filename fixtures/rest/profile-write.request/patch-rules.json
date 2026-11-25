@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "remote_access": false,
+    "areas": {
+      "mode": "selected",
+      "area_ids": [
+        "a1b2c3d4-0000-4000-8000-00000000000a"
+      ],
+      "own_area": true
+    }
+  },
+  "fixed": [
+    "remote_access",
+    "kids_exceptions"
+  ]
+}

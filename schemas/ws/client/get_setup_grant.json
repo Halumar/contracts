@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "get_setup_grant",
+  "description": "What this device may give when it sets up a device of platform (default ios) or, with purpose invite, invites a guest (only kind guest). For “type first” (choose what to set up before scanning) and the invitation screen. Answer: setup_grant, or onboard_error {not_permitted} without the rule setup_devices.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "get_setup_grant"
+    },
+    "platform": {
+      "$ref": "../../common/defs.json#/$defs/platform",
+      "description": "Platform of the device to set up; default ios."
+    },
+    "purpose": {
+      "enum": [
+        "onboard",
+        "invite"
+      ],
+      "description": "invite = grant of a guest invitation (kinds: guest only); default onboard."
+    }
+  },
+  "additionalProperties": true
+}

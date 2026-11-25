@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "family_get_requests",
+  "description": "Open requests of the children in scope plus answered/expired ones of the last 24 hours. Family manager devices (effective rule family_manager) and babysitter devices with access (only the open requests, include_closed is ignored); otherwise family_error {not_permitted}. Also accepted through the integration relay (POST /api/integration/family) when the device is away. Answer: family_requests.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "const": "family_get_requests"
+    },
+    "request_id": {
+      "$ref": "../../common/defs.json#/$defs/control_request_id",
+      "description": "Optional id of the app, echoed in the answer."
+    },
+    "include_closed": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "additionalProperties": true
+}

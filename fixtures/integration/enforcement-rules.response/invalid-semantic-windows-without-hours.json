@@ -1,0 +1,58 @@
+{
+  "snapshots": [
+    {
+      "version": 1,
+      "client_id": "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a",
+      "ha_user_id": "5d4c3b2a19087f6e5d4c3b2a19087f6e",
+      "issued_at": "2026-11-20T18:00:00+00:00",
+      "rules_hash": "9046b4320dae42ffd6d4359973d471262b162be263353ba320e8a3e17bf5063e",
+      "control_path": "checked",
+      "remote_access": true,
+      "child_protection": false,
+      "entities": {
+        "light.living_room": {
+          "local": "control",
+          "remote": "control",
+          "quick": "off"
+        },
+        "lock.front_door": {
+          "local": "control",
+          "remote": "view",
+          "quick": "off"
+        },
+        "cover.garage_door": {
+          "local": "control",
+          "remote": "view",
+          "quick": "off"
+        }
+      },
+      "kids": null,
+      "access": {
+        "switch": true,
+        "hours": false,
+        "windows": [
+          {
+            "days": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri",
+              "sat",
+              "sun"
+            ],
+            "start": "07:00",
+            "end": "21:00"
+          }
+        ],
+        "time_zone": "Europe/Zurich",
+        "early_until": null
+      },
+      "home_networks": [],
+      "location": "background"
+    }
+  ],
+  "control_paths": {
+    "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a": "checked"
+  }
+}

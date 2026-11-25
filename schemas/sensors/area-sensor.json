@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sensor.<ns>_area_<slug>_<uid8>",
+  "description": "Per-area layout (active areas only); state = number of entities. slug = slugified name (max 48) + '_' + first 8 hex of the area id. Written by the hub via POST /core/api/states/<entity_id>; not persistent in HA (gone after a Core restart until the next resync). Readable with every HA token.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^sensor\\.halumar_area_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}$",
+      "x-namespace-key": "area_sensor_template"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "attributes": {
+      "type": "object",
+      "required": [
+        "area_id",
+        "name",
+        "sections",
+        "section_count",
+        "tags"
+      ],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "area_id": {
+          "$ref": "../common/defs.json#/$defs/uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "color": {
+          "$ref": "../common/defs.json#/$defs/hex_color"
+        },
+        "grid_cols": {
+          "type": "integer"
+        },
+        "sort_order": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "control_mode": {
+          "anyOf": [
+            {
+              "$ref": "../common/defs.json#/$defs/control_mode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "card_image_src": {
+          "$ref": "../common/defs.json#/$defs/image_src"
+        },
+        "card_image_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bg_light_src": {
+          "$ref": "../common/defs.json#/$defs/image_src"
+        },
+        "bg_light_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bg_dark_src": {
+          "$ref": "../common/defs.json#/$defs/image_src"
+        },
+        "bg_dark_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tags": {
+          "$ref": "../common/defs.json#/$defs/area_tags"
+        },
+        "section_count": {
+          "type": "integer"
+        },
+        "updated_at": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        "unit_of_measurement": {
+          "const": "entities"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "entities",
+              "widgets"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "../common/defs.json#/$defs/uuid"
+              },
+              "title": {
+                "type": "string"
+              },
+              "icon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "column_span": {
+                "type": "integer"
+              },
+              "columns": {
+                "type": "integer"
+              },
+              "sort_order": {
+                "type": "integer"
+              },
+              "is_collapsed": {
+                "$ref": "../common/defs.json#/$defs/boolish"
+              },
+              "entities": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "entity_id"
+                  ],
+                  "properties": {
+                    "entity_id": {
+                      "$ref": "../common/defs.json#/$defs/entity_id"
+                    },
+                    "display_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "columns": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    },
+                    "is_visible": {
+                      "$ref": "../common/defs.json#/$defs/boolish"
+                    },
+                    "control_mode": {
+                      "anyOf": [
+                        {
+                          "$ref": "../common/defs.json#/$defs/control_mode"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "widgets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "widget_type"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "../common/defs.json#/$defs/uuid"
+                    },
+                    "widget_type": {
+                      "type": "string"
+                    },
+                    "config": {
+                      "type": "object"
+                    },
+                    "columns": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    },
+                    "sort_order": {
+                      "type": "integer"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "control_ok",
+  "description": "The action was sent to Home Assistant. adjusted names values the hub changed (volume cap).",
+  "type": "object",
+  "required": [
+    "type",
+    "request_id",
+    "entity_id"
+  ],
+  "properties": {
+    "type": {
+      "const": "control_ok"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "$ref": "../../common/defs.json#/$defs/control_request_id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entity_id": {
+      "$ref": "../../common/defs.json#/$defs/entity_id"
+    },
+    "adjusted": {
+      "type": "object",
+      "properties": {
+        "volume_level": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

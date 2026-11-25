@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "setup_grant",
+  "description": "Answer to get_setup_grant.",
+  "type": "object",
+  "required": [
+    "type",
+    "platform",
+    "purpose",
+    "grant"
+  ],
+  "properties": {
+    "type": {
+      "const": "setup_grant"
+    },
+    "platform": {
+      "$ref": "../../common/defs.json#/$defs/platform"
+    },
+    "purpose": {
+      "enum": [
+        "onboard",
+        "invite"
+      ]
+    },
+    "grant": {
+      "$ref": "../../common/setup-grant.json"
+    }
+  },
+  "additionalProperties": true
+}

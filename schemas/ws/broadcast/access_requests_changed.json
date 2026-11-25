@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast access_requests_changed",
+  "description": "An early access request changed (new, answered, expired, withdrawn) or an early access started or ended. Admin UIs reload GET /api/access-requests and open device pages; the integration treats it as refresh trigger. Ids only.",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "access_requests_changed"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "client_ids"
+      ],
+      "properties": {
+        "client_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "description": "Requesting devices concerned (sorted)."
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "$ref": "../../common/defs.json#/$defs/access_request_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "x-audience": "ADMIN"
+}

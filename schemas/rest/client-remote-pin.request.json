@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PUT /api/pairing/clients/{client_id}/remote-pin (body)",
+  "description": "Remote PIN of the device (Fern-PIN): exactly 8 digits, stored as PBKDF2 (fixtures/crypto/settings-pin-vectors); null removes it. Never part of a profile, never logged. Rule app_settings = pin needs it (else hidden, prerequisite_missing). With a fixed profile PIN setting a device PIN answers 422 remote_pin.fixed; removing is always allowed.",
+  "type": "object",
+  "required": [
+    "pin"
+  ],
+  "properties": {
+    "pin": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "x-sensitive": true
+    }
+  },
+  "additionalProperties": false
+}

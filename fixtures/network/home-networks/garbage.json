@@ -1,0 +1,11 @@
+{
+  "name": "garbage",
+  "input": [
+    {
+      "cidr": "tailscale"
+    }
+  ],
+  "expect": {
+    "error": "home_network_invalid"
+  }
+}

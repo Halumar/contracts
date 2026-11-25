@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "state_subscribed",
+  "description": "Live states are on; entity_count = entities visible to the device.",
+  "type": "object",
+  "required": [
+    "type",
+    "entity_count"
+  ],
+  "properties": {
+    "type": {
+      "const": "state_subscribed"
+    },
+    "entity_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": true
+}

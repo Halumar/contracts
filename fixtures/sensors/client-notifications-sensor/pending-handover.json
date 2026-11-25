@@ -1,0 +1,31 @@
+{
+  "entity_id": "sensor.halumar_client_wohnzimmer_panel_3f2b8c1e_notifications",
+  "state": "1",
+  "attributes": {
+    "friendly_name": "Halumar: Wohnzimmer-Panel Notifications",
+    "icon": "mdi:bell-badge",
+    "count": 1,
+    "notifications": [
+      {
+        "notification_id": "9d1c0a6e-2222-4222-8222-000000000001",
+        "title": "Waschmaschine fertig",
+        "message": "",
+        "notification_type": "default",
+        "popup": false,
+        "popup_mode": "none",
+        "scheduled_at": null,
+        "priority": 50,
+        "color": "none",
+        "action_type": "none",
+        "action_target": null,
+        "show_time": true,
+        "created_at": "2026-11-19T09:30:00.123456+00:00",
+        "status": "pending"
+      }
+    ],
+    "updated_at": "2026-11-19T09:30:00.123456+00:00",
+    "pending_handover": [
+      "9d1c0a6e-2222-4222-8222-000000000001"
+    ]
+  }
+}

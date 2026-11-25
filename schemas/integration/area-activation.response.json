@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/areas/{area_id}/activate|deactivate (200)",
+  "type": "object",
+  "required": [
+    "success",
+    "area_id",
+    "is_active"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "area_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "is_active": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

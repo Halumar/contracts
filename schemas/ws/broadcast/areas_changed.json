@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast areas_changed",
+  "description": "Sent to paired app sessions (not Admin UI, not integration) when an area was created, duplicated or deleted and the change can affect the session's area list (visibility rule common/defs.json#/$defs/client_tags; bulk deletes reach every app). No payload: the app answers with get_areas. Admin sessions keep getting area_created / area_deleted / areas_deleted with details.",
+  "x-audience": "TARGETED",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "areas_changed"
+    },
+    "data": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

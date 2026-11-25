@@ -1,0 +1,5 @@
+{
+  "type": "auth_error",
+  "reason": "guest_expired",
+  "message": "Guest access expired"
+}

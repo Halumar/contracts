@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/client/control",
+  "description": "REST twin of WS control for devices on the hub path (e.g. without an open WebSocket). Authorization: Bearer <client secret>; 401 for an unknown, revoked or deleted device. Answers: 200 control_ok, 403 rule_blocked or control_error {not_hub_controlled|not_visible}, 422 control_error {invalid_request}, 409 {not_ready}, 502 {ha_error}, 503 {ha_unavailable} (bodies = schemas/ws/server/*).",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "service"
+  ],
+  "properties": {
+    "request_id": {
+      "$ref": "../common/defs.json#/$defs/control_request_id"
+    },
+    "entity_id": {
+      "$ref": "../common/defs.json#/$defs/entity_id"
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "maxLength": 64
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

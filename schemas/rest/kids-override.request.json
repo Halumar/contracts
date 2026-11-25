@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/pairing/clients/{client_id}/kids-override",
+  "description": "Admin only: parent release of a child device (bedtime, rate limit and pauses off; blocked types, color lock, volume cap stay); also ends running pauses. Exactly one of minutes (15/30/60/120 in the admin UI, 1–240) or until = \"bedtime_end\" (\"until tomorrow morning\": end of the current or next bedtime of the device from its rule kids_quiet_hours in the hub time zone; without bedtime 07:00 local like the adjustment preset tomorrow_morning). DELETE = \"lift pause\": ends the release and every running pause. 409 not_child, 422 for neither (anyOf) and for both (hub check; the codegen subset cannot express \"not both\"). Answer: rest/kids-status.response.json.",
+  "type": "object",
+  "properties": {
+    "minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 240
+    },
+    "until": {
+      "const": "bedtime_end",
+      "description": "Release until the end of the bedtime (\"Until tomorrow morning\")."
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "minutes"
+      ]
+    },
+    {
+      "required": [
+        "until"
+      ]
+    }
+  ]
+}

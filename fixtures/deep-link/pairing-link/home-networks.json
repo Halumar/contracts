@@ -1,0 +1,10 @@
+{
+  "uri": "halumar://pair?url=https%3A%2F%2F100.101.102.103%3A8100&pin=1234-5678&tls_port=8100&fp=c32101118c77ad579e5e0adb89b6995db9d589b7b461e2fea0e838c8dfd628d4&hn=100.64.0.0%2F10%2Cfd7a%3A115c%3Aa1e0%3A%3A%2F48",
+  "params": {
+    "url": "https://100.101.102.103:8100",
+    "pin": "1234-5678",
+    "tls_port": "8100",
+    "fp": "c32101118c77ad579e5e0adb89b6995db9d589b7b461e2fea0e838c8dfd628d4",
+    "hn": "100.64.0.0/10,fd7a:115c:a1e0::/48"
+  }
+}

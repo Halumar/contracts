@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Preview of a profile change (?dry_run=true)",
+  "description": "Answer of every profile, assignment, adjustment, own-area, default-profile and bulk write with ?dry_run=true (preview before saving): nothing is saved; per affected device the effective values before and after (resolver), the adjustments that would be deleted and the consequences for the HA key and remote access. Without dry_run the same write saves and answers with its normal body; the audit entry contains before/after. Remote PINs (profile or device) never appear in a preview, a diff or the audit.",
+  "type": "object",
+  "required": [
+    "dry_run",
+    "affected_count",
+    "devices",
+    "loosened_rules"
+  ],
+  "properties": {
+    "dry_run": {
+      "const": true
+    },
+    "affected_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "loosened_rules": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "../common/defs.json#/$defs/profile_rule_key"
+      },
+      "description": "Rules loosened on at least one device (confirmation needed)."
+    },
+    "devices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "changes",
+          "overrides_removed",
+          "ha_key",
+          "remote_access"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "$ref": "../common/defs.json#/$defs/display_name"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "rule",
+                "before",
+                "after",
+                "loosens"
+              ],
+              "properties": {
+                "rule": {
+                  "$ref": "../common/defs.json#/$defs/profile_rule_key"
+                },
+                "before": {
+                  "$ref": "../common/effective-rule.json"
+                },
+                "after": {
+                  "$ref": "../common/effective-rule.json"
+                },
+                "loosens": {
+                  "type": "boolean",
+                  "description": "after is looser than before for a critical/sensitive rule (along order; areas: more areas) → confirmation with loosening_warning."
+                }
+              },
+              "additionalProperties": true
+            },
+            "description": "Only rules whose effective value or source changes."
+          },
+          "overrides_removed": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "../common/defs.json#/$defs/profile_rule_key"
+            },
+            "description": "Adjustments that would be deleted (rule becomes fixed or the new profile fixes it)."
+          },
+          "ha_key": {
+            "enum": [
+              "unchanged",
+              "removed",
+              "restored"
+            ],
+            "description": "removed: the device stops holding a Home Assistant key (control_path hub without remote access) → the HA token leaves the device, it reads and switches only through the hub; restored: it holds a key again → it gets its own HA token again."
+          },
+          "remote_access": {
+            "enum": [
+              "unchanged",
+              "enabled",
+              "disabled"
+            ]
+          },
+          "hub_remote_now": {
+            "type": "boolean",
+            "description": "Right after this state the device's effective Home Assistant access is Hub only and its remote access is on: it holds the read-only key because of remote access (the admin page warns). Never true on tvos, android_tv, watchos or wearos (Hub only resolves to checked there). Missing on older hubs = unknown."
+          },
+          "hub_remote_at": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The earliest later end (UTC) of a device adjustment or of the guest access after which the device becomes Hub only with remote access; null when hub_remote_now is true or no end leads there."
+          }
+        },
+        "additionalProperties": true
+      },
+      "description": "Devices the change leaves unchanged may be listed when the change alters their pair (hub_remote_now, hub_remote_at), both computed before and after the change at the same moment; such an entry has changes [], overrides_removed [], ha_key and remote_access unchanged, and does not count in affected_count."
+    },
+    "scene_hints": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "$ref": "../common/scene-hint.json"
+      },
+      "description": "PATCH /api/profiles/{profile_id}?dry_run=true only: the scene hints of the draft (rest/profile.json scene_hints), as they would be after saving."
+    },
+    "watches_removed": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "name",
+          "reason"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/client_id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "reason": {
+            "$ref": "../common/defs.json#/$defs/watch_removed_reason"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Watches the write removes: a child's watch whose phone may no longer have one. Missing = none. An adult's watch is never removed by a write; it follows its phone (limited_by_phone)."
+    }
+  },
+  "additionalProperties": true
+}

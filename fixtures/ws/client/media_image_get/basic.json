@@ -1,0 +1,5 @@
+{
+  "type": "media_image_get",
+  "request_id": "m1",
+  "entity_id": "media_player.living_room"
+}

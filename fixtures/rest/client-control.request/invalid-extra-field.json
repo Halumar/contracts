@@ -1,0 +1,5 @@
+{
+  "entity_id": "light.kids_room",
+  "service": "turn_off",
+  "secret": "x"
+}

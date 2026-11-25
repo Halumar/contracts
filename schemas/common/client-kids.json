@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.kids",
+  "description": "Kids mode of a device with parental controls. Present exactly when profile.child_protection is true. The hub enforces the rules where it is reachable, the integration (<ns>.control) when away is ha; rules is for display (grey out, limit sliders, countdown). rules.profile mirrors the effective kids_* rules (client_config.rules), rules.areas and rules.entities the profile's kids_exceptions with the own area resolved.",
+  "type": "object",
+  "required": [
+    "control",
+    "away",
+    "time_zone",
+    "override_until",
+    "rules"
+  ],
+  "properties": {
+    "control": {
+      "const": "hub",
+      "description": "Control path at home: only through the hub (WS control)."
+    },
+    "away": {
+      "enum": [
+        "none",
+        "ha"
+      ],
+      "description": "How the device controls while the hub is not reachable. none = not at all (no HA key on the device, ha_token null: rule control_path hub without remote access). ha = the device holds a read-only HA key (rule control_path checked, or hub with effective remote_access; ha_token while the access is open, ha_enforcement.control_path checked) and, while the hub is not reachable, reads states and history from Home Assistant and switches only through <ns>.control, where the integration enforces every kids rule (bedtime, blocked types, color lock, volume cap, releases; pauses and the pause of everything asked from the hub, kids-check). Requests (“Can I have more time?”) go through <ns>/family. Where the hub is reachable it stays the control path."
+    },
+    "time_zone": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 64
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "IANA zone of the bedtime windows (Home Assistant's time_zone); null = UTC."
+    },
+    "override_until": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Parent release: until then bedtime, rate limit and pauses do not apply (blocked types, color lock and volume cap do). null = no release."
+    },
+    "paused_all_until": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Everything is paused until then (overall rate limit kids_rate_limit_all exceeded); the hub rejects every action with rule_blocked {reason paused_all, until}. The app may grey out all controls and show the end time; it switches back at until even offline. Missing or null = no pause of everything. The hub sends client_config_updated when such a pause starts or is ended early (release, admin)."
+    },
+    "rules": {
+      "type": "object",
+      "required": [
+        "profile",
+        "areas",
+        "entities"
+      ],
+      "properties": {
+        "profile": {
+          "$ref": "kids-rules.json"
+        },
+        "areas": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "kids-rules.json"
+          },
+          "description": "area_id -> rules."
+        },
+        "entities": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "kids-rules.json"
+          },
+          "description": "entity_id -> rules."
+        }
+      },
+      "additionalProperties": false
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "$ref": "family-release.json"
+      },
+      "description": "Running releases by the admin or a family manager; the app shows them (“Up until 21:00”) and switches back at until even offline. Missing = none."
+    },
+    "requests": {
+      "$ref": "client-kids-requests.json"
+    }
+  },
+  "additionalProperties": true
+}

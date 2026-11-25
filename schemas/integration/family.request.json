@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/family",
+  "description": "Integration token only, from the HA host (away route). The integration relays a message that an app sent through Home Assistant (HA WebSocket command <ns>/family) over the external URL. client_id is NOT taken from the app: the integration maps the calling HA user (connection.user.id) to the paired device whose HA user it is and refuses all other users. The hub checks everything exactly like on its own WebSocket (right, scope, “Fixed”, limits) and records route away. family_* messages of family manager devices; kids_request / kids_request_cancel of child devices with effective remote access (they hold a read-only HA key only then), else family_error not_permitted.",
+  "type": "object",
+  "required": [
+    "client_id",
+    "message"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^(family_[a-z_]{1,40}|kids_request|kids_request_cancel)$"
+        }
+      },
+      "additionalProperties": true,
+      "description": "A ws/client/family_* or ws/client/kids_request* message (validated by the hub)."
+    }
+  },
+  "additionalProperties": false
+}

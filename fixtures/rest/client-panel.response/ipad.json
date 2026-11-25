@@ -1,0 +1,48 @@
+{
+  "client_id": "c1d2e3f4-0000-4000-8000-0000000000a1",
+  "platform": "ipados",
+  "is_connected": true,
+  "is_panel": true,
+  "panel": {
+    "screen": "dimmed",
+    "brightness": 0.15,
+    "brightness_mode": "auto",
+    "actions": [
+      "wake",
+      "screensaver",
+      "home",
+      "reload",
+      "set_brightness",
+      "set_brightness_mode"
+    ]
+  },
+  "battery_level": 64,
+  "battery_state": "charging",
+  "low_power": false,
+  "panel_ha": {
+    "sensors": [
+      "battery",
+      "charging",
+      "screen",
+      "brightness"
+    ],
+    "controls": [
+      "brightness",
+      "brightness_mode",
+      "wake",
+      "screensaver",
+      "home",
+      "reload"
+    ]
+  },
+  "remote": true,
+  "supported_actions": [
+    "wake",
+    "screensaver",
+    "home",
+    "reload",
+    "set_brightness",
+    "set_brightness_mode"
+  ],
+  "updated_at": "2026-11-19T20:15:00Z"
+}

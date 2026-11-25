@@ -1,0 +1,361 @@
+{
+  "dry_run": true,
+  "affected_count": 1,
+  "loosened_rules": [],
+  "devices": [
+    {
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6b",
+      "name": "iPhone Kind",
+      "changes": [
+        {
+          "rule": "remote_access",
+          "before": {
+            "value": false,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "ha"
+          },
+          "after": {
+            "value": true,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "ha"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "setup_devices",
+          "before": {
+            "value": false,
+            "source": "boundary",
+            "reason": "boundary_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": false,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "setup_devices",
+          "before": {
+            "value": false,
+            "source": "boundary",
+            "reason": "boundary_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": false,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "app_settings",
+          "before": {
+            "value": "hidden",
+            "source": "prerequisite",
+            "reason": "prerequisite_missing",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "app"
+          },
+          "after": {
+            "value": "open",
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "app"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "app_settings_biometrics",
+          "before": {
+            "value": false,
+            "source": "boundary",
+            "reason": "boundary_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "app"
+          },
+          "after": {
+            "value": false,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "app"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "remote_control",
+          "before": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_remote_access",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "app"
+          },
+          "after": {
+            "value": {
+              "default": "control",
+              "domains": {
+                "lock": "view",
+                "alarm_control_panel": "view",
+                "cover:garage": "view",
+                "cover:gate": "view"
+              },
+              "entities": {}
+            },
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "app"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_blocked_types",
+          "before": {
+            "value": [
+              "lock",
+              "alarm_control_panel",
+              "cover:garage",
+              "cover:gate",
+              "camera"
+            ],
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_quiet_hours",
+          "before": {
+            "value": [
+              {
+                "days": [
+                  "mon",
+                  "tue",
+                  "wed",
+                  "thu",
+                  "fri"
+                ],
+                "start": "20:00",
+                "end": "06:30"
+              },
+              {
+                "days": [
+                  "sat",
+                  "sun"
+                ],
+                "start": "21:00",
+                "end": "07:00"
+              }
+            ],
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_rate_limit",
+          "before": {
+            "value": {
+              "max_actions": 6,
+              "window_seconds": 60,
+              "cooldown_seconds": 300
+            },
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_volume_max",
+          "before": {
+            "value": 40,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_color_lock",
+          "before": {
+            "value": false,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "kids_exceptions",
+          "before": {
+            "value": [],
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": null,
+            "source": "not_applicable",
+            "reason": "requires_child_protection",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "quick_access",
+          "before": {
+            "value": "off",
+            "source": "boundary",
+            "reason": "boundary_hub_only",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "app"
+          },
+          "after": {
+            "value": "control",
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "app"
+          },
+          "loosens": false
+        },
+        {
+          "rule": "watch",
+          "before": {
+            "value": false,
+            "source": "boundary",
+            "reason": "boundary_hub_only",
+            "locked": true,
+            "fixed": true,
+            "enforcement": "hub"
+          },
+          "after": {
+            "value": true,
+            "source": "profile",
+            "reason": "profile",
+            "locked": true,
+            "fixed": false,
+            "enforcement": "hub"
+          },
+          "loosens": false
+        }
+      ],
+      "overrides_removed": [],
+      "ha_key": "restored",
+      "remote_access": "enabled"
+    }
+  ],
+  "scene_hints": [
+    {
+      "entity_id": "scene.good_morning",
+      "name": "Guten Morgen",
+      "area_ids": [
+        "9b2e3d4f-5061-4b72-8c83-d4e5f6071829"
+      ],
+      "targets_unknown": false,
+      "targets": [
+        {
+          "entity_id": "cover.living_room_window",
+          "name": "Rollladen",
+          "reason": "remote",
+          "area_ids": [
+            "8a1d2c3e-4f50-4a61-9b72-c3d4e5f60718"
+          ]
+        },
+        {
+          "entity_id": "switch.wall_panel_screen",
+          "name": "Bildschirm",
+          "reason": "not_controllable",
+          "area_ids": []
+        }
+      ]
+    }
+  ]
+}

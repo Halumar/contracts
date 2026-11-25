@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tile settings of an area entity (read)",
+  "description": "Per-placement presentation and behavior of an entity card as delivered by the hub (WS get_area, Admin REST). The writable fields are defs.json#/$defs/tile_settings_base; icon_svg and secondary_state are hub output and never accepted on write. {} = everything default. An app may ignore the settings and show the standard card (guests always do); apps that do not know the field ignore it (tolerant decoding). Fallback rules: docs/protocol.md, Tile settings.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "defs.json#/$defs/tile_settings_base"
+    }
+  ],
+  "properties": {
+    "icon_svg": {
+      "description": "Hub output: SVG path of the effective MDI icon (tile.icon when mdi:, else an mdi: icon set in Home Assistant, attributes.icon). null or absent for sf: icons and when no MDI icon applies.",
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 10000
+    },
+    "secondary_state": {
+      "description": "Hub output for secondary.source=entity: state of secondary.entity_id at request time (sanitized like area-entity.state); null when unavailable.",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "attributes": {
+              "type": "object"
+            },
+            "last_changed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

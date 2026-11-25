@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/quick-access, PUT /api/quick-access/{entity_id}",
+  "description": "Admin only. GET: every entity placed in an area plus every entity with an admin choice, sorted by entity_id ({\"items\": [...]}); PUT answers {\"items\": [<the changed entity>]}. Levels apply to the entity on every device (not per placement); what a device gets is resolved per device (client_config.quick_access).",
+  "type": "object",
+  "required": [
+    "items"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "entity_id",
+          "level",
+          "default",
+          "max",
+          "critical",
+          "effective",
+          "critical_ack",
+          "updated_at",
+          "updated_by"
+        ],
+        "properties": {
+          "entity_id": {
+            "$ref": "../common/defs.json#/$defs/entity_id"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "HA friendly name (display only)."
+          },
+          "level": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/quick_access_level"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Admin choice; null = domain default."
+          },
+          "default": {
+            "$ref": "../common/defs.json#/$defs/quick_access_level"
+          },
+          "max": {
+            "$ref": "../common/defs.json#/$defs/quick_access_level"
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "effective": {
+            "$ref": "../common/defs.json#/$defs/quick_access_level",
+            "description": "level, else the default (critical: at most status)."
+          },
+          "critical_ack": {
+            "type": "boolean",
+            "description": "The admin confirmed the warning for this critical entity."
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/timestamp"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_by": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

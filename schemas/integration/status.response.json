@@ -1,0 +1,509 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/integration/status",
+  "description": "Full snapshot for the HA integration (poll 30 s, 300 s with WS push). Contains names and GPS positions. Per-device users: per-client ha_user_id/ha_token_status/owner_label/remote_allowed and the provisioning[] backlog; no owner token any more. ha_user_holds: HA users kept until a deleted device confirmed its reset.",
+  "type": "object",
+  "required": [
+    "hub",
+    "areas",
+    "clients",
+    "guests",
+    "guest_count",
+    "pairing_active",
+    "pairing_remaining",
+    "pairing_is_guest",
+    "allow_pairing_via_integration",
+    "compliance_endpoint_enabled",
+    "tombstones",
+    "area_count",
+    "client_count",
+    "provisioning",
+    "ha_user_holds"
+  ],
+  "properties": {
+    "hub": {
+      "type": "object",
+      "required": [
+        "version",
+        "instance_id",
+        "connected_clients",
+        "ws_push"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "instance_id": {
+          "$ref": "../common/defs.json#/$defs/hub_instance_id",
+          "description": "Stable id of this hub: generated once and kept in the hub's data, the same value as the Bonjour TXT iid and the hub_id of onboarding. The integration stores it in its config entry on first sight. A later status with another id is another hub (reinstalled add-on, entry pointed at another host): the integration then removes no device, user or token and raises a repair issue; only after the admin confirms with reconfigure or reauthenticate does it take the new id."
+        },
+        "connected_clients": {
+          "type": "integer"
+        },
+        "ws_push": {
+          "const": true,
+          "description": "Capability flag (2026.7.5): WS push session supported."
+        },
+        "protocol_version": {
+          "type": "integer",
+          "x-planned": "protocol version check"
+        }
+      },
+      "additionalProperties": true
+    },
+    "areas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "is_active",
+          "entity_count"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color": {
+            "$ref": "../common/defs.json#/$defs/hex_color"
+          },
+          "grid_cols": {
+            "type": "integer"
+          },
+          "sort_order": {
+            "type": "integer"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "control_mode": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/control_mode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "entity_count": {
+            "type": "integer"
+          },
+          "section_count": {
+            "type": "integer"
+          },
+          "card_image_src": {
+            "$ref": "../common/defs.json#/$defs/image_src"
+          },
+          "card_image_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bg_light_src": {
+            "$ref": "../common/defs.json#/$defs/image_src"
+          },
+          "bg_light_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bg_dark_src": {
+            "$ref": "../common/defs.json#/$defs/image_src"
+          },
+          "bg_dark_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tags": {
+            "$ref": "../common/defs.json#/$defs/area_tags"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "clients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "is_active",
+          "is_connected",
+          "tags",
+          "has_ha_token",
+          "is_guest",
+          "pending_deletion",
+          "notification_ids",
+          "notification_count",
+          "ha_user_id",
+          "ha_token_status",
+          "owner_label",
+          "remote_allowed"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "is_connected": {
+            "type": "boolean"
+          },
+          "tags": {
+            "$ref": "../common/defs.json#/$defs/client_tags"
+          },
+          "has_ha_token": {
+            "type": "boolean",
+            "description": "true = the device holds a Home Assistant key that Home Assistant still accepts: a delivered key (its effective control_path is checked or direct, or hub with effective remote access: a read-only key), or a withdrawn key whose replacement the integration has not confirmed yet (the old token stays valid until then). false = the device holds none (Hub only without remote access, or a withdrawn key after the integration confirmed the rotation). When a device stops holding a key (control_path becomes hub, remote access ends on Hub only; log entry ha_key_withdrawn; at guest expiry the hub removes the device and its Home Assistant user instead) and when its access closes, the hub rotates the token, so a key the app held before stops working as soon as the integration has removed it (until then it keeps working, and the hub keeps trying). Whether the HA user is set up at all is ha_token_status."
+          },
+          "created_at": {
+            "$ref": "../common/defs.json#/$defs/timestamp"
+          },
+          "last_seen": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "device_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "app_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "platform": {
+            "description": "Platform of the device (null for a device that never reported one). A watch (watchos, wearos) has no hub channel and shows the notifications of the phone in set_up_by: while the hub is unreachable the integration leaves watches out of “all” and writes a notification for a watch into that phone's sensor, as the hub does.",
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/platform"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "set_up_by": {
+            "description": "Member device that set this device up (as in GET /api/pairing/clients); for a watch the phone that shows its notifications. null for devices paired with the admin PIN.",
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/set_up_by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "battery_level": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "battery_state": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/battery_state"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "low_power": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "connection_type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "'disconnected' when not connected."
+          },
+          "current_area_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "current_area_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "is_guest": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pending_deletion": {
+            "type": "boolean"
+          },
+          "pending_deletion_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "compliance": {
+            "$ref": "../common/compliance-blob.json"
+          },
+          "notification_ids": {
+            "type": "array",
+            "items": {
+              "$ref": "../common/defs.json#/$defs/uuid"
+            }
+          },
+          "notification_count": {
+            "type": "integer"
+          },
+          "ha_user_id": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/ha_id"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "HA user of this device; null while ha_token_status is pending."
+          },
+          "ha_token_status": {
+            "$ref": "../common/defs.json#/$defs/ha_token_status",
+            "description": "HA user of the device on the hub: pending = waiting for the integration to create the user and deliver its token; active = user and token stored on the hub. On the hub path active means the hub holds the token for its calls of <ns>.control; the device itself holds it only when it holds a key (has_ha_token)."
+          },
+          "owner_label": {
+            "$ref": "../common/defs.json#/$defs/owner_label"
+          },
+          "remote_allowed": {
+            "type": "boolean",
+            "description": "Effective profile rule remote_access: also guests when their profile allows it, and devices with parental controls (read-only key, docs/enforcement.md §7). Always a boolean: when the hub cannot resolve a device's rules it sends false (the HA user stays local_only, fail closed)."
+          },
+          "panel": {
+            "anyOf": [
+              {
+                "$ref": "../common/panel-status.json"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last status of the device (every device with an app connection, not only panels); null when the device never reported one."
+          },
+          "panel_ha": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "sensors",
+                  "controls"
+                ],
+                "properties": {
+                  "sensors": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "$ref": "../common/defs.json#/$defs/panel_ha_sensor"
+                    },
+                    "description": "Sensor entities to create: rule panel_sensors limited to the platform. Wall panels (iPad, Android tablet) get screen with the other allowed values, TVs (Apple TV, Android TV) only screen; every other device gets app (“app active”) for the rule value screen; illuminance only with light_sensor."
+                  },
+                  "controls": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                      "$ref": "../common/defs.json#/$defs/panel_control"
+                    },
+                    "description": "Control entities to create: only wall panels (iPad, Android tablet) and TVs (Apple TV, Android TV) with panel_remote on (tablets all, TVs wake/screensaver/home/reload). Empty on every other device and with panel_remote off."
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Entities of this device in Home Assistant, decided by the hub: null = none (guest, deactivated, or a platform without status: watchos, wearos). Every other device gets the sensors its rule panel_sensors allows; controls only wall panels and TVs. The integration creates exactly these entities on the existing client device and removes the others."
+          },
+          "access": {
+            "anyOf": [
+              {
+                "$ref": "../common/defs.json#/$defs/access_now"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Access right now. switch not null = the integration offers the switch switch.<ns>_<name>_access (state = switch, attributes open, reason, until, opens_at); turning it calls POST /api/integration/access-switch. Missing or null for removed devices."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "guests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "is_connected",
+          "expires_at"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "is_connected": {
+            "type": "boolean"
+          },
+          "expires_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "guest_count": {
+      "type": "integer"
+    },
+    "pairing_active": {
+      "type": "boolean"
+    },
+    "pairing_remaining": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "pairing_is_guest": {
+      "type": "boolean"
+    },
+    "pairing_guest_expires_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pairing_qr_camera": {
+      "enum": [
+        "off",
+        "guests",
+        "all"
+      ],
+      "description": "Hub option pairing_qr_camera: when GET /api/integration/pairing-qr returns the QR code with the PIN (X-Pairing-Pin: included). off = never, guests = only during a guest pairing window (X-Pairing-Kind: guest), all = during every window. The integration shows an included image only when this mode allows its X-Pairing-Kind. Missing = off."
+    },
+    "allow_pairing_via_integration": {
+      "type": "boolean"
+    },
+    "compliance_endpoint_enabled": {
+      "type": "boolean"
+    },
+    "tombstones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "client_id",
+          "compliance"
+        ],
+        "properties": {
+          "client_id": {
+            "$ref": "../common/defs.json#/$defs/uuid"
+          },
+          "compliance": {
+            "$ref": "../common/compliance-blob.json"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "area_count": {
+      "type": "integer"
+    },
+    "client_count": {
+      "type": "integer"
+    },
+    "provisioning": {
+      "type": "array",
+      "maxItems": 500,
+      "description": "Outstanding provisioning requests (same shape as provision_client.data): every active client with ha_token_status=pending (reason pair/reprovision) and rotations not yet answered (reason rotate/guest_extend). Fallback for a missed WS push; the integration handles each item exactly like a provision_client message. Empty = nothing to do.",
+      "items": {
+        "$ref": "../common/provision-request.json"
+      }
+    },
+    "ha_user_holds": {
+      "type": "array",
+      "maxItems": 500,
+      "description": "Deleted devices whose HA user stays until the app confirmed its reset (client_reset_ack) or the grace period ran out (24 h offline); hidden tombstones included. The integration must not remove the HA user of a listed client id on its own (reconcile skips it); the hub sends deprovision_client when it releases the hold. Empty = no holds.",
+      "items": {
+        "$ref": "../common/defs.json#/$defs/uuid"
+      }
+    },
+    "enforcement": {
+      "type": "object",
+      "required": [
+        "rules_hashes"
+      ],
+      "properties": {
+        "rules_hashes": {
+          "type": "object",
+          "maxProperties": 1000,
+          "additionalProperties": {
+            "$ref": "../common/defs.json#/$defs/rules_hash"
+          },
+          "description": "client_id -> rules_hash of the current rule snapshot of every device with an HA user. The integration fetches GET /api/integration/enforcement-rules when this differs from what it holds (backstop for a lost enforcement_rules push)."
+        }
+      },
+      "additionalProperties": true,
+      "description": "Rule snapshots for the integration action <ns>.control. Missing = the hub does not deliver snapshots (the integration keeps the ones it has)."
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,16 @@
+{
+  "type": "history",
+  "request_id": "h1",
+  "entity_id": "sensor.kids_room_temperature",
+  "hours": 24,
+  "states": [
+    {
+      "state": "21.4",
+      "last_changed": "2026-11-19T18:00:00+00:00",
+      "attributes": {
+        "unit_of_measurement": "°C"
+      }
+    }
+  ],
+  "truncated": false
+}

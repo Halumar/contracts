@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/kids-check",
+  "description": "Integration token only. The integration asks before executing a kids action whose entity has a rate limit (rule snapshot kids.entities.<id>.rate_limit) and no parental release is running. The hub checks pause and counter like for its own control path and, when allowed, records the action (it counts as executed). grant: the opaque value the hub passed itself in <ns>.control when it controls for a child device; the hub then answers allowed without counting twice. Timeout of the integration 3 s; no answer = kids_hub_unreachable (the action is not executed). Never contains data values beyond the action (no codes).",
+  "type": "object",
+  "required": [
+    "client_id",
+    "entity_id",
+    "action"
+  ],
+  "properties": {
+    "client_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "entity_id": {
+      "$ref": "../common/defs.json#/$defs/entity_id"
+    },
+    "action": {
+      "type": "string",
+      "pattern": "^[a-z_]{1,64}$"
+    },
+    "grant": {
+      "type": "string",
+      "minLength": 16,
+      "maxLength": 128,
+      "x-sensitive": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Area widget",
+  "type": "object",
+  "required": [
+    "id",
+    "section_id",
+    "widget_type",
+    "config"
+  ],
+  "properties": {
+    "id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "area_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "section_id": {
+      "$ref": "defs.json#/$defs/uuid"
+    },
+    "widget_type": {
+      "type": "string",
+      "description": "clock | text | spacer (not enforced server-side)."
+    },
+    "config": {
+      "type": "object",
+      "maxProperties": 100
+    },
+    "columns": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "rows": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "created_at": {
+      "$ref": "defs.json#/$defs/timestamp"
+    }
+  },
+  "additionalProperties": true
+}

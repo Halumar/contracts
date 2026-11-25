@@ -1,0 +1,8 @@
+{
+  "action": "announce",
+  "text": "x",
+  "volume": 150,
+  "actor": {
+    "kind": "automation"
+  }
+}

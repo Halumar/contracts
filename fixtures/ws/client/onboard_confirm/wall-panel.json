@@ -1,0 +1,15 @@
+{
+  "type": "onboard_confirm",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "hub_id": "8b7e3b10-2c4d-4e5f-9a0b-1c2d3e4f5a6b",
+  "kind": "panel",
+  "profile_id": "3f1c2b4a-5d6e-4f70-8a9b-0c1d2e3f4a5b",
+  "client_name": "Wandpanel Küche",
+  "own_area_id": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+  "start_area": "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+  "area_ids": [
+    "9c0d85fe-cd89-4bfd-8c15-1e56e24352f3",
+    "d18b03ba-0f49-4fea-8d96-e25af54def81"
+  ]
+}

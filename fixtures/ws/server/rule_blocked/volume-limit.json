@@ -1,0 +1,12 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-24",
+  "entity_id": "media_player.living_room",
+  "reason": "volume_limit",
+  "level": "area",
+  "until": null,
+  "retry_after": null,
+  "limit": {
+    "volume_max": 30
+  }
+}

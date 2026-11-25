@@ -1,0 +1,10 @@
+{
+  "type": "pair",
+  "pin": "3477-3800",
+  "client_name": "Pixel 10",
+  "protocol_version": 1,
+  "platform": "android",
+  "app_version": "2026.12.0",
+  "app_build": "12",
+  "device_model": "Google Pixel 10"
+}

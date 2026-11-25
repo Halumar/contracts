@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast profiles_changed",
+  "description": "The profile model changed – profiles (created, renamed, rules, deleted, suggestion added/applied, default profiles) and/or the profile state of devices (assignment, adjustments incl. expiry, own area, remote PIN, bulk). Admin UIs reload the profile list, device list and open device pages; the integration treats it as refresh trigger. The affected devices themselves get client_config_updated (targeted).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "profiles_changed"
+    },
+    "data": {
+      "type": "object",
+      "required": [
+        "profile_ids",
+        "client_ids"
+      ],
+      "properties": {
+        "profile_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/profile_id"
+          },
+          "uniqueItems": true,
+          "description": "Changed profiles (sorted); empty when only devices changed."
+        },
+        "client_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "../../common/defs.json#/$defs/uuid"
+          },
+          "uniqueItems": true,
+          "description": "Devices whose effective rules changed (sorted); empty when only profile metadata changed."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,17 @@
+{
+  "type": "onboard_confirm",
+  "session_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "public_key": "3MP7GKUvcQGkH_k46HYu5ErCo73ec4uk7Qi8OKvzGQ0",
+  "hub_id": "8b7e3b10-2c4d-4e5f-9a0b-1c2d3e4f5a6b",
+  "kind": "child",
+  "profile_id": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "client_name": "iPhone Kind",
+  "owner_label": "Child 1",
+  "area_ids": [
+    "7a2c9e4b-1d3f-4b5a-9c8d-2e4f6a8b0c1d",
+    "d18b03ba-0f49-4fea-8d96-e25af54def81"
+  ],
+  "managers": [
+    "0f1e2d3c-4b5a-4968-8778-695a4b3c2d1e"
+  ]
+}

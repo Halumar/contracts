@@ -1,0 +1,20 @@
+{
+  "type": "set_up_devices",
+  "devices": [
+    {
+      "client_id": "3f2b8c1e-5d4a-4e6f-9a7b-1c2d3e4f5a6d",
+      "name": "x",
+      "platform": "ios",
+      "access": "member",
+      "expires_at": null,
+      "profile": {
+        "id": "6b8d0f2a-4c6e-4a80-9b1d-3f5a7c9e1b3d",
+        "name": "Gast",
+        "kind": "guest"
+      },
+      "method": "pin",
+      "set_up_at": "2026-11-20T19:01:00+00:00",
+      "is_connected": true
+    }
+  ]
+}

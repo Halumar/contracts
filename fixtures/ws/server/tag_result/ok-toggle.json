@@ -1,0 +1,12 @@
+{
+  "type": "tag_result",
+  "tag_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "result": "ok",
+  "tag": {
+    "name": "Flur Licht",
+    "action": {
+      "kind": "toggle",
+      "entity_id": "light.hallway"
+    }
+  }
+}

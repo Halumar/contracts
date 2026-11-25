@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Access switch (admin)",
+  "description": "Admin only: PUT /api/pairing/clients/{client_id}/access-switch. Turns the device's access switch on or off (the same switch Home Assistant shows as switch.<ns>_<name>_access). 409 no_access_switch when the device has none (no access hours and not of kind guest, house_sitter or babysitter). Answer: rest/paired-client.json with access_now.",
+  "type": "object",
+  "required": [
+    "on"
+  ],
+  "properties": {
+    "on": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

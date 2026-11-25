@@ -1,0 +1,5 @@
+{
+  "type": "pair_error",
+  "reason": "pin_wrong",
+  "message": "Invalid pairing PIN"
+}

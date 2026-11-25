@@ -1,0 +1,7 @@
+{
+  "uri": "halumar://open/area/living_room",
+  "params": {
+    "view": "area",
+    "area_id": "living_room"
+  }
+}

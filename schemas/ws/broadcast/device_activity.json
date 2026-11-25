@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast device_activity",
+  "description": "A new entry in a device's activity feed; same object as in GET /api/pairing/clients/{client_id}/activity.",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "device_activity"
+    },
+    "data": {
+      "$ref": "../../common/defs.json#/$defs/device_activity"
+    }
+  },
+  "additionalProperties": true
+}

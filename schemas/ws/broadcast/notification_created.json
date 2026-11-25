@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "broadcast notification_created",
+  "description": "Notification created (full content, admin sessions).",
+  "x-audience": "ADMIN",
+  "type": "object",
+  "required": [
+    "type",
+    "data"
+  ],
+  "properties": {
+    "type": {
+      "const": "notification_created"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "notification": {
+          "type": "object",
+          "required": [
+            "id",
+            "client_id"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "../../common/defs.json#/$defs/uuid"
+            },
+            "client_id": {
+              "$ref": "../../common/defs.json#/$defs/uuid"
+            }
+          },
+          "additionalProperties": true,
+          "description": "Normalized DB row (id, client_id, title, message, notification_type, popup, popup_mode, priority, color, action_*, show_time, status, created_at, ...)."
+        },
+        "client_id": {
+          "$ref": "../../common/defs.json#/$defs/uuid"
+        },
+        "client_name": {
+          "type": "string"
+        },
+        "ws_sent": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "notification",
+        "client_id",
+        "ws_sent"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

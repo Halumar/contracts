@@ -1,0 +1,9 @@
+{
+  "type": "control",
+  "request_id": "r-17",
+  "entity_id": "light.kids_room",
+  "service": "turn_on",
+  "data": {
+    "brightness_pct": 60
+  }
+}

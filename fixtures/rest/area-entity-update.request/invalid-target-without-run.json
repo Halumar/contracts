@@ -1,0 +1,8 @@
+{
+  "tile": {
+    "tap_action": {
+      "action": "toggle",
+      "target_entity_id": "script.tv_abend"
+    }
+  }
+}

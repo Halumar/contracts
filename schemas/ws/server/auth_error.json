@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "auth_error",
+  "description": "Authentication failed. The socket stays open (the client may retry within the per-connection limit). `reason` is machine-readable; `message` is English text for logs only.",
+  "type": "object",
+  "required": [
+    "type",
+    "reason",
+    "message"
+  ],
+  "properties": {
+    "type": {
+      "const": "auth_error"
+    },
+    "reason": {
+      "$ref": "../../common/defs.json#/$defs/auth_error_reason"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Human-readable English text for logs; not for display, not stable."
+    }
+  },
+  "additionalProperties": true
+}

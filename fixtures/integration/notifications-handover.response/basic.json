@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "created": [
+    "9d1c0a6e-2222-4222-8222-000000000001"
+  ],
+  "duplicates": [
+    "9d1c0a6e-2222-4222-8222-000000000002"
+  ],
+  "skipped": [
+    {
+      "notification_id": "9d1c0a6e-2222-4222-8222-000000000003",
+      "reason": "client_not_found"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/notify and POST /api/notifications (200)",
+  "description": "{sent, duplicates} for client_id 'all', else the created notification and whether it was pushed live. With a notification_id that already exists for the same device (integration retry after the hub was unreachable): the existing notification, ws_sent false, duplicate true. For 'all' with a broadcast notification_id the per-device ids are derived (UUIDv5, docs/protocol.md) and devices that already have theirs count as duplicates (nothing created or pushed for them). Watches have no hub connection: 'all' leaves them out, and a notification for one watch goes to the phone that set it up (the notification's client_id is the phone's, the answer names it in forwarded_to); without that phone (deleted, inactive or being deleted) the call is 422 and nothing is stored.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "sent"
+      ],
+      "properties": {
+        "sent": {
+          "type": "integer",
+          "description": "Devices that got a new notification (watches are not counted: they show the notifications of their phone)."
+        },
+        "duplicates": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Only with a broadcast notification_id: devices that already had the derived id (retry after a timeout or a handover in between)."
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "notification",
+        "ws_sent"
+      ],
+      "properties": {
+        "notification": {
+          "type": "object",
+          "required": [
+            "id",
+            "client_id"
+          ],
+          "additionalProperties": true
+        },
+        "ws_sent": {
+          "type": "boolean"
+        },
+        "duplicate": {
+          "const": true,
+          "description": "Only present when the notification_id already existed (nothing created, nothing pushed)."
+        }
+      },
+      "description": "One device. For a watch the notification went to the phone that set it up, and the answer carries forwarded_to {client_id, name} of that phone (also with duplicate; the notification_id is checked against the phone).",
+      "additionalProperties": true
+    }
+  ]
+}

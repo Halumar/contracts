@@ -1,0 +1,12 @@
+{
+  "tag_id": "q8Zr3vT1yL0pXw5nB2cD4e",
+  "name": "Haustür Licht",
+  "action": {
+    "kind": "toggle",
+    "entity_id": "light.hallway"
+  },
+  "url": "https://halumar.com/t/q8Zr3vT1yL0pXw5nB2cD4e",
+  "created_at": "2026-11-21T10:00:00+00:00",
+  "updated_at": "2026-11-21T10:00:00+00:00",
+  "last_scanned_at": null
+}

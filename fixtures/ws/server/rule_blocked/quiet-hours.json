@@ -1,0 +1,9 @@
+{
+  "type": "rule_blocked",
+  "request_id": "r-17",
+  "entity_id": "light.kids_room",
+  "reason": "quiet_hours",
+  "level": "profile",
+  "until": "2026-11-20T05:30:00+00:00",
+  "retry_after": 30600
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sensor.<ns>_client_<slug>_<uid8>_notifications",
+  "description": "Active notifications of one client (full content, same item shape as WS 'notifications'); state = count. The id is delivered as client_config.notification_sensor. Written by the hub via POST /core/api/states/<entity_id>; while the hub does not answer, the integration writes it in the same shape and hands its changes over later (POST /api/integration/notifications/handover); not persistent in HA (gone after a Core restart until the next resync). Readable with every HA token.",
+  "type": "object",
+  "required": [
+    "entity_id",
+    "state",
+    "attributes"
+  ],
+  "properties": {
+    "entity_id": {
+      "type": "string",
+      "pattern": "^sensor\\.halumar_client_[a-z0-9]+(?:_[a-z0-9]+)*_[0-9a-f]{8}_notifications$",
+      "x-namespace-key": "client_notification_sensor_template"
+    },
+    "state": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "attributes": {
+      "type": "object",
+      "required": [
+        "count",
+        "notifications"
+      ],
+      "properties": {
+        "friendly_name": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "notifications": {
+          "type": "array",
+          "items": {
+            "$ref": "../common/notification-item.json"
+          }
+        },
+        "updated_at": {
+          "$ref": "../common/defs.json#/$defs/timestamp"
+        },
+        "pending_handover": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Only while not empty: ids of items the integration wrote while the hub was unreachable and has not handed over yet. The hub's own sensor update keeps these items (if younger than 72 h and not in its database) until the handover, so apps never lose them in between. Apps ignore the attribute."
+        }
+      },
+      "additionalProperties": true
+    },
+    "last_changed": {
+      "type": "string"
+    },
+    "last_updated": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

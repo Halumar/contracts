@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/integration/ha-url (200)",
+  "description": "When changed is true, connected apps were sent client_config_updated (the external URL only reaches devices with remote access).",
+  "type": "object",
+  "required": [
+    "success",
+    "changed"
+  ],
+  "properties": {
+    "success": {
+      "const": true
+    },
+    "changed": {
+      "type": "boolean",
+      "description": "The URL devices with remote access get (client_config.ha_url) changed. false when the value is unchanged or the admin set another external URL in the hub."
+    }
+  },
+  "additionalProperties": false
+}

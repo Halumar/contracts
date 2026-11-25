@@ -1,0 +1,11 @@
+{
+  "type": "update_client_identity",
+  "data": {
+    "client_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "display_name": "iPhone",
+    "owner_label": "Parent",
+    "is_guest": true,
+    "remote_allowed": false,
+    "guest_expires_at": "2026-12-24T18:00:00+00:00"
+  }
+}

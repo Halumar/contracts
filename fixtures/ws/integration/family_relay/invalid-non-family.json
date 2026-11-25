@@ -1,0 +1,9 @@
+{
+  "type": "family_relay",
+  "client_ids": [
+    "2a6f0c1e-4b7d-4e8a-9c1f-3d5e7a9b1c2d"
+  ],
+  "message": {
+    "type": "client_config_updated"
+  }
+}

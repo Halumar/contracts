@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "client_config.kids.requests",
+  "description": "“Can I have more time?” on a child device. enabled = at least one family manager of this child or an admin notification target for kids_release_requested exists and the admin did not switch requests off; otherwise the app hides the button. open = own open request (also after a restart of the app). next_allowed_at = cooldown after a No or the hourly limit. recipients = who gets a request right now: the hub sends client_config_updated to the child whenever the list changes (a babysitter's access opens or closes, it connects or leaves, a rename).",
+  "type": "object",
+  "required": [
+    "enabled",
+    "categories",
+    "open",
+    "next_allowed_at",
+    "recipients"
+  ],
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "$ref": "defs.json#/$defs/family_request_category"
+      },
+      "uniqueItems": true
+    },
+    "open": {
+      "anyOf": [
+        {
+          "$ref": "family-request.json"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "next_allowed_at": {
+      "anyOf": [
+        {
+          "$ref": "defs.json#/$defs/timestamp"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "recipients": {
+      "type": "array",
+      "maxItems": 10,
+      "description": "Who gets a request of this child now, for “Dad and Mum will get your question.”: every family manager of the child (role family_manager) and every active babysitter (role babysitter: rule babysitter_requests, access open right now, connected to the hub = at home; docs/access.md). Family managers first, then babysitters, each sorted by name; the same name only once per role. Empty = nobody can answer by name (the app says “a grown-up”).",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "role"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "description": "First name (owner label), else the device name."
+          },
+          "role": {
+            "description": "family_manager or babysitter ($defs/family_actor_kind).",
+            "enum": [
+              "family_manager",
+              "babysitter"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

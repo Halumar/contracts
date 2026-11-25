@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "POST /api/settings/event-notifications/test",
+  "description": "Send a test of a stored rule (rule_id) or of an unsaved draft rule (rule; the edit panel tests before saving). Exactly one of both: 422 for neither (anyOf) and for both (hub check; the codegen subset cannot express \"not both\"). 404 when rule_id is unknown, 422 notifications.no_target without target. The test goes to every target of the rule and is fired as <ns>_event with test true (rest/event-notifications-test.response.json).",
+  "type": "object",
+  "properties": {
+    "rule_id": {
+      "$ref": "../common/defs.json#/$defs/uuid"
+    },
+    "rule": {
+      "$ref": "event-notifications.json#/properties/rules/items"
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    {
+      "required": [
+        "rule_id"
+      ]
+    },
+    {
+      "required": [
+        "rule"
+      ]
+    }
+  ]
+}

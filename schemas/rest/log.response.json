@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GET /api/log",
+  "description": "Entries newest first (ts, id). Filters: category, range today|7d (none = whole retention), client_id, owner, profile_id, area_id, kind, q (search, _ and % literal), unread; paging before_id + limit (1–500, default 100). Entries older than the retention are never returned. GET /api/log/export answers the same shape without paging (max 20000).",
+  "type": "object",
+  "required": [
+    "entries",
+    "has_more"
+  ],
+  "properties": {
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "../common/log-entry.json"
+      }
+    },
+    "has_more": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}
